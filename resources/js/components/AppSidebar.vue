@@ -42,6 +42,7 @@ const mainNavItems: NavItem[] = [
     title: 'Pandu Genre',
     href: '/pandu-genre',
     icon: Hand,
+    guard: 'TPK',
   },
   {
     title: 'BADUTA',
@@ -67,11 +68,13 @@ const mainNavItems: NavItem[] = [
     title: 'Kinerja TPK',
     href: '/kinerja-tpk',
     icon: ClipboardList,
+    guard: 'TPK',
   },
   {
     title: 'Manajemen User',
     href: '/manajemen-user',
     icon: Settings,
+    guard: 'TPK',
   },
 ];
 
