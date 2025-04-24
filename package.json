@@ -33,13 +33,11 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "concurrently": "^9.0.1",
-<<<<<<< HEAD
-        "laravel-vite-plugin": "^1.2.0",
-=======
+
         "dotenv": "^16.5.0",
         "laravel-vite-plugin": "^1.0",
         "leaflet": "^1.9.4",
->>>>>>> 2e8947c (lanjuttt)
+
         "lucide": "^0.468.0",
         "lucide-vue-next": "^0.468.0",
         "reka-ui": "^2.2.0",
