@@ -27,68 +27,77 @@ const mainNavItems: NavItem[] = [
     title: 'Beranda',
     href: '/dashboard',
     icon: Home,
+    guard: undefined
   },
   {
     title: 'Data Penduduk',
     href: '/population_data',
     icon: Users,
+    guard: undefined
   },
   {
     title: 'Stunting',
     href: '/stunting',
     icon: ActivitySquare,
+    guard: undefined
   },
   {
     title: 'Pandu Genre',
     href: '/pandu-genre',
     icon: Hand,
-    guard: 'TPK',
+    guard: ['admin']
   },
   {
     title: 'BADUTA',
     href: '/baduta',
     icon: Baby,
+    guard: undefined
   },
   {
     title: 'BUMIL',
     href: '/bumil',
     icon: HeartPulse,
+    guard: undefined
   },
   {
     title: 'CATIN',
     href: '/catin',
     icon: UserRound,
+    guard: undefined
   },
   {
     title: 'Pasca Persalinan',
     href: '/pasca-persalinan',
     icon: HeartPulse,
+    guard: undefined
   },
   {
     title: 'Kinerja TPK',
     href: '/kinerja-tpk',
     icon: ClipboardList,
-    guard: 'TPK',
+    guard: ['admin']
   },
   {
     title: 'Manajemen User',
     href: '/manajemen-user',
     icon: Settings,
-    guard: 'TPK',
+    guard: ['admin']
   },
 ];
 
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
+      title: 'Github Repo',
+      href: 'https://github.com/laravel/vue-starter-kit',
+      icon: Folder,
+      guard: undefined
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits',
-        icon: BookOpen,
+      title: 'Documentation',
+      href: 'https://laravel.com/docs/starter-kits',
+      icon: BookOpen,
+      guard: undefined
     },
 ];
 </script>

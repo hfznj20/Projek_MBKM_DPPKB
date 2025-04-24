@@ -18,19 +18,19 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         //Membuat Role
-        $ra = Role::firstOrCreate(['name' => 'admin']);
-        $rop = Role::firstOrCreate(['name'=> 'TPK']);
+        $adm = Role::firstOrCreate(['name' => 'admin']);
+        $tpk = Role::firstOrCreate(['name'=> 'TPK']);
 
         $user2 = User::factory()->create([
             'email' => 'admin@gmail.com',
             'name' => 'Admin',
         ]);
-        $user2->assignRole($ra);
+        $user2->assignRole($adm);
 
         $user3 = User::factory()->create([
             'name' => 'TPK',
             'email' => 'TPK@gmail.com',
         ]);
-        $user3->assignRole($rop);
+        $user3->assignRole($tpk);
     }
 }
