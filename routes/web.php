@@ -14,51 +14,22 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Route untuk menyimpan logo
+// // Route untuk menyimpan logo
 Route::post('/store-logo', [SettingController::class, 'store'])->name('store.logo');
-
-// Route halaman Data Penduduk
-Route::get('/population_data', function () {
-    return Inertia::render('PopulationData');
-})->name('population.data');
-
-// === Halaman tambahan sesuai sidebar === //
-Route::get('/stunting', function () {
-    return Inertia::render('Stunting');
-})->name('stunting');
-
-Route::get('/pandu-genre', function () {
-    return Inertia::render('PanduGenre');
-})->name('pandu.genre');
-
-Route::get('/baduta', function () {
-    return Inertia::render('Baduta');
-})->name('baduta');
-
-Route::get('/bumil', function () {
-    return Inertia::render('Bumil');
-})->name('bumil');
-
-Route::get('/catin', function () {
-    return Inertia::render('Catin');
-})->name('catin');
-
-Route::get('/pasca-persalinan', function () {
-    return Inertia::render('PascaPersalinan');
-})->name('pasca.persalinan');
-
-Route::get('/kinerja-tpk', function () {
-    return Inertia::render('KinerjaTPK');
-})->name('kinerja.tpk');
-
-Route::get('/manajemen-user', function () {
-    return Inertia::render('ManajemenUser');
-})->name('manajemen.user');
-// Route untuk halaman tambah user
-Route::get('/add-user', function () {
-    return Inertia::render('AddUserForm'); // Pastikan AddUserForm.vue sudah ada
-})->name('add.user');
 
 // Route tambahan dari file lain
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
+
+
+use App\Http\Controllers\UserController;
+
+Route::get('/population_data', [UserController::class, 'index1'])->name('population_data');
+Route::get('/stunting', [UserController::class, 'index2'])->name('stunting');
+Route::get('/pandu-genre', [UserController::class, 'index3'])->name('pandu-genre');
+Route::get('/baduta', [UserController::class, 'index4'])->name('baduta');
+Route::get('/bumil', [UserController::class, 'index5'])->name('bumil');
+Route::get('/catin', [UserController::class, 'index6'])->name('catin');
+Route::get('/pasca-persalinan', [UserController::class, 'index7'])->name('pasca-persalinan');
+Route::get('/kinerja-tpk', [UserController::class, 'index8'])->name('kinerja-tpk');
+Route::get('/manajemen-user', [UserController::class, 'index9'])->name('manajemen-user');
