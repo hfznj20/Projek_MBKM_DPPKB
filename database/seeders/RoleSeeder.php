@@ -2,13 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-
-
 
 class RoleSeeder extends Seeder
 {
@@ -17,20 +13,38 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        //Membuat Role
-        $adm = Role::firstOrCreate(['name' => 'admin']);
-        $tpk = Role::firstOrCreate(['name'=> 'TPK']);
+        // Membuat Role
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $tpkRole   = Role::firstOrCreate(['name'=> 'TPK']);
 
-        $user2 = User::factory()->create([
-            'email' => 'admin@gmail.com',
-            'name' => 'Admin',
-        ]);
-        $user2->assignRole($adm);
+        // Membuat User Admin
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('password'),
+            ]
+        );
+        $admin->assignRole($adminRole);
 
-        $user3 = User::factory()->create([
-            'name' => 'TPK',
-            'email' => 'TPK@gmail.com',
-        ]);
-        $user3->assignRole($tpk);
+        // Membuat User TPK
+        $tpk = User::firstOrCreate(
+            ['email' => 'TPK@gmail.com'],
+            [
+                'name' => 'TPK',
+                'password' => bcrypt('password'),
+            ]
+        );
+        $tpk->assignRole($tpkRole);
+
+        // Membuat User Muhammad Ikhlashul Amal
+        $amal = User::firstOrCreate(
+            ['email' => 'ikhlashulamal@gmail.com'],
+            [
+                'name' => 'Muhammad Ikhlashul Amal',
+                'password' => bcrypt('opalepale'),
+            ]
+        );
+        $amal->assignRole($adminRole);
     }
 }
