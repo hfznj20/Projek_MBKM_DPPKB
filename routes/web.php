@@ -54,6 +54,10 @@ Route::get('/kinerja-tpk', function () {
 Route::get('/manajemen-user', function () {
     return Inertia::render('ManajemenUser');
 })->name('manajemen.user');
+// Route untuk halaman tambah user
+Route::get('/add-user', function () {
+    return Inertia::render('AddUserForm'); // Pastikan AddUserForm.vue sudah ada
+})->name('add.user');
 
 // Route tambahan dari file lain
 require __DIR__ . '/settings.php';
