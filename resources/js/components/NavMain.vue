@@ -16,6 +16,7 @@ const page = usePage<SharedData>();
         <SidebarMenu>
             <SidebarMenuItem v-for="item in items" :key="item.title">
                 <SidebarMenuButton 
+                    v-if="!item.guard || item.guard.includes(page.props.auth.user.role)"
                     as-child :is-active="item.href === page.url"
                     :tooltip="item.title"
                 >
