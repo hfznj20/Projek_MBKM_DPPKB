@@ -27,12 +27,11 @@ const submit = () => {
 </script>
 
 <template>
-    <div class="min-h-screen flex items-center justify-center bg-[#37347E] font-Gintari p-4">
+    <div class="min-h-screen flex items-center justify-center bg-[#071556] font-Gintari p-4">
         <!-- Form login container -->
         <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-6 sm:p-8 flex flex-col justify-center items-center transition-all">
             <Head title="Masuk" />
-            
-            <!-- Judul -->
+                        <!-- Judul -->
             <div class="flex aspect-square size-20 items-center justify-center rounded-md bg-transparent text-sidebar-primary-foreground">
                 <!-- Mengakses logo dengan latar belakang transparan -->
                 <img src="/logo.png" alt="DPPKB Logo" class="size-20 object-contain" />
