@@ -45,4 +45,29 @@ class UserController extends Controller
         return Inertia::render('ManajemenUser'); // 'ManajemenUser' adalah nama komponen Vue.js
     }
 
+    public function index10()
+    {
+        return Inertia::render('BadutaTPK'); // 'ManajemenUser' adalah nama komponen Vue.js
+    }
+    public function index11()
+    {
+        return Inertia::render('PopulationDataTPK'); // 'ManajemenUser' adalah nama komponen Vue.js
+    }
+    public function index12()
+    {
+        return Inertia::render('StuntingTPK');  // Menampilkan halaman StuntingTPK.vue
+    }
+    public function index13()
+    {
+        return Inertia::render('BumilTPK');
+    }
+
+    public function index14()
+    {
+        return Inertia::render('CatinTPK');
+    }
+    public function index15()
+    {
+        return Inertia::render('PascaPersalinanTPK');
+    }
 }

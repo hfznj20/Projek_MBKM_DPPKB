@@ -6,25 +6,18 @@ import { type BreadcrumbItem } from '@/types';
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'; 
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 
-// Breadcrumbs
+// Hapus deklarasi breadcrumbs di sini
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Beranda', href: '/dashboard' },
-  { title: 'Data Penduduk', href: '/population_data' },
+  { title: 'Data Penduduk tpk', href: '/population_data_tpk' },
 ];
 
-// State untuk pencarian
 const search = ref('');
-const searchCategory = ref('nama'); // Default pencarian adalah berdasarkan nama
+const searchCategory = ref('nama'); // default pencarian
 
-// Data penduduk (dummy data)
-const population = ref([
-  { id: 1, nik: '1234567890123456', nama: 'John Doe', kecamatan: 'Kecamatan A', kelurahan: 'Kelurahan X' },
-  { id: 2, nik: '9876543210987654', nama: 'Jane Smith', kecamatan: 'Kecamatan B', kelurahan: 'Kelurahan Y' },
-  { id: 3, nik: '1122334455667788', nama: 'Muhammad Ali', kecamatan: 'Kecamatan C', kelurahan: 'Kelurahan Z' },
-  { id: 4, nik: '9988776655443322', nama: 'Siti Aisyah', kecamatan: 'Kecamatan A', kelurahan: 'Kelurahan X' },
-]);
+// Kosongkan data penduduk
+const population = ref<any[]>([]);
 
-// Filter penduduk berdasarkan pencarian
 const filteredPopulation = computed(() => {
   const keyword = search.value.toLowerCase();
   const category = searchCategory.value;
@@ -58,11 +51,11 @@ const hapusData = (id: number) => {
 </script>
 
 <template>
-  <Head title="Data Penduduk" />
+  <Head title="Data Penduduk TPK" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6">
       <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl">
-        Data Penduduk
+        Data Penduduk TPK
       </h1>
 
       <!-- Pencarian dan Dropdown Kategori -->

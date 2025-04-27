@@ -23,7 +23,7 @@ import AppLogo from './AppLogo.vue';
 
 
 const mainNavItems: NavItem[] = [
-  {
+{
     title: 'Beranda',
     href: '/dashboard',
     icon: Home,
@@ -33,13 +33,13 @@ const mainNavItems: NavItem[] = [
     title: 'Data Penduduk',
     href: '/population_data',
     icon: Users,
-    guard: undefined
+    guard: ['admin']
   },
   {
     title: 'Stunting',
     href: '/stunting',
     icon: ActivitySquare,
-    guard: undefined
+    guard: ['admin']
   },
   {
     title: 'Pandu Genre',
@@ -48,28 +48,28 @@ const mainNavItems: NavItem[] = [
     guard: ['admin']
   },
   {
-    title: 'BADUTA',
+    title: 'Baduta',
     href: '/baduta',
     icon: Baby,
-    guard: undefined
+    guard: ['admin']
   },
   {
-    title: 'BUMIL',
+    title: 'Bumil',
     href: '/bumil',
     icon: HeartPulse,
-    guard: undefined
+    guard: ['admin']
   },
   {
-    title: 'CATIN',
+    title: 'Catin',
     href: '/catin',
     icon: UserRound,
-    guard: undefined
+    guard: ['admin']
   },
   {
     title: 'Pasca Persalinan',
     href: '/pasca-persalinan',
     icon: HeartPulse,
-    guard: undefined
+    guard: ['admin']
   },
   {
     title: 'Kinerja TPK',
@@ -83,9 +83,45 @@ const mainNavItems: NavItem[] = [
     icon: Settings,
     guard: ['admin']
   },
-];
 
-
+  // ===== TPK Section =====
+  {
+    title: 'Data Penduduk TPK',
+    href: '/population_data_tpk',
+    icon: Users,
+    guard: ['TPK']
+  },
+  {
+    title: 'Data Baduta TPK',
+    href: '/baduta_tpk', // <-- Sesuaikan URL
+    icon: Baby,
+    guard: ['TPK']
+  },
+  {
+    title: 'Data Stunting TPK',
+    href: '/stunting-tpk', // <-- URL yang sesuai
+    icon: ActivitySquare,            // <-- Kalau mau icon lain bisa ganti
+    guard: ['TPK']
+  },
+  {
+    title: 'Bumil TPK',
+    href: '/bumil-tpk',
+    icon: HeartPulse,
+    guard: ['TPK']
+  },
+  {
+      title: 'Catin TPK',
+      href: '/catin-tpk',
+      icon: UserRound,
+      guard: ['TPK']
+  },
+  {
+    title: 'Data Pasca Persalinan TPK',
+    href: '/pasca-persalinan-tpk', // sesuai route yang kita buat
+    icon: Baby, // (kalau ikon pasca persalinan belum ada, sementara pakai Baby atau bisa cari ikon lain)
+    guard: ['TPK'], // hanya muncul untuk role TPK
+  }
+  ];
 const footerNavItems: NavItem[] = [
     {
       title: 'Github Repo',

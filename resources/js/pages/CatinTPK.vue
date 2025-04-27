@@ -3,69 +3,54 @@ import { ref, computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { type BreadcrumbItem } from '@/types';
-import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'; 
+import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 
-// Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Beranda', href: '/dashboard' },
-  { title: 'Data Penduduk', href: '/population_data' },
+  { title: 'Catin', href: '/catin-tpk' },
 ];
 
-// State untuk pencarian
 const search = ref('');
-const searchCategory = ref('nama'); // Default pencarian adalah berdasarkan nama
+const searchCategory = ref('nama');
 
-// Data penduduk (dummy data)
-const population = ref([
-  { id: 1, nik: '1234567890123456', nama: 'John Doe', kecamatan: 'Kecamatan A', kelurahan: 'Kelurahan X' },
-  { id: 2, nik: '9876543210987654', nama: 'Jane Smith', kecamatan: 'Kecamatan B', kelurahan: 'Kelurahan Y' },
-  { id: 3, nik: '1122334455667788', nama: 'Muhammad Ali', kecamatan: 'Kecamatan C', kelurahan: 'Kelurahan Z' },
-  { id: 4, nik: '9988776655443322', nama: 'Siti Aisyah', kecamatan: 'Kecamatan A', kelurahan: 'Kelurahan X' },
-]);
+const catinData = ref<any[]>([]);
 
-// Filter penduduk berdasarkan pencarian
-const filteredPopulation = computed(() => {
+const filteredCatin = computed(() => {
   const keyword = search.value.toLowerCase();
   const category = searchCategory.value;
 
-  return population.value.filter((warga) => {
-    if (category === 'nik') {
-      return String(warga.nik).toLowerCase().includes(keyword);
-    } else if (category === 'nama') {
-      return warga.nama.toLowerCase().includes(keyword);
-    } else if (category === 'kecamatan') {
-      return warga.kecamatan.toLowerCase().includes(keyword);
-    } else if (category === 'kelurahan') {
-      return warga.kelurahan.toLowerCase().includes(keyword);
+  return catinData.value.filter((data) => {
+    if (category === 'nama') {
+      return data.nama.toLowerCase().includes(keyword);
+    } else if (category === 'nik') {
+      return String(data.nik).toLowerCase().includes(keyword);
     }
     return false;
   });
 });
 
-// Fungsi untuk mengedit data penduduk
 const editData = (id: number) => {
-  alert(`Edit data penduduk dengan ID: ${id}`);
+  alert(`Edit data catin dengan ID: ${id}`);
 };
 
-// Fungsi untuk menghapus data penduduk
 const hapusData = (id: number) => {
-  const confirmDelete = confirm(`Apakah Anda yakin ingin menghapus data dengan ID: ${id}?`);
+  const confirmDelete = confirm(`Apakah Anda yakin ingin menghapus data catin dengan ID: ${id}?`);
   if (confirmDelete) {
-    population.value = population.value.filter((warga) => warga.id !== id);
+    catinData.value = catinData.value.filter((data) => data.id !== id);
   }
 };
 </script>
 
 <template>
-  <Head title="Data Penduduk" />
+  <Head title="Catin TPK" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6">
       <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl">
-        Data Penduduk
+        Data Catin TPK
       </h1>
 
-      <!-- Pencarian dan Dropdown Kategori -->
+      <!-- Search & Category -->
       <div class="flex flex-col md:flex-row justify-between mb-4 mt-4 space-y-6 md:space-y-0 md:space-x-6">
         <div class="flex items-center w-full md:w-1/3 space-x-2">
           <label for="searchCategory" class="text-sm text-black whitespace-nowrap">Kategori</label>
@@ -77,13 +62,10 @@ const hapusData = (id: number) => {
             >
               <option value="nik">NIK</option>
               <option value="nama">Nama</option>
-              <option value="kecamatan">Kecamatan</option>
-              <option value="kelurahan">Kelurahan</option>
             </select>
           </div>
         </div>
 
-        <!-- Input Pencarian -->
         <div class="relative w-full md:w-1/3">
           <input
             v-model="search"
@@ -97,7 +79,7 @@ const hapusData = (id: number) => {
         </div>
       </div>
 
-      <!-- Tabel Data -->
+      <!-- Table -->
       <div class="overflow-x-auto">
         <table class="min-w-full table-auto border border-gray-300 rounded-lg">
           <thead class="bg-[#F9690C]/90 text-white">
@@ -105,38 +87,28 @@ const hapusData = (id: number) => {
               <th class="px-4 py-2 text-left">No</th>
               <th class="px-4 py-2 text-left">NIK</th>
               <th class="px-4 py-2 text-left">Nama</th>
-              <th class="px-4 py-2 text-left">Kecamatan</th>
-              <th class="px-4 py-2 text-left">Kelurahan</th>
+              <th class="px-4 py-2 text-left">Status</th>
               <th class="px-4 py-2 text-left">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-if="filteredPopulation.length === 0" class="text-center text-gray-500">
-              <td colspan="6" class="px-4 py-4">Tidak ada data penduduk.</td>
+            <tr v-if="filteredCatin.length === 0" class="text-center text-gray-500">
+              <td colspan="5" class="px-4 py-4">Tidak ada data catin.</td>
             </tr>
             <tr
-              v-for="(warga, index) in filteredPopulation"
-              :key="warga.id"
+              v-for="(data, index) in filteredCatin"
+              :key="data.id"
               class="border-t hover:bg-gray-50"
             >
               <td class="px-4 py-2">{{ index + 1 }}</td>
-              <td class="px-4 py-2">{{ warga.nik }}</td>
-              <td class="px-4 py-2">{{ warga.nama }}</td>
-              <td class="px-4 py-2">{{ warga.kecamatan }}</td>
-              <td class="px-4 py-2">{{ warga.kelurahan }}</td>
+              <td class="px-4 py-2">{{ data.nik }}</td>
+              <td class="px-4 py-2">{{ data.nama }}</td>
+              <td class="px-4 py-2">{{ data.status }}</td>
               <td class="px-4 py-2 space-x-2 flex items-center">
-                <button
-                  @click="editData(warga.id)"
-                  class="text-blue-600 hover:text-blue-800"
-                  title="Edit"
-                >
+                <button @click="editData(data.id)" class="text-blue-600 hover:text-blue-800">
                   <PencilIcon class="w-5 h-5" />
                 </button>
-                <button
-                  @click="hapusData(warga.id)"
-                  class="text-red-600 hover:text-red-800"
-                  title="Hapus"
-                >
+                <button @click="hapusData(data.id)" class="text-red-600 hover:text-red-800">
                   <TrashIcon class="w-5 h-5" />
                 </button>
               </td>
