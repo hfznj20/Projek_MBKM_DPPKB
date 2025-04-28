@@ -21,7 +21,7 @@ Route::post('/store-logo', [SettingController::class, 'store'])->name('store.log
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 
-
+use App\Http\Controllers\BdtpkController;
 use App\Http\Controllers\UserController;
 
 // Bagian Admin
@@ -42,3 +42,5 @@ Route::get('/stunting-tpk', [UserController::class, 'index12'])->name('stunting-
 Route::get('/bumil-tpk', [UserController::class, 'index13'])->name('bumil-tpk');
 Route::get('/catin-tpk', [UserController::class, 'index14'])->name('catin-tpk');
 Route::get('/pasca-persalinan-tpk', [UserController::class, 'index15'])->name('pasca-persalinan-tpk');
+
+Route::resource('bdtpk', BdtpkController::class);

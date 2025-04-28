@@ -93,7 +93,7 @@ const mainNavItems: NavItem[] = [
   },
   {
     title: 'Data Baduta TPK',
-    href: '/baduta_tpk', // <-- Sesuaikan URL
+    href: '/bdtpk', // <-- Sesuaikan URL
     icon: Baby,
     guard: ['TPK']
   },
