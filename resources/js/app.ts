@@ -7,7 +7,7 @@ import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
 import { initializeTheme } from './composables/useAppearance';
 import 'leaflet/dist/leaflet.css';
-// import AddUserForm from '@/pages/AddUserForm.vue';  
+// import AddUserForm from '@/pages/AddUserForm.vue';
 // Extend ImportMeta interface for Vite...
 // declare module 'vite/client' {
 //     interface ImportMetaEnv {

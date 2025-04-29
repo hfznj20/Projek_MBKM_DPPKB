@@ -17,7 +17,12 @@ class BdtpkController extends Controller
             "bdtpks" => $bdtpks
         ]);
 
+        
+
     }
+
+
+
 
     /**
      * Show the form for creating a new resource.

@@ -22,6 +22,7 @@ require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 
 use App\Http\Controllers\BdtpkController;
+use App\Http\Controllers\DatapendudukController;
 use App\Http\Controllers\UserController;
 
 // Bagian Admin
@@ -44,3 +45,8 @@ Route::get('/catin-tpk', [UserController::class, 'index14'])->name('catin-tpk');
 Route::get('/pasca-persalinan-tpk', [UserController::class, 'index15'])->name('pasca-persalinan-tpk');
 
 Route::resource('bdtpk', BdtpkController::class);
+Route::resource('datapenduduk', DatapendudukController::class);
+Route::put('/datapenduduk/{nik}', [DatapendudukController::class, 'update'])->name('datapenduduk.update');
+Route::resource('bdtpk', BdtpkController::class);
+
+Route::resource('datapenduduk', DatapendudukController::class);
