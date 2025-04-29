@@ -64,7 +64,7 @@ const submitForm = () => {
 
   form.post('/baduta', {
     onSuccess: () => {
-      window.location.href = '/datapenduduk/create';
+      window.location.href = '/datapenduduk';
     },
     onError: () => {
       errors.value = Object.values(form.errors).flat();

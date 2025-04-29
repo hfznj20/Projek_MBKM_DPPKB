@@ -14,7 +14,7 @@ class PendudukController extends Controller
     public function index()
     {
         // Menampilkan semua data penduduk
-        $penduduks = Penduduk::get();
+        $penduduks = Penduduk::all();
         return Inertia::render('Penduduk/Index', [
             'penduduks' => $penduduks,
         ]);

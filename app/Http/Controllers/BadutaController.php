@@ -30,6 +30,7 @@ class BadutaController extends Controller
         $request->validate([
             'penduduk_id' => 'required|exists:penduduk,id', // ID bayi
             'penduduk_ibu_id' => 'required', // ID ibu
+            'nama_ibu' => 'required',
             'jumlah_anak_kandung' => 'required|integer',
             'tanggal_lahir_anak_terakhir' => 'required|date',
             'berat_badan' => 'required|integer',
@@ -58,6 +59,7 @@ class BadutaController extends Controller
             Baduta::create([
                 'penduduk_id' => $request->penduduk_id,
                 'penduduk_ibu_id' => $request->penduduk_ibu_id,
+                'nama_ibu' => $request->nama_ibu,
                 'jumlah_anak_kandung' => $request->jumlah_anak_kandung,
                 'tanggal_lahir_anak_terakhir' => $request->tanggal_lahir_anak_terakhir,
                 'berat_badan' => $request->berat_badan,
@@ -79,8 +81,8 @@ class BadutaController extends Controller
                 'nik' => $penduduk->NIK,
             ]);
         }
-
-        return redirect()->route('penduduk.index')->with('success', 'Data Baduta berhasil disimpan');
+        // return Inertia::render('Penduduk/Index', ['penduduks' => $penduduks,]);
+        return redirect()->route('Penduduk/Index')->with('success', 'Data Baduta berhasil disimpan');
     }
 
     public function show($id)

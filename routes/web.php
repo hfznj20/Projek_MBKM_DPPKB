@@ -40,50 +40,46 @@ Route::get('/manajemen-user', [UserController::class, 'index9'])->name('manajeme
 
 // Bagian TPK
 Route::get('/baduta_tpk', [UserController::class, 'index10'])->name('baduta-tpk');
-Route::get('/population_data_tpk', [UserController::class, 'index11'])->name('PopulationDataTPK');
+// Route::get('/population_data_tpk', [UserController::class, 'index11'])->name('PopulationDataTPK');
 Route::get('/stunting-tpk', [UserController::class, 'index12'])->name('stunting-tpk');
 Route::get('/bumil-tpk', [UserController::class, 'index13'])->name('bumil-tpk');
 Route::get('/catin-tpk', [UserController::class, 'index14'])->name('catin-tpk');
 Route::get('/pasca-persalinan-tpk', [UserController::class, 'index15'])->name('pasca-persalinan-tpk');
 
 Route::resource('bdtpk', BdtpkController::class);
-Route::resource('datapenduduk', DatapendudukController::class);
-Route::put('/datapenduduk/{nik}', [DatapendudukController::class, 'update'])->name('datapenduduk.update');
-Route::resource('bdtpk', BdtpkController::class);
 
-Route::resource('datapenduduk', DatapendudukController::class);
+// manajemen penduduk CRUD
 Route::resource('datapenduduk', PendudukController::class);
-Route::resource('baduta', BadutaController::class);
+Route::get('/datapenduduk', [PendudukController::class, 'index'])->name('Penduduk/Index');
+Route::get('/datapenduduk/create', function () {
+    return Inertia::render('Penduduk/Create');
+})->name('Penduduk/Create');
 
+
+// Baduta CRUD
+Route::resource('baduta', BadutaController::class);
 Route::post('/Baduta/Store', [BadutaController::class, 'store']);
 Route::get('/Baduta/Create', [BadutaController::class, 'create'])->name('Baduta/Create');
 
+Route::get('/Baduta/Create/{penduduk_id}', function () {
+    return Inertia::render('Baduta/Create');
+})->name('Baduta.Create');
 
-Route::get('/Baduta/Create', function () {
+Route::post('/Baduta', function () {
     return Inertia::render('Baduta/Create');
 })->name('Baduta.Create');
 
 
-
-// Route::get('/baduta/create/{penduduk_id}', function () {
-//     return Inertia::render('Baduta/Create');
-// })->name('baduta.create');
-
-Route::get('/Baduta/Create', function () {
-    return Inertia::render('Baduta/Create');
-})->name('Baduta.Create');
-
-Route::get('/bumil/Create', function () {
-    return Inertia::render('bumil/Create');
-})->name('bumil.create');
 
 Route::get('/bumil/create', function () {
     return Inertia::render('bumil/Create');
 })->name('bumil.create');
 
+
 Route::get('/catin/create', function () {
     return Inertia::render('catin/Create');
 })->name('catin.create');
+
 
 Route::get('/pasca-persalinan/create', function () {
     return Inertia::render('pasca-persalinan/Create');

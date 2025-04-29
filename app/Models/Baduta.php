@@ -14,6 +14,7 @@ class Baduta extends Model
     protected $fillable = [
         'penduduk_id',  // ID bayi
         'penduduk_ibu_id',  // ID ibu
+        'nama_ibu',  // ID ibu
         'jumlah_anak_kandung',  // Jumlah anak kandung
         'tanggal_lahir_anak_terakhir',  // Tanggal lahir anak terakhir
         'berat_badan',  // Berat badan bayi

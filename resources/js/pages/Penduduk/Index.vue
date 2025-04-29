@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { BreadcrumbItem } from '@/types';
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import axios from 'axios'
-import { Head, Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { Head, Link, usePage} from '@inertiajs/vue3';
 
 // Interface untuk tipe data penduduk
 interface Penduduk {
@@ -25,37 +24,24 @@ interface Penduduk {
 const breadcrumbs: BreadcrumbItem[] = [
   {
     title: 'Baduta TPK',
-    href: '/datapenduduk/create',
+    href: '/datapenduduk',
   },
 ];
+const { props } = usePage();
+const penduduks = ref<Penduduk[]>(props.penduduks as Penduduk[]);
 
 // Router instance
 const router = useRouter()
 
-// Data penduduk, pastikan ada typing
-const penduduks = ref<Penduduk[]>([])
-
 // Pesan sukses setelah aksi berhasil
 const successMessage = ref('')
-
-// Ambil data penduduk dari backend
-const fetchPenduduks = async () => {
-  try {
-    const response = await axios.get('/api/penduduk')
-    penduduks.value = response.data
-  } catch (error) {
-    console.error('Gagal mengambil data penduduk:', error)
-  }
-}
 
 // Hapus data penduduk
 const deletePenduduk = async (id: number) => {
   if (!confirm('Yakin mau hapus?')) return
-
   try {
-    await axios.delete(`/api/penduduk/${id}`)
     successMessage.value = 'Data berhasil dihapus'
-    fetchPenduduks()
+    // fetchPenduduks()
   } catch (error) {
     console.error('Gagal menghapus data:', error)
   }
@@ -71,10 +57,6 @@ const goToCreatePage = () => {
   router.push({ name: 'penduduk-create' })
 }
 
-// Fetch data saat komponen dimount
-onMounted(() => {
-  fetchPenduduks()
-})
 </script>
 
 <template>
