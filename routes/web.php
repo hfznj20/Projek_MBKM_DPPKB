@@ -25,6 +25,7 @@ use App\Http\Controllers\BdtpkController;
 use App\Http\Controllers\DatapendudukController;
 use App\Http\Controllers\PendudukController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BadutaController;
 
 // Bagian Admin
 Route::get('/population_data', [UserController::class, 'index1'])->name('population_data');
@@ -52,3 +53,40 @@ Route::resource('bdtpk', BdtpkController::class);
 
 Route::resource('datapenduduk', DatapendudukController::class);
 Route::resource('datapenduduk', PendudukController::class);
+Route::resource('baduta', BadutaController::class);
+
+Route::post('/Baduta/Store', [BadutaController::class, 'store']);
+Route::get('/Baduta/Create', [BadutaController::class, 'create'])->name('Baduta/Create');
+
+
+Route::get('/Baduta/Create', function () {
+    return Inertia::render('Baduta/Create');
+})->name('Baduta.Create');
+
+
+
+// Route::get('/baduta/create/{penduduk_id}', function () {
+//     return Inertia::render('Baduta/Create');
+// })->name('baduta.create');
+
+Route::get('/Baduta/Create', function () {
+    return Inertia::render('Baduta/Create');
+})->name('Baduta.Create');
+
+Route::get('/bumil/Create', function () {
+    return Inertia::render('bumil/Create');
+})->name('bumil.create');
+
+Route::get('/bumil/create', function () {
+    return Inertia::render('bumil/Create');
+})->name('bumil.create');
+
+Route::get('/catin/create', function () {
+    return Inertia::render('catin/Create');
+})->name('catin.create');
+
+Route::get('/pasca-persalinan/create', function () {
+    return Inertia::render('pasca-persalinan/Create');
+})->name('pasca-persalinan.create');
+
+

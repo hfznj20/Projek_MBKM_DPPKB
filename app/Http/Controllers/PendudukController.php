@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Inertia\Inertia;
 use App\Models\Penduduk;
 use Illuminate\Http\Request;
+
 use App\Models\TPK;
+
 
 
 class PendudukController extends Controller
@@ -12,14 +14,16 @@ class PendudukController extends Controller
     public function index()
     {
         // Menampilkan semua data penduduk
-        $penduduks = Penduduk::all();
-        return view('penduduk.index', compact('penduduks'));
+        $penduduks = Penduduk::get(); 
+        return Inertia::render('Penduduk/Index', [
+            'penduduks' => $penduduks,
+        ]);
     }
 
     public function create()
     {
         // Menampilkan form untuk menambah data penduduk
-        return view('penduduk.create');
+        return Inertia::render('Penduduk/Create');
     }
 
     public function store(Request $request)

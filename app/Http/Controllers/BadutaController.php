@@ -6,6 +6,7 @@ use App\Models\Baduta;
 use Illuminate\Http\Request;
 use App\Models\Penduduk;
 use App\Models\TPK;
+use Inertia\Inertia;
 
 class BadutaController extends Controller
 {
@@ -19,8 +20,8 @@ class BadutaController extends Controller
     public function create(Request $request)
     {
         $penduduks = Penduduk::all(); // ambil semua penduduk
-        $penduduk_id = $request->penduduk_id; // kalau ada penduduk_id bayi dikirim dari URL
-        return view('baduta.create', compact('penduduks', 'penduduk_id'));
+        $penduduk_id = $request->penduduk_id; // kalau ada penduduk_id bayi dikirim dari UR
+        return Inertia::render('Baduta/Create', compact('penduduks', 'penduduk_id'));
     }
 
     public function store(Request $request)
