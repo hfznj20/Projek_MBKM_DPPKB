@@ -6,36 +6,38 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
-        Schema::create('_b_a_d_u_t_a', function (Blueprint $table) {
-            $table->id('nik'); // Nomor Induk Kependudukan
-$table->integer('berat_badan'); // BB saat lahir (dalam gram)
-$table->integer('tinggi_badan'); // TB saat lahir (dalam cm)
-$table->integer('urutan_anak'); // Anak ke-berapa
-$table->string('umur_kehamilan_saat_lahir'); // Misal: "38 minggu"
-$table->enum('asi_eksklusif', ['ya', 'tidak']); // Pemberian ASI eksklusif
-$table->enum('imunisasi_hepatitis_b', ['lengkap', 'tidak lengkap']); // Status imunisasi Hepatitis B
-$table->enum('paparan_rokok', ['ya', 'tidak']); // Terpapar asap rokok
-$table->string('kondisi_kesehatan_anak'); // KKA - ringkasan kondisi
-$table->decimal('longitude', 10, 7); // Koordinat geografis
-$table->decimal('latitude', 10, 7);
-$table->date('tanggal_kehadiran_posyandu'); // Kehadiran ke Posyandu
-$table->string('partisipasi_penyuluhan'); // Mengikuti penyuluhan (jenis atau status)
-$table->string('akses_fasilitas_bantuan'); // Misal: "PKH", "BPJS", dsb.
-$table->timestamps();
+        Schema::create('baduta', function (Blueprint $table) {
+            $table->id();
+            
+            $table->foreignId('penduduk_id')->constrained('penduduk')->onDelete('cascade');
 
+            $table->integer('penduduk_ibu_id'); // ID ibu (relasi ke tabel penduduk)
+            $table->integer('jumlah_anak_kandung');
+            $table->date('tanggal_lahir_anak_terakhir');
+            $table->integer('berat_badan'); // Berat badan bayi
+            $table->integer('tinggi_badan'); // Tinggi badan bayi
+            $table->integer('urutan_anak'); // Urutan anak (misalnya anak ke-1, ke-2, dst)
+            $table->integer('umur_kehamilan_saat_lahir'); // Umur kehamilan saat bayi lahir
+            $table->text('menggunakan_alat_kontrasepsi')->nullable(); // Alat kontrasepsi yang digunakan ibu
+            $table->text('sumber_air_minum')->nullable(); // Sumber air minum ibu
+            $table->text('fasilitas_BAB')->nullable(); // Fasilitas BAB ibu
+            $table->text('asi_eksklusif')->nullable(); // Menyusui dengan ASI eksklusif
+            $table->text('imunisasi_hepatitis_B')->nullable(); // Imunisasi hepatitis B
+            $table->text('meerokok_terpapar')->nullable(); // Ibu merokok atau terpapar
+            $table->text('mengisi_KKA')->nullable(); // Mengisi KKA (Kartu Kesehatan Anak)
+            $table->decimal('longitude', 10, 7); // Koordinat longitude
+            $table->decimal('latitude', 10, 7); // Koordinat latitude
+            $table->text('kehadiran_posyandu')->nullable(); // Kehadiran di posyandu
+            $table->text('penyuluhan_KIE')->nullable(); // Penyuluhan KIE
+            $table->text('fasilitas_bantuan_sosial')->nullable(); // Fasilitas bantuan sosial
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('_b_a_d_u_t_a');
+        Schema::dropIfExists('baduta');
     }
 };
