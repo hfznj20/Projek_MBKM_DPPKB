@@ -48,16 +48,21 @@ const onKecamatanChange = () => {
 
 const submitForm = () => {
   form.post('/datapenduduk', {
-    onSuccess: () => {
-      // Konversi nama kategori untuk digunakan sebagai path
-      const kategoriPath = form.kategori.toLowerCase().replace(/\s+/g, '-');
-      window.location.href = `/${kategoriPath}/create`;
+    onSuccess: (page) => {
+      const id = page.props.flash?.penduduk_id;
+      if (id) {
+        const kategoriPath = form.kategori.toLowerCase().replace(/\s+/g, '-');
+        window.location.href = `/${kategoriPath}/create?penduduk_id=${id}`;
+      } else {
+        errors.value.push("Gagal mendapatkan ID penduduk.");
+      }
     },
     onError: () => {
       errors.value = Object.values(form.errors).flat();
     }
   });
 };
+
 
 </script>
 

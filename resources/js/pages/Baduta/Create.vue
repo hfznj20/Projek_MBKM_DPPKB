@@ -2,8 +2,10 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { BreadcrumbItem } from '@/types';
 import { ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
-import { useForm } from '@inertiajs/vue3';
+import { Head, useForm, } from '@inertiajs/vue3';
+
+// Ambil penduduk_id dari URL
+const penduduk_id = ref<string>(new URLSearchParams(window.location.search).get('penduduk_id') || '');
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -16,54 +18,61 @@ const breadcrumbs: BreadcrumbItem[] = [
 const step = ref(1);
 const errors = ref<string[]>([]);
 
-// Penduduk ID (ubah sesuai dengan logika dinamis)
-const penduduk_id = '123';
-
-// Sumber air minum dan fasilitas BAB options
+// Opsi dropdown
 const sumberAirOptions = [
   "Air kemasan", "Ledeng", "Sumur bor", "Sumur terlindungi", "Sumur tak terlindungi",
   "Mata air terlindungi", "Mata air tak terlindungi", "Air permukaan", "Air hujan", "Lainnya"
 ];
-
 const fasilitasBABOptions = [
   "Jamban milik sendiri", "Jamban pada MCK", "Lainnya", "Tidak Ada"
 ];
 
 // Form Setup
 const form = useForm({
-  nama_ibu: '', penduduk_ibu_id: '', jumlah_anak_kandung: 0,
-  tanggal_lahir_anak_terakhir: '', menggunakan_alat_kontrasepsi: '',
-  sumber_air_minum: '', fasilitas_BAB: '',
-  berat_badan: null, tinggi_badan: null, urutan_anak: null,
-  umur_kehamilan_saat_lahir: null, asi_eksklusif: '', imunisasi_hepatitis_B: '',
-  meerokok_terpapar: '', mengisi_KKA: '', longitude: '', latitude: '',
-  kehadiran_posyandu: '', penyuluhan_KIE: '', fasilitas_bantuan_sosial: '',
-  penduduk_id: penduduk_id,  // Include penduduk_id in the form data
+  nama_ibu: '',
+  penduduk_ibu_id: '',
+  jumlah_anak_kandung: 0,
+  tanggal_lahir_anak_terakhir: '',
+  menggunakan_alat_kontrasepsi: '',
+  sumber_air_minum: '',
+  fasilitas_BAB: '',
+  berat_badan: null,
+  tinggi_badan: null,
+  urutan_anak: null,
+  umur_kehamilan_saat_lahir: null,
+  asi_eksklusif: '',
+  imunisasi_hepatitis_B: '',
+  meerokok_terpapar: '',
+  mengisi_KKA: '',
+  longitude: '',
+  latitude: '',
+  kehadiran_posyandu: '',
+  penyuluhan_KIE: '',
+  fasilitas_bantuan_sosial: '',
+  penduduk_id: penduduk_id.value,
 });
 
-// Form Submission Handler
+// Form Submission
 const submitForm = () => {
   errors.value = [];
 
-  // Validasi data dari form
   if (!form.nama_ibu || !form.penduduk_ibu_id || !form.penduduk_id) {
     errors.value.push("Nama Ibu, NIK Ibu, dan Penduduk ID wajib diisi.");
-    step.value = 1; // Kembali ke Step 1 jika ada error
+    step.value = 1;
     return;
   }
 
-  // Submit the form using Inertia
   form.post('/baduta', {
     onSuccess: () => {
-      window.location.href = `Datapenduduk/Create`;
+      window.location.href = '/datapenduduk/create';
     },
     onError: () => {
       errors.value = Object.values(form.errors).flat();
     }
   });
 };
-
 </script>
+
 
 <template>
   <Head title="Baduta TPK" />

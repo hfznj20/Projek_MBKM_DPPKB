@@ -14,7 +14,7 @@ class PendudukController extends Controller
     public function index()
     {
         // Menampilkan semua data penduduk
-        $penduduks = Penduduk::get(); 
+        $penduduks = Penduduk::get();
         return Inertia::render('Penduduk/Index', [
             'penduduks' => $penduduks,
         ]);
@@ -73,7 +73,7 @@ class PendudukController extends Controller
         }
 
         // Arahkan ke halaman utama jika kategori tidak dikenali
-        return redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil disimpan');
+        return redirect()->route('Penduduk/Index')->with('success', 'Data Penduduk berhasil disimpan');
     }
 
     public function show($id)

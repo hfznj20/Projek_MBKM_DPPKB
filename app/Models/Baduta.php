@@ -31,7 +31,8 @@ class Baduta extends Model
         'latitude',  // Latitude
         'kehadiran_posyandu',  // Kehadiran Posyandu
         'penyuluhan_KIE',  // Penyuluhan KIE
-        'fasilitas_bantuan_sosial',  // Fasilitas bantuan sosial
+        'fasilitas_bantuan_sosial',
+          // Fasilitas bantuan sosial
     ];
 
     // Relasi dengan tabel Penduduk untuk bayi

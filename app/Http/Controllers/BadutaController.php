@@ -16,7 +16,7 @@ class BadutaController extends Controller
         return view('baduta.index', compact('badutas'));
     }
 
-    
+
     public function create(Request $request)
     {
         $penduduks = Penduduk::all(); // ambil semua penduduk
@@ -103,7 +103,7 @@ class BadutaController extends Controller
             'penduduk_ibu_id' => 'required|exists:penduduk,id',
             'usia_kehamilan' => 'required|integer',
             'jumlah_anak_kandung' => 'required|integer',
-            'tanggal_lahir_anak_terakhir' => 'required|date',
+            'tanggal_lahir_anak_terakhir' => 'required|string',
             'berat_badan' => 'required|integer',
             'tinggi_badan' => 'required|integer',
             'urutan_anak' => 'required|integer',
