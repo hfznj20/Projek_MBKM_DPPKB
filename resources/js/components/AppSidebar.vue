@@ -87,7 +87,7 @@ const mainNavItems: NavItem[] = [
   // ===== TPK Section =====
   {
     title: 'Data Penduduk TPK',
-    href: '/datapenduduk',
+    href: '/datapenduduk', 
     icon: Users,
     guard: ['TPK']
   },

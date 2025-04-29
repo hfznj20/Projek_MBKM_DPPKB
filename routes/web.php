@@ -23,6 +23,7 @@ require __DIR__ . '/auth.php';
 
 use App\Http\Controllers\BdtpkController;
 use App\Http\Controllers\DatapendudukController;
+use App\Http\Controllers\PendudukController;
 use App\Http\Controllers\UserController;
 
 // Bagian Admin
@@ -50,3 +51,4 @@ Route::put('/datapenduduk/{nik}', [DatapendudukController::class, 'update'])->na
 Route::resource('bdtpk', BdtpkController::class);
 
 Route::resource('datapenduduk', DatapendudukController::class);
+Route::resource('datapenduduk', PendudukController::class);
