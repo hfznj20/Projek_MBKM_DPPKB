@@ -27,7 +27,7 @@ const penduduks = ref<Penduduk[]>(props.penduduks as Penduduk[]);
 const router = useRouter();
 const successMessage = ref('');
 
-const deletePenduduk = async (id: number) => {
+const deletePenduduk = async (nik: number) => {
   if (!confirm('Yakin mau hapus?')) return;
   try {
     successMessage.value = 'Data berhasil dihapus';

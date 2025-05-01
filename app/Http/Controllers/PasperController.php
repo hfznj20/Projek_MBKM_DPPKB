@@ -15,7 +15,7 @@ class PasperController extends Controller
     {
         // Mengambil data dari pasca_persalinan dan penduduk
         $pasca_persalinan = DB::table('pasca_persalinan')
-            ->join('penduduk', 'pasca_persalinan.penduduk_id', '=', 'penduduk.id')
+            ->join('penduduk', 'pasca_persalinan.penduduk_nik', '=', 'penduduk.nik')
             ->select('pasca_persalinan.id', 'pasca_persalinan.tanggal_persalinan', 'penduduk.nik', 'penduduk.nama')
             ->get();
 
@@ -29,17 +29,17 @@ class PasperController extends Controller
     {
         // Ambil semua penduduk untuk form input
         $penduduks = Penduduk::all();
-        // ambil penduduk_id dari URL jika ada
-        $penduduk_id = $request->penduduk_id;
+        // ambil penduduk_nik dari URL jika ada
+        $penduduk_nik = $request->penduduk_nik;
 
-        return Inertia::render('Pasper/Create', compact('penduduks', 'penduduk_id'));
+        return Inertia::render('Pasper/Create', compact('penduduks', 'penduduk_nik'));
     }
 
     public function store(Request $request)
     {
-        // Validasi input
+        // Valnikasi input
         $request->validate([
-            'penduduk_id' => 'required|exists:penduduk,id', // ID penduduk
+            'penduduk_nik' => 'required|exists:penduduk,nik', // nik penduduk
             'tanggal_persalinan' => 'required|date',
             'tempat_persalinan' => 'required|string',
             'penolong_persalinan' => 'required|string',
@@ -57,13 +57,13 @@ class PasperController extends Controller
             'fasilitas_layanan_rujukan' => 'nullable|string',
         ]);
 
-        // Ambil data penduduk berdasarkan penduduk_id
-        $penduduk = Penduduk::find($request->penduduk_id);
+        // Ambil data penduduk berdasarkan penduduk_
+        $penduduk = Penduduk::find($request->penduduk_nik);
 
 
             // Menyimpan data Pasper ke database
             Pasper::create([
-                'penduduk_id' => $request->penduduk_id,
+                'penduduk_nik' => $request->penduduk_nik,
                 'tanggal_persalinan' => $request->tanggal_persalinan,
                 'tempat_persalinan' => $request->tempat_persalinan,
                 'penolong_persalinan' => $request->penolong_persalinan,
@@ -83,30 +83,30 @@ class PasperController extends Controller
 
 
         // Redirect ke halaman Pasper
-        return redirect()->route('Pasper/Index')->with('success', 'Data Pasper berhasil disimpan');
+        return redirect()->route('pasper.index')->with('success', 'Data Pasper berhasil disimpan');
     }
 
-    public function show($id)
+    public function show($nik)
     {
-        $pasper = Pasper::findOrFail($id);
+        $pasper = Pasper::findOrFail($nik);
         return Inertia::render('Pasper/Show', [
             'pasper' => $pasper,
         ]);
     }
 
-    public function edit($id)
+    public function edit($nik)
     {
-        $pasper = Pasper::findOrFail($id);
+        $pasper = Pasper::findOrFail($nik);
         return Inertia::render('Pasper/Edit', [
             'pasper' => $pasper,
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $nik)
     {
-        // Validasi input
-        $request->validate([
-            'penduduk_id' => 'required|exists:penduduk,id', // ID penduduk
+        // Valnikasi input
+        $request->valnikate([
+            'penduduk_nik' => 'required|exists:penduduk,nik', // nik penduduk
             'tanggal_persalinan' => 'required|date',
             'tempat_persalinan' => 'required|string',
             'penolong_persalinan' => 'required|string',
@@ -125,9 +125,9 @@ class PasperController extends Controller
         ]);
 
         // Cari data Pasper yang akan diperbarui
-        $pasper = Pasper::findOrFail($id);
+        $pasper = Pasper::findOrFail($nik);
         $pasper->update([
-            'penduduk_id' => $request->penduduk_id,
+            'penduduk_nik' => $request->penduduk_nik,
             'tanggal_persalinan' => $request->tanggal_persalinan,
             'tempat_persalinan' => $request->tempat_persalinan,
             'penolong_persalinan' => $request->penolong_persalinan,
@@ -148,10 +148,10 @@ class PasperController extends Controller
         return redirect()->route('pasper.index')->with('success', 'Data Pasper berhasil diperbarui');
     }
 
-    public function destroy($id)
+    public function destroy($nik)
     {
         // Cari dan hapus data Pasper
-        $pasper = Pasper::findOrFail($id);
+        $pasper = Pasper::findOrFail($nik);
         $pasper->delete();
 
         return redirect()->route('pasper.index')->with('success', 'Data Pasper berhasil dihapus');

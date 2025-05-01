@@ -4,15 +4,12 @@ import { BreadcrumbItem } from '@/types';
 import { ref } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
-// Props dari controller Laravel
-const props = defineProps<{
-  nik: string
-}>();
+const penduduk_nik = ref<string>(new URLSearchParams(window.location.search).get('nik') || '');
 
 
 // Form data termasuk penduduk_id
 const form = useForm({
-  penduduk_id: props.nik,
+penduduk_nik: penduduk_nik.value,
   tanggal_persalinan: '',
   tempat_persalinan: '',
   penolong_persalinan: '',
@@ -29,6 +26,7 @@ const form = useForm({
   penyuluhan_KIE: '',
   fasilitas_layanan_rujukan: ''
 });
+
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -65,7 +63,7 @@ const submitForm = () => {
       </div>
 
       <form @submit.prevent="submitForm">
-        <input type="hidden" v-model="form.penduduk_id" />
+        <input type="hidden" v-model="form.penduduk_nik" />
 
         <div class="mb-3">
           <label for="tanggal_persalinan" class="form-label">Tanggal Persalinan</label>

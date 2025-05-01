@@ -111,7 +111,7 @@ const mainNavItems: NavItem[] = [
   },
   {
       title: 'Catin TPK',
-      href: '/catin-tpk',
+      href: '/catin',
       icon: UserRound,
       guard: ['TPK']
   },

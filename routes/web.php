@@ -35,7 +35,7 @@ Route::get('/pandu-genre', [UserController::class, 'index3'])->name('pandu-genre
 Route::get('/baduta', [UserController::class, 'index4'])->name('baduta');
 Route::get('/bumil', [UserController::class, 'index5'])->name('bumil');
 Route::get('/catin', [UserController::class, 'index6'])->name('catin');
-Route::get('/pasca-persalinan', [UserController::class, 'index7'])->name('pasca-persalinan');
+
 Route::get('/kinerja-tpk', [UserController::class, 'index8'])->name('kinerja-tpk');
 Route::get('/manajemen-user', [UserController::class, 'index9'])->name('manajemen-user');
 
@@ -43,7 +43,7 @@ Route::get('/manajemen-user', [UserController::class, 'index9'])->name('manajeme
 Route::get('/stunting-tpk', [UserController::class, 'index12'])->name('stunting-tpk');
 Route::get('/bumil-tpk', [UserController::class, 'index13'])->name('bumil-tpk');
 Route::get('/catin-tpk', [UserController::class, 'index14'])->name('catin-tpk');
-Route::get('/pasca-persalinan-tpk', [UserController::class, 'index15'])->name('pasca-persalinan-tpk');
+
 
 // Manajemen Penduduk
 Route::get('/penduduk', [PendudukController::class, 'index'])->name('penduduk.index');
@@ -66,6 +66,7 @@ Route::post('/baduta', [PendudukController::class, 'store'])->name('baduta.store
 Route::get('/pasper', [PasperController::class, 'index'])->name('pasper.index');
 Route::get('/pasper/create', [PasperController::class, 'create'])->name('pasper.create');
 Route::post('/pasper', [PasperController::class, 'store'])->name('pasper.store');
+Route::get('/Pasper/Index', [PasperController::class, 'index']);
 
 // CATIN CRUD
 Route::get('/catin', [CatinController::class, 'index'])->name('catin.index');

@@ -49,8 +49,13 @@ const onKecamatanChange = () => {
 const submitForm = () => {
   form.post('/penduduk', {
     onSuccess: () => {
-      const kategoriPath = form.kategori.toLowerCase().replace(/\s+/g, '-');
-      // Arahkan berdasarkan nik, bukan ID
+      let kategoriPath = form.kategori.toLowerCase().replace(/\s+/g, '-');
+
+      // Override khusus untuk "Pasca Persalinan"
+      if (form.kategori === 'Pasca Persalinan') {
+        kategoriPath = 'pasper';
+      }
+
       window.location.href = `/${kategoriPath}/create?nik=${form.nik}`;
     },
     onError: () => {
@@ -150,7 +155,7 @@ const submitForm = () => {
             <option value="CATIN">CATIN</option>
             <option value="BUMIL">BUMIL</option>
             <option value="BADUTA">BADUTA</option>
-            <option value="Pasca Persalinan">Pasca Persalinan</option>
+            <option value="Pasca Persalinan">Pasper</option>
           </select>
         </div>
 

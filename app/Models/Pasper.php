@@ -14,7 +14,7 @@ class Pasper extends Model
 
     // Kolom yang dapat diisi (fillable)
     protected $fillable = [
-        'penduduk_id',
+        'penduduk_nik',
         'tanggal_persalinan',
         'tempat_persalinan',
         'penolong_persalinan',
