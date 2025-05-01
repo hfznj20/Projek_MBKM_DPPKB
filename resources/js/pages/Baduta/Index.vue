@@ -5,29 +5,28 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 
-interface Penduduk {
+interface baduta {
   id: number
   nik: string
   nama: string
   kecamatan: string
   kelurahan: string
-  kategori: string
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Penduduk TPK',
-    href: '/penduduk',
+    title: 'Baduta TPK',
+    href: '/baduta',
   },
 ];
 
 const { props } = usePage();
-const penduduks = ref<Penduduk[]>(props.penduduks as Penduduk[]);
+const badutas = ref<baduta[]>(props.badutas as baduta[]);
 
 const router = useRouter();
 const successMessage = ref('');
 
-const deletePenduduk = async (id: number) => {
+const deletebaduta = async (id: number) => {
   if (!confirm('Yakin mau hapus?')) return;
   try {
     successMessage.value = 'Data berhasil dihapus';
@@ -37,7 +36,7 @@ const deletePenduduk = async (id: number) => {
   }
 };
 
-const editPenduduk = (id: number) => {
+const editbaduta = (id: number) => {
   router.push({ name: 'penduduk-edit', params: { id } });
 };
 
@@ -52,13 +51,6 @@ const editPenduduk = (id: number) => {
 
       <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
 
-      <Link
-        href="/penduduk/create"
-        class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded hover:bg-green-600"
-      >
-        Tambah Data
-      </Link>
-
       <table class="table table-bordered table-striped mt-4">
         <thead class="table-dark">
           <tr>
@@ -67,22 +59,19 @@ const editPenduduk = (id: number) => {
             <th>Nama</th>
             <th>Kecamatan</th>
             <th>Kelurahan</th>
-            <th>Kategori</th>
             <th>Aksi</th>
-
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(penduduk, index) in penduduks" :key="penduduk.id">
+          <tr v-for="(baduta, index) in badutas" :key="baduta.id">
             <td>{{ index + 1 }}</td>
-            <td>{{ penduduk.nik }}</td>
-            <td>{{ penduduk.nama }}</td>
-            <td>{{ penduduk.kecamatan }}</td>
-            <td>{{ penduduk.kelurahan }}</td>
-            <td>{{ penduduk.kategori }}</td>
+            <td>{{ baduta.nik }}</td>
+            <td>{{ baduta.nama }}</td>
+            <td>{{ baduta.kecamatan }}</td>
+            <td>{{ baduta.kelurahan }}</td>
             <td>
-              <button class="btn btn-primary btn-sm" @click="editPenduduk(penduduk.id)">Edit</button>
-              <button class="btn btn-danger btn-sm" @click="deletePenduduk(penduduk.id)">Hapus</button>
+              <button class="btn btn-primary btn-sm" @click="editbaduta(baduta.id)">Edit</button>
+              <button class="btn btn-danger btn-sm" @click="deletebaduta(baduta.id)">Hapus</button>
             </td>
           </tr>
         </tbody>

@@ -11,8 +11,12 @@ class Penduduk extends Model
 
     protected $table = 'penduduk';
 
+    protected $primaryKey = 'nik'; // set primary key ke 'nik'
+    public $incrementing = false;  // karena nik bukan auto-increment
+    protected $keyType = 'string'; // karena nik bertipe string
+
     protected $fillable = [
-        'NIK',
+        'nik',
         'nama',
         'jenis_kelamin',
         'tanggal_lahir',
@@ -25,24 +29,24 @@ class Penduduk extends Model
         'kategori',
     ];
 
-    // Relasi
+    // Relasi satu ke satu dengan model terkait berdasarkan foreign key 'nik'
+    public function baduta()
+    {
+        return $this->hasOne(Baduta::class, 'penduduk_nik', 'nik');
+    }
+
     public function catin()
     {
-        return $this->hasOne(Catin::class);
+        return $this->hasOne(Catin::class, 'penduduk_nik', 'nik');
     }
 
     public function bumil()
     {
-        return $this->hasOne(Bumil::class);
-    }
-
-    public function baduta()
-    {
-        return $this->hasOne(Baduta::class);
+        return $this->hasOne(Bumil::class, 'penduduk_nik', 'nik');
     }
 
     public function pascaPersalinan()
     {
-        return $this->hasOne(Pasper::class);
+        return $this->hasOne(Pasper::class, 'penduduk_nik', 'nik');
     }
 }

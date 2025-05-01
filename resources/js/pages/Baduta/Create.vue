@@ -1,11 +1,13 @@
+CREATE.VUE BADUTA NORMAL
 <script lang="ts" setup>
 import AppLayout from '@/layouts/AppLayout.vue';
-import { BreadcrumbItem } from '@/types';
+import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import { Head, useForm, } from '@inertiajs/vue3';
+import { BreadcrumbItem } from '@/types';
+import axios from 'axios'; // pastikan ini diimport
 
-// Ambil penduduk_id dari URL
-const penduduk_id = ref<string>(new URLSearchParams(window.location.search).get('penduduk_id') || '');
+// Ambil 'nik' dari URL (query param)
+const penduduk_nik = ref<string>(new URLSearchParams(window.location.search).get('nik') || '');
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -27,10 +29,9 @@ const fasilitasBABOptions = [
   "Jamban milik sendiri", "Jamban pada MCK", "Lainnya", "Tidak Ada"
 ];
 
-// Form Setup
+// Form state
 const form = useForm({
-  nama_ibu: '',
-  penduduk_ibu_id: '',
+  penduduk_ibu_nik: '',
   jumlah_anak_kandung: 0,
   tanggal_lahir_anak_terakhir: '',
   menggunakan_alat_kontrasepsi: '',
@@ -42,29 +43,46 @@ const form = useForm({
   umur_kehamilan_saat_lahir: null,
   asi_eksklusif: '',
   imunisasi_hepatitis_B: '',
-  meerokok_terpapar: '',
+  merokok_terpapar: '',
   mengisi_KKA: '',
   longitude: '',
   latitude: '',
   kehadiran_posyandu: '',
   penyuluhan_KIE: '',
   fasilitas_bantuan_sosial: '',
-  penduduk_id: penduduk_id.value,
+  stunting: '',
+  penduduk_nik: penduduk_nik.value,
 });
+const namaIbu = ref<string>('');
+const checkNIK = async () => {
+  try {
+    const response = await axios.post('/cek-nik', {
+      nik: form.penduduk_ibu_nik
+    });
 
-// Form Submission
+    if (response.data.status === 'data ada') {
+      namaIbu.value = response.data.nama;
+    } else {
+      namaIbu.value = '';
+      alert("Data tidak ada");
+    }
+  } catch (error: unknown) {
+    namaIbu.value = '';
+    if (axios.isAxiosError(error)) {
+      alert("Terjadi kesalahan: " + error.message);
+    } else {
+      alert("Terjadi kesalahan tidak diketahui");
+    }
+  }
+};
+
+// Submit
 const submitForm = () => {
   errors.value = [];
 
-  if (!form.nama_ibu || !form.penduduk_ibu_id || !form.penduduk_id) {
-    errors.value.push("Nama Ibu, NIK Ibu, dan Penduduk ID wajib diisi.");
-    step.value = 1;
-    return;
-  }
-
   form.post('/baduta', {
     onSuccess: () => {
-      window.location.href = '/datapenduduk';
+      window.location.href = '/penduduk';
     },
     onError: () => {
       errors.value = Object.values(form.errors).flat();
@@ -73,29 +91,37 @@ const submitForm = () => {
 };
 </script>
 
-
 <template>
-  <Head title="Baduta TPK" />
+  <Head title="Penduduk TPK" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="container mt-5">
-      <h2 class="mb-4">Tambah Data Penduduk</h2>
+      <h2 class="mb-4">Tambah Data Penduduk Baduta</h2>
 
-      <!-- Display Errors -->
       <div v-if="errors.length" class="alert alert-danger">
         <ul>
           <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
         </ul>
       </div>
 
-      <!-- Form Steps -->
       <form @submit.prevent="submitForm">
-        <!-- Step 1: Data Ibu -->
+        <!-- Step 1 -->
         <div v-if="step === 1">
           <h2>Data Ibu</h2>
-          <div><label>Nama Ibu:</label><input v-model="form.nama_ibu" type="text" required /></div>
-          <div><label>NIK Ibu:</label><input v-model="form.penduduk_ibu_id" type="text" required /></div>
-          <div><label>Jumlah Anak Kandung:</label><input v-model.number="form.jumlah_anak_kandung" type="number" required /></div>
-          <div><label>Tanggal Lahir Anak Terakhir:</label><input v-model="form.tanggal_lahir_anak_terakhir" type="date" required /></div>
+          <div>
+            <label>NIK Ibu:</label>
+            <input v-model="form.penduduk_ibu_nik" type="text" />
+            <button type="button" @click="checkNIK">Cek</button>
+            <!-- ✅ Tampilkan nama ibu -->
+            <p v-if="namaIbu"><strong>Nama Ibu:</strong> {{ namaIbu }}</p>
+        </div>
+          <div>
+            <label>Jumlah Anak Kandung:</label>
+            <input v-model.number="form.jumlah_anak_kandung" type="number" required />
+          </div>
+          <div>
+            <label>Tanggal Lahir Anak Terakhir:</label>
+            <input v-model="form.tanggal_lahir_anak_terakhir" type="date" required />
+          </div>
           <div>
             <label>Menggunakan Kontrasepsi Saat Ini?</label><br>
             <label><input type="radio" value="Ya" v-model="form.menggunakan_alat_kontrasepsi" /> Ya</label>
@@ -118,10 +144,10 @@ const submitForm = () => {
           <button type="button" @click="step++">Next</button>
         </div>
 
-        <!-- Step 2: Data Baduta -->
+        <!-- Step 2 -->
         <div v-if="step === 2">
           <h2>Data Baduta</h2>
-          <input type="hidden" :value="penduduk_id" name="penduduk_id" />
+          <div><label>NIK Anak (dari URL):</label><input v-model="form.penduduk_nik" type="text" disabled /></div>
           <div><label>Berat Badan (kg):</label><input v-model.number="form.berat_badan" type="number" step="0.01" required /></div>
           <div><label>Tinggi Badan (cm):</label><input v-model.number="form.tinggi_badan" type="number" step="0.1" required /></div>
           <div><label>Urutan Anak:</label><input v-model.number="form.urutan_anak" type="number" required /></div>
@@ -138,8 +164,8 @@ const submitForm = () => {
           </div>
           <div>
             <label>Terpapar Rokok?</label><br>
-            <label><input type="radio" value="Ya" v-model="form.meerokok_terpapar" /> Ya</label>
-            <label><input type="radio" value="Tidak" v-model="form.meerokok_terpapar" /> Tidak</label>
+            <label><input type="radio" value="Ya" v-model="form.merokok_terpapar" /> Ya</label>
+            <label><input type="radio" value="Tidak" v-model="form.merokok_terpapar" /> Tidak</label>
           </div>
           <div>
             <label>Mengisi KKA?</label><br>
@@ -150,7 +176,7 @@ const submitForm = () => {
           <button type="button" @click="step++">Next</button>
         </div>
 
-        <!-- Step 3: Pendampingan Bulanan -->
+        <!-- Step 3 -->
         <div v-if="step === 3">
           <h2>Data Pendampingan Bulanan</h2>
           <div><label>Longitude:</label><input v-model="form.longitude" type="text" required /></div>
@@ -172,6 +198,11 @@ const submitForm = () => {
             <label><input type="radio" value="Ya, sudah mendapat bantuan sosial" v-model="form.fasilitas_bantuan_sosial" /> Ya, sudah mendapat</label>
             <label><input type="radio" value="Tidak, karena tidak memenuhi syarat" v-model="form.fasilitas_bantuan_sosial" /> Tidak, tidak memenuhi syarat</label>
             <label><input type="radio" value="Tidak, karena sudah menerima bantuan" v-model="form.fasilitas_bantuan_sosial" /> Tidak, sudah menerima</label>
+          </div>
+          <div>
+            <label>Anak Mengalami Stunting?</label><br>
+            <label><input type="radio" value="Ya" v-model="form.stunting" /> Ya</label>
+            <label><input type="radio" value="Tidak" v-model="form.stunting" /> Tidak</label>
           </div>
           <button type="button" @click="step--">Back</button>
           <button type="submit">Simpan Data</button>

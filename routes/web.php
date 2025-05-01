@@ -3,31 +3,32 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\BdtpkController;
 
-// Route homepage
+use App\Http\Controllers\PendudukController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\BadutaController;
+use App\Http\Controllers\PasperController;
+use App\Http\Controllers\CatinController;
+
+// Homepage
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
 
-// Route dashboard (dengan middleware auth & verified)
+// Dashboard (authenticated & verified)
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// // Route untuk menyimpan logo
+// Simpan logo
 Route::post('/store-logo', [SettingController::class, 'store'])->name('store.logo');
 
-// Route tambahan dari file lain
+// Tambahan route
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 
-use App\Http\Controllers\BdtpkController;
-use App\Http\Controllers\DatapendudukController;
-use App\Http\Controllers\PendudukController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\BadutaController;
-
-// Bagian Admin
+// Admin Pages
 Route::get('/population_data', [UserController::class, 'index1'])->name('population_data');
 Route::get('/stunting', [UserController::class, 'index2'])->name('stunting');
 Route::get('/pandu-genre', [UserController::class, 'index3'])->name('pandu-genre');
@@ -38,51 +39,50 @@ Route::get('/pasca-persalinan', [UserController::class, 'index7'])->name('pasca-
 Route::get('/kinerja-tpk', [UserController::class, 'index8'])->name('kinerja-tpk');
 Route::get('/manajemen-user', [UserController::class, 'index9'])->name('manajemen-user');
 
-// Bagian TPK
-Route::get('/baduta_tpk', [UserController::class, 'index10'])->name('baduta-tpk');
-// Route::get('/population_data_tpk', [UserController::class, 'index11'])->name('PopulationDataTPK');
+// TPK Pages
 Route::get('/stunting-tpk', [UserController::class, 'index12'])->name('stunting-tpk');
 Route::get('/bumil-tpk', [UserController::class, 'index13'])->name('bumil-tpk');
 Route::get('/catin-tpk', [UserController::class, 'index14'])->name('catin-tpk');
 Route::get('/pasca-persalinan-tpk', [UserController::class, 'index15'])->name('pasca-persalinan-tpk');
 
-Route::resource('bdtpk', BdtpkController::class);
+// Manajemen Penduduk
+Route::get('/penduduk', [PendudukController::class, 'index'])->name('penduduk.index');
+Route::get('/penduduk/create', [PendudukController::class, 'create'])->name('penduduk.create');
+Route::post('/penduduk', [PendudukController::class, 'store'])->name('penduduk.store');
 
-// manajemen penduduk CRUD
-Route::resource('datapenduduk', PendudukController::class);
-Route::get('/datapenduduk', [PendudukController::class, 'index'])->name('Penduduk/Index');
-Route::get('/datapenduduk/create', function () {
-    return Inertia::render('Penduduk/Create');
-})->name('Penduduk/Create');
+Route::get('/baduta', [PendudukController::class, 'index'])->name('baduta.index');
+Route::get('/baduata/create', [PendudukController::class, 'create'])->name('baduta.create');
+Route::post('/baduta', [PendudukController::class, 'store'])->name('baduta.store');
+
+// BADUTA CRUD
+// Route::get('/baduta', [BadutaController::class, 'index'])->name('baduta.index');
+// Route::get('/baduta/create', [BadutaController::class, 'create'])->name('baduta.create');
+// Route::post('/baduta', [BadutaController::class, 'store'])->name('baduta.store');
+// Route::get('/baduta/{id}/edit', [BadutaController::class, 'edit'])->name('baduta.edit');
+// Route::put('/baduta/{id}', [BadutaController::class, 'update'])->name('baduta.update');
+// Route::delete('/baduta/{id}', [BadutaController::class, 'destroy'])->name('baduta.destroy');
+
+// PASPER CRUD
+Route::get('/pasper', [PasperController::class, 'index'])->name('pasper.index');
+Route::get('/pasper/create', [PasperController::class, 'create'])->name('pasper.create');
+Route::post('/pasper', [PasperController::class, 'store'])->name('pasper.store');
+
+// CATIN CRUD
+Route::get('/catin', [CatinController::class, 'index'])->name('catin.index');
+Route::get('/catin/create', [CatinController::class, 'create'])->name('catin.create');
+Route::post('/catin', [CatinController::class, 'store'])->name('catin.store');
+
+// Form Static Rendering (jika masih dibutuhkan untuk shortcut saja)
+Route::get('/bumil/create', fn () => Inertia::render('bumil/Create'))->name('bumil.create');
 
 
-// Baduta CRUD
+
 Route::resource('baduta', BadutaController::class);
-Route::post('/Baduta/Store', [BadutaController::class, 'store']);
-Route::get('/Baduta/Create', [BadutaController::class, 'create'])->name('Baduta/Create');
-
-Route::get('/Baduta/Create/{penduduk_id}', function () {
-    return Inertia::render('Baduta/Create');
-})->name('Baduta.Create');
-
-Route::post('/Baduta', function () {
-    return Inertia::render('Baduta/Create');
-})->name('Baduta.Create');
 
 
 
-Route::get('/bumil/create', function () {
-    return Inertia::render('bumil/Create');
-})->name('bumil.create');
 
 
-Route::get('/catin/create', function () {
-    return Inertia::render('catin/Create');
-})->name('catin.create');
-
-
-Route::get('/pasca-persalinan/create', function () {
-    return Inertia::render('pasca-persalinan/Create');
-})->name('pasca-persalinan.create');
-
-
+//cek nama ibu berdasrkan nik
+Route::get('/cek-ibu/{nik}', [PendudukController::class, 'searchIbu']);
+Route::post('/cek-nik', [PendudukController::class, 'cekNIK']);

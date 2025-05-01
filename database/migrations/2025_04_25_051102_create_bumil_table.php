@@ -10,14 +10,17 @@ return new class extends Migration
     {
         Schema::create('bumil', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('penduduk_id')->constrained('penduduk')->onDelete('cascade');
+            // Ganti foreignId ke NIK
+            $table->string('penduduk_nik', 16);
+            $table->foreign('penduduk_nik')->references('nik')->on('penduduk')->onDelete('cascade');
+
             $table->integer('usia_kehamilan');
             $table->integer('TUF');
             $table->integer('jumlah_anak_kandung');
             $table->date('tgl_lahir_ank_terakhir');
             $table->integer('tinggi_badan');
             $table->integer('berat_badan_sebelum_hamil');
-            $table->integer('berat_badan_saat_ini'); // Hapus duplikasi kolom ini
+            $table->integer('berat_badan_saat_ini');
             $table->integer('indeks_massa_tubuh');
             $table->integer('kadar_hemoglobin');
             $table->integer('LILA');
@@ -25,13 +28,14 @@ return new class extends Migration
             $table->text('meerokok_terpapar')->nullable();
             $table->text('sumber_air_minum')->nullable();
             $table->text('fasilitas_BAB')->nullable();
-            $table->decimal('longitude', 10, 7); // Menggunakan decimal untuk koordinat
-            $table->decimal('latitude', 10, 7); // Menggunakan decimal untuk koordinat
+            $table->decimal('longitude', 10, 7);
+            $table->decimal('latitude', 10, 7);
             $table->text('mendapatkan_tablet_tambah_darah')->nullable();
             $table->text('meminum_table_tambah_darah')->nullable();
             $table->text('penyuluhan_KIE')->nullable();
             $table->text('fasilitas_layanan_rujukan')->nullable();
             $table->text('fasilitas_bantuan_sosial')->nullable();
+            $table->text('stunting');
             $table->timestamps();
         });
     }

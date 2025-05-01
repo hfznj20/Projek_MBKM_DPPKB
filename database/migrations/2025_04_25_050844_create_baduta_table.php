@@ -10,27 +10,32 @@ return new class extends Migration
     {
         Schema::create('baduta', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('penduduk_id')->constrained('penduduk')->onDelete('cascade');
-            $table->string('penduduk_ibu_id',16)->unique();
-            $table->string('nama_ibu');
+            // Tambahkan kolom dulu
+            $table->string('penduduk_nik', 16);
+            $table->string('penduduk_ibu_nik', 16);
+            // Foreign key relasi ke tabel penduduk (kolom nik)
+            $table->foreign('penduduk_nik')->references('nik')->on('penduduk')->onDelete('cascade');
+            $table->foreign('penduduk_ibu_nik')->references('nik')->on('penduduk')->onDelete('cascade');
+
             $table->integer('jumlah_anak_kandung');
             $table->date('tanggal_lahir_anak_terakhir');
-            $table->integer('berat_badan'); // Berat badan bayi
-            $table->integer('tinggi_badan'); // Tinggi badan bayi
-            $table->integer('urutan_anak'); // Urutan anak (misalnya anak ke-1, ke-2, dst)
-            $table->integer('umur_kehamilan_saat_lahir'); // Umur kehamilan saat bayi lahir
-            $table->text('menggunakan_alat_kontrasepsi')->nullable(); // Alat kontrasepsi yang digunakan ibu
-            $table->text('sumber_air_minum')->nullable(); // Sumber air minum ibu
-            $table->text('fasilitas_BAB')->nullable(); // Fasilitas BAB ibu
-            $table->text('asi_eksklusif')->nullable(); // Menyusui dengan ASI eksklusif
-            $table->text('imunisasi_hepatitis_B')->nullable(); // Imunisasi hepatitis B
-            $table->text('meerokok_terpapar')->nullable(); // Ibu merokok atau terpapar
-            $table->text('mengisi_KKA')->nullable(); // Mengisi KKA (Kartu Kesehatan Anak)
-            $table->decimal('longitude', 10, 7); // Koordinat longitude
-            $table->decimal('latitude', 10, 7); // Koordinat latitude
-            $table->text('kehadiran_posyandu')->nullable(); // Kehadiran di posyandu
-            $table->text('penyuluhan_KIE')->nullable(); // Penyuluhan KIE
-            $table->text('fasilitas_bantuan_sosial')->nullable(); // Fasilitas bantuan sosial
+            $table->integer('berat_badan');
+            $table->integer('tinggi_badan');
+            $table->integer('urutan_anak');
+            $table->integer('umur_kehamilan_saat_lahir');
+            $table->text('menggunakan_alat_kontrasepsi')->nullable();
+            $table->text('sumber_air_minum')->nullable();
+            $table->text('fasilitas_BAB')->nullable();
+            $table->text('asi_eksklusif')->nullable();
+            $table->text('imunisasi_hepatitis_B')->nullable();
+            $table->text('meerokok_terpapar')->nullable();
+            $table->text('mengisi_KKA')->nullable();
+            $table->decimal('longitude', 10, 7);
+            $table->decimal('latitude', 10, 7);
+            $table->text('kehadiran_posyandu')->nullable();
+            $table->text('penyuluhan_KIE')->nullable();
+            $table->text('fasilitas_bantuan_sosial')->nullable();
+            $table->text('stunting');
             $table->timestamps();
         });
     }

@@ -1,19 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Inertia\Inertia;
 use App\Models\Penduduk;
 use Illuminate\Http\Request;
-
-use App\Models\TPK;
-
-
 
 class PendudukController extends Controller
 {
     public function index()
     {
-        // Menampilkan semua data penduduk
         $penduduks = Penduduk::all();
         return Inertia::render('Penduduk/Index', [
             'penduduks' => $penduduks,
@@ -22,30 +18,27 @@ class PendudukController extends Controller
 
     public function create()
     {
-        // Menampilkan form untuk menambah data penduduk
         return Inertia::render('Penduduk/Create');
     }
 
     public function store(Request $request)
     {
-        // Validasi inputan
         $request->validate([
-            'NIK' => 'required|digits:16|unique:penduduk,NIK',
+            'nik' => 'required|digits:16|unique:penduduk,nik',
             'nama' => 'required|string',
             'tanggal_lahir' => 'required|date',
-            'jenis_kelamin' => 'required',
-            'kecamatan' => 'required',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'kecamatan' => 'required|in:Ujung,Bacukiki,Bacukiki Barat,Soreang',
             'kelurahan' => 'required',
             'RT' => 'required',
             'RW' => 'required',
             'alamat' => 'required',
             'no_hp' => 'required',
-            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan',  // Validasi kategori
+            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk',
         ]);
 
-        // Simpan data penduduk
         $penduduk = Penduduk::create([
-            'NIK' => $request->NIK,
+            'nik' => $request->nik,
             'nama' => $request->nama,
             'tanggal_lahir' => $request->tanggal_lahir,
             'jenis_kelamin' => $request->jenis_kelamin,
@@ -58,43 +51,20 @@ class PendudukController extends Controller
             'kategori' => $request->kategori,
         ]);
 
-        // Periksa kategori dan arahkan ke form yang sesuai
-        if ($penduduk->kategori == 'BADUTA') {
-            return redirect()->route('baduta.create', ['penduduk_id' => $penduduk->id]);
-        } elseif ($penduduk->kategori == 'CATIN') {
-            // Arahkan ke form CATIN
-            return redirect()->route('catin.create', ['penduduk_id' => $penduduk->id]);
-        } elseif ($penduduk->kategori == 'BUMIL') {
-            // Arahkan ke form BUMIL
-            return redirect()->route('bumil.create', ['penduduk_id' => $penduduk->id]);
-        } elseif ($penduduk->kategori == 'Pasca Persalinan') {
-            // Arahkan ke form Pasca Persalinan
-            return redirect()->route('pasper.create', ['penduduk_id' => $penduduk->id]);
-        }
-
-        // Arahkan ke halaman utama jika kategori tidak dikenali
-        return redirect()->route('Penduduk/Index')->with('success', 'Data Penduduk berhasil disimpan');
+        // Redirect berdasarkan kategori
+        return match ($penduduk->kategori) {
+            'BADUTA' => redirect()->route('baduta.create', ['penduduk_id' => $penduduk->nik]),
+            'CATIN' => redirect()->route('catin.create', ['penduduk_id' => $penduduk->nik]),
+            'BUMIL' => redirect()->route('bumil.create', ['penduduk_id' => $penduduk->nik]),
+            'Pasca Persalinan' => redirect()->route('pasper.create', ['penduduk_id' => $penduduk->nik]),
+            default => redirect()->route('Penduduk/Index')->with('success', 'Data Penduduk berhasil disimpan'),
+        };
     }
 
-    public function show($id)
+    public function update(Request $request, $nik)
     {
-        // Menampilkan detail data penduduk
-        $penduduk = Penduduk::findOrFail($id);
-        return view('penduduk.show', compact('penduduk'));
-    }
-
-    public function edit($id)
-    {
-        // Menampilkan form edit data penduduk
-        $penduduk = Penduduk::findOrFail($id);
-        return view('penduduk.edit', compact('penduduk'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        // Validasi inputan update
         $request->validate([
-            'NIK' => 'required|string|max:16|unique:penduduk,NIK,' . $id,
+            'nik' => 'required|digits:16|unique:penduduk,nik,' . $nik . ',nik',
             'nama' => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'tanggal_lahir' => 'required|date',
@@ -104,24 +74,54 @@ class PendudukController extends Controller
             'RW' => 'required|string|max:3',
             'alamat' => 'required|string',
             'no_hp' => 'required|string|max:16',
-            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan',
+            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk',
         ]);
 
-        // Update data penduduk
-        $penduduk = Penduduk::findOrFail($id);
+        $penduduk = Penduduk::where('nik', $nik)->firstOrFail();
         $penduduk->update($request->all());
 
-        // Kembali ke halaman index setelah update
         return redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil diperbarui');
     }
 
-    public function destroy($id)
+    public function destroy($nik)
     {
-        // Menghapus data penduduk
-        $penduduk = Penduduk::findOrFail($id);
+        $penduduk = Penduduk::where('nik', $nik)->firstOrFail();
         $penduduk->delete();
 
-        // Kembali ke halaman index setelah dihapus
         return redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil dihapus');
     }
+
+    public function searchIbu(Request $request, $nik)
+    {
+        $penduduk = Penduduk::where('nik', $nik)->first();
+
+        if ($penduduk) {
+            return response()->json([
+                'status' => 'success',
+                'nama' => $penduduk->nama,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'not_found',
+                'message' => 'Data tidak ditemukan.',
+            ]);
+        }
+    }
+
+    public function cekNIK(Request $request)
+{
+    $penduduk = Penduduk::where('nik', $request->nik)->first();
+
+    if ($penduduk) {
+        return response()->json([
+            'status' => 'data ada',
+            'nama' => $penduduk->nama
+        ]);
+    } else {
+        return response()->json([
+            'status' => 'data tidak ada'
+        ]);
+    }
+}
+
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 use Illuminate\Foundation\Auth\TPK as Authenticatable;
 
 class TPK extends Authenticatable

@@ -8,7 +8,7 @@ import { useForm } from '@inertiajs/vue3';
 type Kecamatan = 'Ujung' | 'Bacukiki' | 'Bacukiki Barat' | 'Soreang';
 
 const form = useForm({
-  NIK: '',
+  nik: '',
   nama: '',
   tanggal_lahir: '',
   jenis_kelamin: '',
@@ -25,7 +25,7 @@ const form = useForm({
 const breadcrumbs: BreadcrumbItem[] = [
   {
     title: 'Baduta TPK',
-    href: '/datapenduduk/create',
+    href: '/penduduk/create',
   },
 ];
 
@@ -47,21 +47,18 @@ const onKecamatanChange = () => {
 };
 
 const submitForm = () => {
-  form.post('/datapenduduk', {
-    onSuccess: (page) => {
-      const id = page.props.flash?.penduduk_id;
-      if (id) {
-        const kategoriPath = form.kategori.toLowerCase().replace(/\s+/g, '-');
-        window.location.href = `/${kategoriPath}/create?penduduk_id=${id}`;
-      } else {
-        errors.value.push("Gagal mendapatkan ID penduduk.");
-      }
+  form.post('/penduduk', {
+    onSuccess: () => {
+      const kategoriPath = form.kategori.toLowerCase().replace(/\s+/g, '-');
+      // Arahkan berdasarkan nik, bukan ID
+      window.location.href = `/${kategoriPath}/create?nik=${form.nik}`;
     },
     onError: () => {
       errors.value = Object.values(form.errors).flat();
     }
   });
 };
+
 
 
 </script>
@@ -80,8 +77,8 @@ const submitForm = () => {
 
       <form @submit.prevent="submitForm">
         <div class="mb-3">
-          <label for="NIK" class="form-label">NIK</label>
-          <input v-model="form.NIK" type="text" class="form-control" id="NIK" required />
+          <label for="nik" class="form-label">nik</label>
+          <input v-model="form.nik" type="text" class="form-control" id="nik" required />
         </div>
 
         <div class="mb-3">
@@ -149,6 +146,7 @@ const submitForm = () => {
           <label for="kategori" class="form-label">Kategori</label>
           <select v-model="form.kategori" class="form-select" id="kategori" required>
             <option value="">-- Pilih Kategori --</option>
+            <option value="Penduduk">Penduduk</option>
             <option value="CATIN">CATIN</option>
             <option value="BUMIL">BUMIL</option>
             <option value="BADUTA">BADUTA</option>

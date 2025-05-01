@@ -87,13 +87,13 @@ const mainNavItems: NavItem[] = [
   // ===== TPK Section =====
   {
     title: 'Data Penduduk TPK',
-    href: '/datapenduduk', 
+    href: '/penduduk',
     icon: Users,
     guard: ['TPK']
   },
   {
     title: 'Data Baduta TPK',
-    href: '/bdtpk', // <-- Sesuaikan URL
+    href: '/baduta', // <-- Sesuaikan URL
     icon: Baby,
     guard: ['TPK']
   },
@@ -117,7 +117,7 @@ const mainNavItems: NavItem[] = [
   },
   {
     title: 'Data Pasca Persalinan TPK',
-    href: '/pasca-persalinan-tpk', // sesuai route yang kita buat
+    href: '/pasper', // sesuai route yang kita buat
     icon: Baby, // (kalau ikon pasca persalinan belum ada, sementara pakai Baby atau bisa cari ikon lain)
     guard: ['TPK'], // hanya muncul untuk role TPK
   }
