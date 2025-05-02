@@ -16,7 +16,7 @@ class PasperController extends Controller
         // Mengambil data dari pasca_persalinan dan penduduk
         $pasca_persalinan = DB::table('pasca_persalinan')
             ->join('penduduk', 'pasca_persalinan.penduduk_nik', '=', 'penduduk.nik')
-            ->select('pasca_persalinan.id', 'pasca_persalinan.tanggal_persalinan', 'penduduk.nik', 'penduduk.nama')
+            ->select('pasca_persalinan.id', 'pasca_persalinan.tanggal_persalinan', 'penduduk.nik', 'penduduk.nama', 'penduduk.kecamatan', 'penduduk.kelurahan')
             ->get();
 
 
@@ -83,7 +83,7 @@ class PasperController extends Controller
 
 
         // Redirect ke halaman Pasper
-        return redirect()->route('pasper.index')->with('success', 'Data Pasper berhasil disimpan');
+        return redirect()->route('penduduk.index')->with('success', 'Data Pasper berhasil disimpan');
     }
 
     public function show($nik)

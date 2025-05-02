@@ -4,6 +4,7 @@ import { BreadcrumbItem } from '@/types';
 import { ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import { useForm } from '@inertiajs/vue3';
+import { Inertia } from '@inertiajs/inertia';
 
 type Kecamatan = 'Ujung' | 'Bacukiki' | 'Bacukiki Barat' | 'Soreang';
 
@@ -24,7 +25,7 @@ const form = useForm({
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Baduta TPK',
+    title: 'Tambah Data Penduduk',
     href: '/penduduk/create',
   },
 ];
@@ -50,13 +51,8 @@ const submitForm = () => {
   form.post('/penduduk', {
     onSuccess: () => {
       let kategoriPath = form.kategori.toLowerCase().replace(/\s+/g, '-');
-
-      // Override khusus untuk "Pasca Persalinan"
-      if (form.kategori === 'Pasca Persalinan') {
-        kategoriPath = 'pasper';
-      }
-
-      window.location.href = `/${kategoriPath}/create?nik=${form.nik}`;
+      // Gunakan Inertia.visit agar sesuai dengan ekosistem Inertia
+      Inertia.visit(`/${kategoriPath}/create?nik=${form.nik}`);
     },
     onError: () => {
       errors.value = Object.values(form.errors).flat();

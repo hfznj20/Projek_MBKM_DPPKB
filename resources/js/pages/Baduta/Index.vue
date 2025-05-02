@@ -11,11 +11,13 @@ interface baduta {
   nama: string
   kecamatan: string
   kelurahan: string
+  stunting: string
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
+  { title: 'Beranda', href: '/dashboard' },
   {
-    title: 'Baduta TPK',
+    title: 'Baduta',
     href: '/baduta',
   },
 ];
@@ -47,7 +49,7 @@ const editbaduta = (id: number) => {
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="container mt-5">
-      <h2 class="mb-4">Data Penduduk</h2>
+      <h2 class="mb-4">Data Baduta</h2>
 
       <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
 
@@ -59,6 +61,7 @@ const editbaduta = (id: number) => {
             <th>Nama</th>
             <th>Kecamatan</th>
             <th>Kelurahan</th>
+            <th>Status</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -69,6 +72,7 @@ const editbaduta = (id: number) => {
             <td>{{ baduta.nama }}</td>
             <td>{{ baduta.kecamatan }}</td>
             <td>{{ baduta.kelurahan }}</td>
+            <td>{{ baduta.stunting }}</td>
             <td>
               <button class="btn btn-primary btn-sm" @click="editbaduta(baduta.id)">Edit</button>
               <button class="btn btn-danger btn-sm" @click="deletebaduta(baduta.id)">Hapus</button>
@@ -77,5 +81,5 @@ const editbaduta = (id: number) => {
         </tbody>
       </table>
     </div>
-  </AppLayout>
+  </AppLayout> 
 </template>

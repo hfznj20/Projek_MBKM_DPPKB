@@ -5,31 +5,31 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 
-interface Pasper {
+interface Bumil {
   id: number;
-  tanggal_persalinan: string;
   nik: string;
+  nama: string;
   kecamatan: string;
   kelurahan: string;
-  nama: string;
+  stunting: string;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-{ title: 'Beranda', href: '/dashboard' },
+  { title: 'Beranda', href: '/dashboard' },
   {
-    title: 'Pasca Persalinan',
-    href: '/pasper',
+    title: 'Bumil',
+    href: '/bumil',
   },
 ];
 
 const { props } = usePage();
-const paspers = ref<Pasper[]>(props.pasper as Pasper[]); // Menampilkan data yang sudah di-join
+const bumils = ref<Bumil[]>(props.bumils as Bumil[]); // Menampilkan data yang sudah di-join
 
 const router = useRouter();
 const successMessage = ref('');
 
-// Menghapus data pasper
-const deletePasper = async (id: number) => {
+// Menghapus data bumil
+const deletebumil = async (id: number) => {
   if (!confirm('Yakin mau hapus?')) return;
 
   try {
@@ -40,22 +40,21 @@ const deletePasper = async (id: number) => {
   }
 };
 
-// Mengedit data pasper
-const editPasper = (id: number) => {
-  router.push({ name: 'pasper-edit', params: { id } });
+// Mengedit data bumil
+const editbumil = (id: number) => {
+  router.push({ name: 'bumil-edit', params: { id } });
 };
 </script>
 
 <template>
-  <Head title="Pasper TPK" />
+  <Head title="Bumil TPK" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="container mt-5">
-      <h2 class="mb-4">Data Pasca Persalinan</h2>
+      <h2 class="mb-4">Data Bumil</h2>
 
       <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
 
-      <!-- Tabel Data Pasper -->
       <table class="table table-bordered table-striped mt-4">
         <thead class="table-dark">
           <tr>
@@ -64,21 +63,21 @@ const editPasper = (id: number) => {
             <th>Nama</th>
             <th>Kecamatan</th>
             <th>Kelurahan</th>
-            <th>Tanggal Persalinan</th>
+            <th>Status</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(pasper, index) in paspers" :key="pasper.id">
+          <tr v-for="(bumil, index) in bumils" :key="bumil.id">
             <td>{{ index + 1 }}</td>
-            <td>{{ pasper.nik }}</td>
-            <td>{{ pasper.nama }}</td>
-            <td>{{ pasper.kecamatan }}</td>
-            <td>{{ pasper.kelurahan }}</td>
-            <td>{{ pasper.tanggal_persalinan }}</td>
+            <td>{{ bumil.nik }}</td>
+            <td>{{ bumil.nama }}</td>
+            <td>{{ bumil.kecamatan }}</td>
+            <td>{{ bumil.kelurahan }}</td>
+            <td>{{ bumil.stunting }}</td>
             <td>
-              <button class="btn btn-primary btn-sm" @click="editPasper(pasper.id)">Edit</button>
-              <button class="btn btn-danger btn-sm" @click="deletePasper(pasper.id)">Hapus</button>
+              <button class="btn btn-primary btn-sm" @click="editbumil(bumil.id)">Edit</button>
+              <button class="btn btn-danger btn-sm" @click="deletebumil(bumil.id)">Hapus</button>
             </td>
           </tr>
         </tbody>

@@ -15,8 +15,9 @@ interface Penduduk {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
+  { title: 'Beranda', href: '/dashboard' },
   {
-    title: 'Penduduk TPK',
+    title: 'Data Penduduk',
     href: '/penduduk',
   },
 ];

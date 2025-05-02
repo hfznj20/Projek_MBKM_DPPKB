@@ -86,40 +86,40 @@ const mainNavItems: NavItem[] = [
 
   // ===== TPK Section =====
   {
-    title: 'Data Penduduk TPK',
+    title: 'Data Penduduk',
     href: '/penduduk',
     icon: Users,
     guard: ['TPK']
   },
   {
-    title: 'Data Baduta TPK',
-    href: '/baduta', // <-- Sesuaikan URL
+    title: 'Stunting',
+    href: '/stunting-tpk',
+    icon: ActivitySquare,
+    guard: ['TPK']
+  },
+  {
+    title: 'Baduta',
+    href: '/baduta',
     icon: Baby,
     guard: ['TPK']
   },
   {
-    title: 'Data Stunting TPK',
-    href: '/stunting-tpk', // <-- URL yang sesuai
-    icon: ActivitySquare,            // <-- Kalau mau icon lain bisa ganti
-    guard: ['TPK']
-  },
-  {
-    title: 'Bumil TPK',
-    href: '/bumil-tpk',
+    title: 'Bumil',
+    href: '/bumil',
     icon: HeartPulse,
     guard: ['TPK']
   },
   {
-      title: 'Catin TPK',
+      title: 'Catin',
       href: '/catin',
       icon: UserRound,
       guard: ['TPK']
   },
   {
-    title: 'Data Pasca Persalinan TPK',
-    href: '/pasper', // sesuai route yang kita buat
-    icon: Baby, // (kalau ikon pasca persalinan belum ada, sementara pakai Baby atau bisa cari ikon lain)
-    guard: ['TPK'], // hanya muncul untuk role TPK
+    title: 'Pasca Persalinan',
+    href: '/pasper',
+    icon: Baby,
+    guard: ['TPK'],
   }
   ];
 const footerNavItems: NavItem[] = [

@@ -8,7 +8,7 @@ import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Beranda', href: '/dashboard' },
-  { title: 'Data Stunting TPK', href: '/stunting-tpk' },
+  { title: 'Data Stunting', href: '/stunting-tpk' },
 ];
 
 const search = ref('');

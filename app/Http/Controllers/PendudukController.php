@@ -51,13 +51,12 @@ class PendudukController extends Controller
             'kategori' => $request->kategori,
         ]);
 
-        // Redirect berdasarkan kategori
         return match ($penduduk->kategori) {
-            'BADUTA' => redirect()->route('baduta.create', ['penduduk_id' => $penduduk->nik]),
-            'CATIN' => redirect()->route('catin.create', ['penduduk_id' => $penduduk->nik]),
-            'BUMIL' => redirect()->route('bumil.create', ['penduduk_id' => $penduduk->nik]),
-            'Pasca Persalinan' => redirect()->route('pasper.create', ['penduduk_id' => $penduduk->nik]),
-            default => redirect()->route('Penduduk/Index')->with('success', 'Data Penduduk berhasil disimpan'),
+            'BADUTA' => Inertia::location(route('baduta.create', ['nik' => $penduduk->nik])),
+            'CATIN' => Inertia::location(route('catin.create', ['nik' => $penduduk->nik])),
+            'BUMIL' => Inertia::location(route('bumil.create', ['nik' => $penduduk->nik])),
+            'Pasca Persalinan' => Inertia::location(route('pasper.create', ['nik' => $penduduk->nik])),
+            'Penduduk' => Inertia::location(route('penduduk.index')),
         };
     }
 

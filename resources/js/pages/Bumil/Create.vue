@@ -6,40 +6,41 @@ import { Head, useForm } from '@inertiajs/vue3';
 
 const penduduk_nik = ref<string>(new URLSearchParams(window.location.search).get('nik') || '');
 
-
-// Form data termasuk penduduk_id
 const form = useForm({
-penduduk_nik: penduduk_nik.value,
-  tanggal_persalinan: '',
-  tempat_persalinan: '',
-  penolong_persalinan: '',
-  cara_persalinan: '',
-  keadaan_bayi: '',
+  penduduk_nik: penduduk_nik.value,
+  usia_kehamilan: '',
+  TUF: '',
+  jumlah_anak_kandung: '',
+  tgl_lahir_ank_terakhir: '',
+  tinggi_badan: '',
+  berat_badan_sebelum_hamil: '',
+  berat_badan_saat_ini: '',
+  indeks_massa_tubuh: '',
+  kadar_hemoglobin: '',
+  LILA: '',
   menggunakan_alat_kontrasepsi: '',
-  meerokok_terpapar: '',
   sumber_air_minum: '',
   fasilitas_BAB: '',
+  meerokok_terpapar: '',
   longitude: '',
   latitude: '',
   mendapatkan_tablet_tambah_darah: '',
   meminum_table_tambah_darah: '',
   penyuluhan_KIE: '',
-  fasilitas_layanan_rujukan: ''
+  fasilitas_layanan_rujukan: '',
+  fasilitas_bantuan_sosial: '',
+  stunting: ''
 });
 
-
-// Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Tambah Data Persalinan',
-    href: '/pasper/create',
-  },
+  { title: 'Tambah Data Bumil', 
+  href: '/bumil/create' }
 ];
 
 const errors = ref<string[]>([]);
 
 const submitForm = () => {
-  form.post('/pasper', {
+  form.post('/bumil', {
     onSuccess: () => {
       window.location.href = '/penduduk';
     },
@@ -50,11 +51,12 @@ const submitForm = () => {
 };
 </script>
 
+
 <template>
-  <Head title="Tambah Data Persalinan" />
+  <Head title="Tambah Data Bumil" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="container mt-5">
-      <h2 class="mb-4">Tambah Data Persalinan</h2>
+      <h2 class="mb-4">Tambah Data Bumil</h2>
 
       <div v-if="errors.length" class="alert alert-danger">
         <ul>
@@ -66,28 +68,45 @@ const submitForm = () => {
         <input type="hidden" v-model="form.penduduk_nik" />
 
         <div class="mb-3">
-          <label for="tanggal_persalinan" class="form-label">Tanggal Persalinan</label>
-          <input v-model="form.tanggal_persalinan" type="date" class="form-control" id="tanggal_persalinan" required />
+          <label for="usia_kehamilan" class="form-label">Usia Kehamilan</label>
+          <input v-model="form.usia_kehamilan" type="text" class="form-control" id="usia_kehamilan" required />
         </div>
-
+        
         <div class="mb-3">
-          <label for="tempat_persalinan" class="form-label">Tempat Persalinan</label>
-          <input v-model="form.tempat_persalinan" type="text" class="form-control" id="tempat_persalinan" required />
+          <label for="TUF" class="form-label">TUF</label>
+          <input v-model="form.TUF" type="text" class="form-control" id="TUF" required />
         </div>
-
         <div class="mb-3">
-          <label for="penolong_persalinan" class="form-label">Penolong Persalinan</label>
-          <input v-model="form.penolong_persalinan" type="text" class="form-control" id="penolong_persalinan" required />
+          <label for="jumlah_anak_kandung" class="form-label">Jumlah Anak Kandung</label>
+          <input v-model="form.jumlah_anak_kandung" type="text" class="form-control" id="jumlah_anak_kandung" required />
         </div>
-
         <div class="mb-3">
-          <label for="cara_persalinan" class="form-label">Cara Persalinan</label>
-          <input v-model="form.cara_persalinan" type="text" class="form-control" id="cara_persalinan" required />
+          <label for="tgl_lahir_ank_terakhir" class="form-label">Tanggal Lahir anak terakhir</label>
+          <input v-model="form.tgl_lahir_ank_terakhir" type="date" class="form-control" id="tgl_lahir_ank_terakhir" required />
         </div>
-
         <div class="mb-3">
-          <label for="keadaan_bayi" class="form-label">Keadaan Bayi</label>
-          <input v-model="form.keadaan_bayi" type="text" class="form-control" id="keadaan_bayi" required />
+          <label for="tinggi_badan" class="form-label">Tinggi Badan</label>
+          <input v-model="form.tinggi_badan" type="text" class="form-control" id="tinggi_badan" required />
+        </div>
+        <div class="mb-3">
+          <label for="berat_badan_sebelum_hamil" class="form-label">Berat Badan Sebelum Hamil</label>
+          <input v-model="form.berat_badan_sebelum_hamil" type="text" class="form-control" id="berat_badan_sebelum_hamil" required />
+        </div>
+        <div class="mb-3">
+          <label for="berat_badan_saat_ini" class="form-label">Berat Badan Saat Ini</label>
+          <input v-model="form.berat_badan_saat_ini" type="text" class="form-control" id="berat_badan_saat_ini" required />
+        </div>
+        <div class="mb-3">
+          <label for="indeks_massa_tubuh" class="form-label">Indeks Massa Tubuh</label>
+          <input v-model="form.indeks_massa_tubuh" type="text" class="form-control" id="indeks_massa_tubuh" required />
+        </div>
+        <div class="mb-3">
+          <label for="kadar_hemoglobin" class="form-label">Kadar Hemoglobin</label>
+          <input v-model="form.kadar_hemoglobin" type="text" class="form-control" id="kadar_hemoglobin" required />
+        </div>
+        <div class="mb-3">
+          <label for="LILA" class="form-label">LILA</label>
+          <input v-model="form.LILA" type="text" class="form-control" id="LILA" required />
         </div>
 
         <div class="mb-3">
@@ -142,6 +161,17 @@ const submitForm = () => {
         <div class="mb-3">
           <label for="fasilitas_layanan_rujukan" class="form-label">Fasilitas Layanan Rujukan</label>
           <input v-model="form.fasilitas_layanan_rujukan" type="text" class="form-control" id="fasilitas_layanan_rujukan" />
+        </div>
+
+        <div class="mb-3">
+          <label for="fasilitas_bantuan_sosial" class="form-label">Fasilitas Bantuan Sosial</label>
+          <input v-model="form.fasilitas_bantuan_sosial" type="text" class="form-control" id="fasilitas_bantuan_sosial" />
+        </div>
+        
+        <div>
+            <label>Ibu Mengalami Stunting?</label><br>
+            <label><input type="radio" value="Ya" v-model="form.stunting" /> Ya</label>
+            <label><input type="radio" value="Tidak" v-model="form.stunting" /> Tidak</label>
         </div>
 
         <button type="submit" class="btn btn-success">Simpan Data</button>

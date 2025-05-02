@@ -7,12 +7,16 @@ use Illuminate\Http\Request;
 use App\Models\Penduduk;
 use App\Models\TPK;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class BadutaController extends Controller
 {
     public function index()
     {
-        $badutas = baduta::all();
+        $badutas = DB::table('baduta')
+            ->join('penduduk', 'baduta.penduduk_nik', '=', 'penduduk.nik')
+            ->select('baduta.id', 'baduta.stunting', 'penduduk.nik', 'penduduk.nama', 'penduduk.kecamatan', 'penduduk.kelurahan')
+            ->get();
         return Inertia::render('Baduta/Index', [
             'badutas' => $badutas,
         ]);
@@ -82,7 +86,7 @@ class BadutaController extends Controller
             'stunting' => $request->stunting,
         ]);
 
-        return redirect()->route('baduta.index')->with('success', 'Data Baduta berhasil disimpan');
+        return redirect()->route('penduduk.index')->with('success', 'Data Baduta berhasil disimpan');
     }
     public function show($id)
     {
@@ -98,7 +102,6 @@ class BadutaController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Validasi data yang dikirim dari form
         $request->validate([
             'penduduk_id' => 'required|exists:penduduk,id',
             'penduduk_ibu_id' => 'required|exists:penduduk,id',
