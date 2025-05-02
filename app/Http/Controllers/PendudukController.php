@@ -57,7 +57,9 @@ class PendudukController extends Controller
             'CATIN' => redirect()->route('catin.create', ['penduduk_id' => $penduduk->nik]),
             'BUMIL' => redirect()->route('bumil.create', ['penduduk_id' => $penduduk->nik]),
             'Pasca Persalinan' => redirect()->route('pasper.create', ['penduduk_id' => $penduduk->nik]),
-            default => redirect()->route('Penduduk/Index')->with('success', 'Data Penduduk berhasil disimpan'),
+            'Penduduk' => redirect()->route('baduta.create', ['penduduk_nik' => $penduduk->nik]),
+
+            default => redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil disimpan'),
         };
     }
 
