@@ -3,10 +3,10 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref, onMounted } from 'vue';
 import { BreadcrumbItem } from '@/types';
+import { router } from '@inertiajs/vue3';
 
 type Kecamatan = 'Ujung' | 'Bacukiki' | 'Bacukiki Barat' | 'Soreang';
 
-// ✅ Hanya satu kali defineProps
 const props = defineProps<{
   penduduk: {
     nik: string;
@@ -41,9 +41,10 @@ const form = useForm({
 const breadcrumbs: BreadcrumbItem[] = [
   {
     title: 'Edit Data Penduduk',
-    href: `/penduduk/${props.nik}/edit`,
+    href: `/penduduk/${props.penduduk.nik}/edit`,
   },
 ];
+
 
 const kelurahanOptions = ref<string[]>([]);
 
@@ -69,8 +70,7 @@ onMounted(() => {
 const submitForm = () => {
     form.put(`/penduduk/${form.nik}`, {
     preserveScroll: true,
-    });
-
+  });
 };
 </script>
 
@@ -82,8 +82,8 @@ const submitForm = () => {
 
       <form @submit.prevent="submitForm">
         <div class="mb-3">
-          <label for="nik" class="form-label">NIK</label>
-          <input v-model="form.nik" type="text" class="form-control" id="nik" required />
+          <label for="nama" class="form-label">NIK</label>
+          <input v-model="form.nik" type="text" class="form-control" id="nik" readonly />
         </div>
 
         <div class="mb-3">
@@ -160,7 +160,7 @@ const submitForm = () => {
         </div>
 
         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-        <button type="button" class="btn btn-secondary" @click="$inertia.visit('/penduduk')">Batal</button>
+        <button type="button" class="btn btn-secondary" @click="router.visit('/penduduk')">Batal</button>
       </form>
     </div>
   </AppLayout>

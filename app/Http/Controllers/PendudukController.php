@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Inertia\Inertia;
 use App\Models\Penduduk;
 use Illuminate\Http\Request;
@@ -72,7 +71,7 @@ class PendudukController extends Controller
     public function update(Request $request, $nik)
     {
         $request->validate([
-            'nik' => 'required|digits:16|unique:penduduk,nik',
+            'nik' => 'required|digits:16|unique:penduduk,nik,' . $nik . ',nik',
             'nama' => 'required|string',
             'tanggal_lahir' => 'required|date',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
@@ -90,6 +89,7 @@ class PendudukController extends Controller
 
         return redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil diperbarui');
     }
+
 
     public function destroy($nik)
     {

@@ -155,7 +155,7 @@ const submitForm = () => {
           </select>
         </div>
 
-        <button type="submit" class="btn btn-success">Selanjutnya</button>
+        <button type="submit" class="btn btn-success">Simpan</button>
       </form>
     </div>
   </AppLayout>

@@ -41,6 +41,11 @@ Route::get('/manajemen-user', [UserController::class, 'index9'])->name('manajeme
 
 // ========== TPK Pages ==========
 Route::get('/stunting-tpk', [UserController::class, 'index12'])->name('stunting-tpk');
+Route::get('/baduta_tpk', [UserController::class, 'index10'])->name('baduta_tpk');
+Route::get('/bumil-tpk', [UserController::class, 'index13'])->name('bumil-tpk');
+Route::get('/catin-tpk', [UserController::class, 'index14'])->name('catin-tpk');
+Route::get('/pasca-persalinan-tpk', [UserController::class, 'index15'])->name('pasca-persalinan-tpk');
+Route::get('/population_data_tpk', [UserController::class, 'index11'])->name('population_data_tpk');
 
 // Manajemen Penduduk
 Route::resource('penduduk', PendudukController::class);
@@ -48,7 +53,7 @@ Route::get('/penduduk', [PendudukController::class, 'index'])->name('penduduk.in
 Route::get('/penduduk/create', [PendudukController::class, 'create'])->name('penduduk.create');
 Route::post('/penduduk', [PendudukController::class, 'store'])->name('penduduk.store');
 Route::get('/Penduduk/Index', [PendudukController::class, 'index']);
-Route::put('/penduduk/{nik}/edit', [PendudukController::class, 'update'])->name('penduduk.update');
+Route::get('/penduduk/{nik}/edit', [PendudukController::class, 'edit'])->name('penduduk.edit');
 Route::put('/penduduk/{nik}', [PendudukController::class, 'update'])->name('penduduk.update');
 Route::delete('/penduduk/{nik}', [PendudukController::class, 'destroy'])->name('penduduk.destroy');
 

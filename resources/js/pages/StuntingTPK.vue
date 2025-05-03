@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, usePage } from '@inertiajs/vue3';
-import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline';
+import { Head } from '@inertiajs/vue3';
+import { EyeIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import { type BreadcrumbItem } from '@/types';
+import { useRouter } from 'vue-router';
 
 // Props dari server (Laravel Controller)
 const props = defineProps<{ stuntingData: any[] }>();
@@ -37,10 +38,14 @@ const filteredStunting = computed(() => {
 });
 
 
-// Aksi edit
-const editData = (id: number) => {
-  alert(`Edit data dengan ID: ${id}`);
+// Menambahkan fungsi untuk view data
+const router = useRouter();
+
+const viewData = (id: number) => {
+  // Arahkan ke halaman detail dengan parameter id
+  router.push({ name: 'baduta-detail', params: { id } });
 };
+
 
 // Aksi hapus
 const hapusData = (id: number) => {
@@ -55,7 +60,7 @@ const hapusData = (id: number) => {
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6 space-y-6">
       <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-xl">
-        Data Stunting TPK
+        Data Stunting
       </h1>
 
       <!-- Pencarian dan Dropdown -->
@@ -95,7 +100,7 @@ const hapusData = (id: number) => {
               <th class="px-4 py-3 text-left">No</th>
               <th class="px-4 py-3 text-left">NIK</th>
               <th class="px-4 py-3 text-left">Nama</th>
-              <th class="px-4 py-3 text-left">Status Stunting</th>
+              <th class="px-4 py-3 text-left">Kategori</th>
               <th class="px-4 py-3 text-left">Aksi</th>
             </tr>
           </thead>
@@ -113,8 +118,8 @@ const hapusData = (id: number) => {
               <td class="px-4 py-3">{{ data.nama }}</td>
               <td class="px-4 py-3">{{ data.statusStunting }}</td>
               <td class="px-4 py-3 flex items-center space-x-2">
-                <button @click="editData(data.id)" class="text-blue-600 hover:text-blue-800" title="Edit">
-                  <PencilIcon class="w-5 h-5" />
+                <button @click="viewData(data.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
+                  <EyeIcon class="w-5 h-5" />
                 </button>
                 <button @click="hapusData(data.id)" class="text-red-600 hover:text-red-800" title="Hapus">
                   <TrashIcon class="w-5 h-5" />

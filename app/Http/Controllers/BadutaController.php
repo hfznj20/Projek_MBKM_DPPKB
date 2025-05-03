@@ -14,13 +14,24 @@ class BadutaController extends Controller
     public function index()
     {
         $badutas = DB::table('baduta')
-            ->join('penduduk', 'baduta.penduduk_nik', '=', 'penduduk.nik')
-            ->select('baduta.id', 'baduta.stunting', 'penduduk.nik', 'penduduk.nama', 'penduduk.kecamatan', 'penduduk.kelurahan')
+            ->join('penduduk as anak', 'baduta.penduduk_nik', '=', 'anak.nik')
+            ->join('penduduk as ibu', 'baduta.penduduk_ibu_nik', '=', 'ibu.nik')
+            ->select(
+                'baduta.id',
+                'baduta.stunting',
+                'anak.nik',
+                'anak.nama',
+                'anak.kecamatan',
+                'anak.kelurahan',
+                'ibu.nama as nama_ibu'
+            )
             ->get();
+
         return Inertia::render('Baduta/Index', [
             'badutas' => $badutas,
         ]);
     }
+
 
 
 
