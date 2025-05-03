@@ -3,8 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\SettingController;
-use App\Http\Controllers\BdtpkController;
-
 use App\Http\Controllers\PendudukController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BadutaController;
@@ -36,7 +34,6 @@ Route::get('/pandu-genre', [UserController::class, 'index3'])->name('pandu-genre
 Route::get('/baduta', [UserController::class, 'index4'])->name('baduta');
 Route::get('/bumil', [UserController::class, 'index5'])->name('bumil');
 Route::get('/catin', [UserController::class, 'index6'])->name('catin');
-
 Route::get('/kinerja-tpk', [UserController::class, 'index8'])->name('kinerja-tpk');
 
 Route::resource('manajemen', ManajemenController::class)
@@ -58,46 +55,28 @@ Route::get('/stunting-tpk', [UserController::class, 'index12'])->name('stunting-
 Route::get('/bumil-tpk', [UserController::class, 'index13'])->name('bumil-tpk');
 Route::get('/catin-tpk', [UserController::class, 'index14'])->name('catin-tpk');
 
-
 // Manajemen Penduduk
 Route::get('/penduduk', [PendudukController::class, 'index'])->name('penduduk.index');
 Route::get('/penduduk/create', [PendudukController::class, 'create'])->name('penduduk.create');
 Route::post('/penduduk', [PendudukController::class, 'store'])->name('penduduk.store');
 
-Route::get('/baduta', [PendudukController::class, 'index'])->name('baduta.index');
-Route::get('/baduata/create', [PendudukController::class, 'create'])->name('baduta.create');
-Route::post('/baduta', [PendudukController::class, 'store'])->name('baduta.store');
-
-// BADUTA CRUD
-// Route::get('/baduta', [BadutaController::class, 'index'])->name('baduta.index');
-// Route::get('/baduta/create', [BadutaController::class, 'create'])->name('baduta.create');
-// Route::post('/baduta', [BadutaController::class, 'store'])->name('baduta.store');
-// Route::get('/baduta/{id}/edit', [BadutaController::class, 'edit'])->name('baduta.edit');
-// Route::put('/baduta/{id}', [BadutaController::class, 'update'])->name('baduta.update');
-// Route::delete('/baduta/{id}', [BadutaController::class, 'destroy'])->name('baduta.destroy');
+// Baduta CRUD
+Route::resource('baduta', BadutaController::class);
 
 // PASPER CRUD
 Route::get('/pasper', [PasperController::class, 'index'])->name('pasper.index');
 Route::get('/pasper/create', [PasperController::class, 'create'])->name('pasper.create');
 Route::post('/pasper', [PasperController::class, 'store'])->name('pasper.store');
-Route::get('/Pasper/Index', [PasperController::class, 'index']);
 
 // CATIN CRUD
 Route::get('/catin', [CatinController::class, 'index'])->name('catin.index');
 Route::get('/catin/create', [CatinController::class, 'create'])->name('catin.create');
 Route::post('/catin', [CatinController::class, 'store'])->name('catin.store');
+Route::get('/catin/create/{penduduk_id}', [CatinController::class, 'create'])->name('catin.create');
 
 // Form Static Rendering (jika masih dibutuhkan untuk shortcut saja)
 Route::get('/bumil/create', fn () => Inertia::render('bumil/Create'))->name('bumil.create');
 
-
-
-Route::resource('baduta', BadutaController::class);
-
-
-
-
-
-//cek nama ibu berdasrkan nik
-Route::get('/cek-ibu/{nik}', [PendudukController::class, 'searchIbu']);
-Route::post('/cek-nik', [PendudukController::class, 'cekNIK']);
+// Cek nama ibu berdasarkan NIK
+Route::get('/cek-ibu/{nik}', [PendudukController::class, 'searchIbu'])->name('cek-ibu');
+Route::post('/cek-nik', [PendudukController::class, 'cekNIK'])->name('cek-nik');
