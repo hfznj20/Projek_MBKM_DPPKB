@@ -102,7 +102,7 @@ const formIbu = useForm({
   RW: '',
   alamat: '',
   no_hp: '',
-  kategori: 'Penduduk'
+  kategori: 'penduduk'
 });
 
 

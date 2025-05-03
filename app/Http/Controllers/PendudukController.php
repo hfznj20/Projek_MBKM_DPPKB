@@ -34,7 +34,7 @@ class PendudukController extends Controller
             'RW' => 'required',
             'alamat' => 'required',
             'no_hp' => 'required',
-            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk',
+            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk,penduduk',
         ]);
 
         $penduduk = Penduduk::create([
@@ -57,7 +57,8 @@ class PendudukController extends Controller
             'CATIN' => redirect()->route('catin.create', ['penduduk_id' => $penduduk->nik]),
             'BUMIL' => redirect()->route('bumil.create', ['penduduk_id' => $penduduk->nik]),
             'Pasca Persalinan' => redirect()->route('pasper.create', ['penduduk_id' => $penduduk->nik]),
-            'Penduduk' => redirect()->route('baduta.create', ['penduduk_nik' => $penduduk->nik]),
+            'penduduk' => redirect()->route('baduta.create', ['penduduk_nik' => $penduduk->nik]),
+            'Penduduk' => redirect()->route('penduduk.index'),
 
             default => redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil disimpan'),
         };
