@@ -39,6 +39,6 @@ class Bumil extends Model
 
     public function penduduk()
     {
-        return $this->belongsTo(Penduduk::class);
+        return $this->belongsTo(Penduduk::class, 'penduduk_nik', 'nik');
     }
 }

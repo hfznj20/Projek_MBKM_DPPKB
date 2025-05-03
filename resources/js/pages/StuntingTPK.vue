@@ -1,40 +1,41 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { type BreadcrumbItem } from '@/types';
+import { Head, usePage } from '@inertiajs/vue3';
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
+import { type BreadcrumbItem } from '@/types';
 
+// Props dari server (Laravel Controller)
+const props = defineProps<{ stuntingData: any[] }>();
+
+// Data breadcrumb
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Beranda', href: '/dashboard' },
   { title: 'Data Stunting', href: '/stunting-tpk' },
 ];
 
+// Salin props ke ref agar bisa dimodifikasi secara lokal
+const stuntingData = ref([...props.stuntingData]);
+
+// Pencarian
 const search = ref('');
 const searchCategory = ref('nama');
 
-// Data stunting
-const stuntingData = ref<any[]>([]);
-
-// Filter data berdasarkan pencarian
+// Filter berdasarkan kategori pencarian
 const filteredStunting = computed(() => {
   const keyword = search.value.toLowerCase();
-  const category = searchCategory.value;
 
   return stuntingData.value.filter((data) => {
-    if (category === 'nama') {
-      return data.nama.toLowerCase().includes(keyword);
-    } else if (category === 'nik') {
-      return String(data.nik).toLowerCase().includes(keyword);
-    } else if (category === 'kecamatan') {
-      return data.kecamatan?.toLowerCase().includes(keyword);
-    } else if (category === 'kelurahan') {
-      return data.kelurahan?.toLowerCase().includes(keyword);
-    }
-    return false;
+    return (
+      String(data.nik).toLowerCase().includes(keyword) ||
+      data.nama.toLowerCase().includes(keyword) ||
+      data.kecamatan?.toLowerCase().includes(keyword) ||
+      data.kelurahan?.toLowerCase().includes(keyword)
+    );
   });
 });
+
 
 // Aksi edit
 const editData = (id: number) => {
@@ -112,18 +113,10 @@ const hapusData = (id: number) => {
               <td class="px-4 py-3">{{ data.nama }}</td>
               <td class="px-4 py-3">{{ data.statusStunting }}</td>
               <td class="px-4 py-3 flex items-center space-x-2">
-                <button
-                  @click="editData(data.id)"
-                  class="text-blue-600 hover:text-blue-800"
-                  title="Edit"
-                >
+                <button @click="editData(data.id)" class="text-blue-600 hover:text-blue-800" title="Edit">
                   <PencilIcon class="w-5 h-5" />
                 </button>
-                <button
-                  @click="hapusData(data.id)"
-                  class="text-red-600 hover:text-red-800"
-                  title="Hapus"
-                >
+                <button @click="hapusData(data.id)" class="text-red-600 hover:text-red-800" title="Hapus">
                   <TrashIcon class="w-5 h-5" />
                 </button>
               </td>
@@ -136,5 +129,5 @@ const hapusData = (id: number) => {
 </template>
 
 <style scoped>
-/* Styling tambahan bisa disini */
+/* Styling tambahan jika perlu */
 </style>

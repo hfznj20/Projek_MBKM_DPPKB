@@ -46,5 +46,9 @@ class Baduta extends Model
     {
         return $this->belongsTo(Penduduk::class, 'penduduk_ibu_nik', 'nik');
     }
+    public function penduduk()
+    {
+        return $this->belongsTo(Penduduk::class, 'penduduk_nik', 'nik');
+    }
 
 }

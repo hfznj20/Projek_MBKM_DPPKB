@@ -48,6 +48,9 @@ Route::get('/penduduk', [PendudukController::class, 'index'])->name('penduduk.in
 Route::get('/penduduk/create', [PendudukController::class, 'create'])->name('penduduk.create');
 Route::post('/penduduk', [PendudukController::class, 'store'])->name('penduduk.store');
 Route::get('/Penduduk/Index', [PendudukController::class, 'index']);
+Route::put('/penduduk/{nik}/edit', [PendudukController::class, 'update'])->name('penduduk.update');
+Route::put('/penduduk/{nik}', [PendudukController::class, 'update'])->name('penduduk.update');
+Route::delete('/penduduk/{nik}', [PendudukController::class, 'destroy'])->name('penduduk.destroy');
 
 
 // BADUTA CRUD

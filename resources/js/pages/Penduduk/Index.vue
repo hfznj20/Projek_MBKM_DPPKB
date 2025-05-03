@@ -4,9 +4,9 @@ import { BreadcrumbItem } from '@/types';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Inertia } from '@inertiajs/inertia'; // ✅ Tambahkan ini
 
 interface Penduduk {
-  id: number
   nik: string
   nama: string
   kecamatan: string
@@ -32,17 +32,16 @@ const deletePenduduk = async (nik: number) => {
   if (!confirm('Yakin mau hapus?')) return;
   try {
     successMessage.value = 'Data berhasil dihapus';
-    // fetchPenduduks() jika ingin di-refresh otomatis
   } catch (error) {
     console.error('Gagal menghapus data:', error);
   }
 };
 
-const editPenduduk = (id: number) => {
-  router.push({ name: 'penduduk-edit', params: { id } });
+const editPenduduk = (nik: number) => {
+  Inertia.visit(`/penduduk/${nik}/edit`);
 };
-
 </script>
+
 
 <template>
   <Head title="Baduta TPK" />
@@ -74,7 +73,7 @@ const editPenduduk = (id: number) => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(penduduk, index) in penduduks" :key="penduduk.id">
+          <tr v-for="(penduduk, index) in penduduks" :key="penduduk.nik">
             <td>{{ index + 1 }}</td>
             <td>{{ penduduk.nik }}</td>
             <td>{{ penduduk.nama }}</td>
@@ -82,8 +81,8 @@ const editPenduduk = (id: number) => {
             <td>{{ penduduk.kelurahan }}</td>
             <td>{{ penduduk.kategori }}</td>
             <td>
-              <button class="btn btn-primary btn-sm" @click="editPenduduk(penduduk.id)">Edit</button>
-              <button class="btn btn-danger btn-sm" @click="deletePenduduk(penduduk.id)">Hapus</button>
+              <button class="btn btn-primary btn-sm" @click="editPenduduk(penduduk.nik)">Edit</button>
+              <button class="btn btn-danger btn-sm" @click="deletePenduduk(penduduk.nik)">Hapus</button>
             </td>
           </tr>
         </tbody>

@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Penduduk;
+use App\Models\Bumil;
+use App\Models\Baduta;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -55,8 +57,40 @@ class UserController extends Controller
     }
     public function index12()
     {
-        return Inertia::render('StuntingTPK');  // Menampilkan halaman StuntingTPK.vue
+        $stuntingData = collect();
+
+        $baduta = Baduta::with('penduduk')
+            ->where('stunting', 'Ya')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'nik' => $item->penduduk?->nik ?? '-',
+                    'nama' => $item->penduduk?->nama ?? 'Tidak Ditemukan',
+                    'statusStunting' => 'Baduta',
+                ];
+            });
+
+        $bumil = Bumil::with('penduduk')
+            ->where('stunting', 'Ya')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'nik' => $item->penduduk?->nik ?? '-',
+                    'nama' => $item->penduduk?->nama ?? 'Tidak Ditemukan',
+                    'statusStunting' => 'Bumil',
+                ];
+            });
+
+        $stuntingData = $baduta->merge($bumil);
+        return Inertia::render('StuntingTPK', [
+            'stuntingData' => $stuntingData,
+        ]);
+        
+
     }
+    
     public function index13()
     {
         return Inertia::render('BumilTPK');

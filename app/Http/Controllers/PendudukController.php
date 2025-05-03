@@ -60,19 +60,28 @@ class PendudukController extends Controller
         };
     }
 
+    public function edit($nik)
+    {
+        $penduduk = Penduduk::findOrFail($nik);
+        return Inertia::render('Penduduk/Edit', [
+            'penduduk' => $penduduk,
+        ]);
+    }   
+
+
     public function update(Request $request, $nik)
     {
         $request->validate([
-            'nik' => 'required|digits:16|unique:penduduk,nik,' . $nik . ',nik',
-            'nama' => 'required|string|max:255',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'nik' => 'required|digits:16|unique:penduduk,nik',
+            'nama' => 'required|string',
             'tanggal_lahir' => 'required|date',
-            'kelurahan' => 'required|string|max:255',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'kecamatan' => 'required|in:Ujung,Bacukiki,Bacukiki Barat,Soreang',
-            'RT' => 'required|string|max:3',
-            'RW' => 'required|string|max:3',
-            'alamat' => 'required|string',
-            'no_hp' => 'required|string|max:16',
+            'kelurahan' => 'required',
+            'RT' => 'required',
+            'RW' => 'required',
+            'alamat' => 'required',
+            'no_hp' => 'required',
             'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk',
         ]);
 
