@@ -49,10 +49,17 @@ const onKecamatanChange = () => {
 const submitForm = () => {
   form.post('/penduduk', {
     onSuccess: () => {
-      let kategoriPath = form.kategori.toLowerCase().replace(/\s+/g, '-');
+      const kategori = form.kategori;
+
+      if (kategori === 'Penduduk') {
+        window.location.href = '/penduduk'; // ⬅️ langsung ke index penduduk
+        return;
+      }
+
+      let kategoriPath = kategori.toLowerCase().replace(/\s+/g, '-');
 
       // Override khusus untuk "Pasca Persalinan"
-      if (form.kategori === 'Pasca Persalinan') {
+      if (kategori === 'Pasca Persalinan') {
         kategoriPath = 'pasper';
       }
 
@@ -63,6 +70,7 @@ const submitForm = () => {
     }
   });
 };
+
 
 
 
