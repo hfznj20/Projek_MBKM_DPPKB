@@ -28,7 +28,7 @@ const router = useRouter();
 const successMessage = ref('');
 
 const detailbaduta = (id: number) => {
-  router.push({ name: 'baduta-detail', params: { id } });
+  router.push({ name: 'Show', params: { id } });
 };
 
 
@@ -77,14 +77,13 @@ const editbaduta = (id: number) => {
             <td>{{ baduta.kecamatan }}</td>
             <td>{{ baduta.kelurahan }}</td>
             <td>{{ baduta.stunting }}</td>
-            <td>
-                <td>
-  <button class="btn btn-info btn-sm me-1" @click="detailbaduta(baduta.id)">Detail</button>
-  <button class="btn btn-primary btn-sm me-1" @click="editbaduta(baduta.id)">Edit</button>
-  <button class="btn btn-danger btn-sm" @click="deletebaduta(baduta.id)">Hapus</button>
+<td>
+<Link :href="`/baduta/${baduta.id}`" class="btn btn-info btn-sm me-1">Detail</Link>
+<button class="btn btn-primary btn-sm me-1" @click="editbaduta(baduta.id)">Edit</button>
+<button class="btn btn-danger btn-sm" @click="deletebaduta(baduta.id)">Hapus</button>
 </td>
 
-            </td>
+
           </tr>
         </tbody>
       </table>

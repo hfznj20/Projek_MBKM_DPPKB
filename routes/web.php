@@ -50,6 +50,8 @@ Route::post('/penduduk', [PendudukController::class, 'store'])->name('penduduk.s
 Route::resource('baduta', BadutaController::class);
 Route::get('/baduta', [BadutaController::class, 'index'])->name('baduta.index');
 Route::get('/baduta/{id}', [BadutaController::class, 'show'])->name('baduta-detail');
+Route::get('/baduta/{id}', [BadutaController::class, 'show'])->name('baduta.show');
+
 
 
 

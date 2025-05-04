@@ -89,10 +89,12 @@ class BadutaController extends Controller
 
         return redirect()->route('baduta.index')->with('success', 'Data Baduta berhasil disimpan');
     }
-    public function show($id)
+    public function show($nik)
     {
-        $baduta = Baduta::findOrFail($id);
-        return view('baduta.show', compact('baduta'));
+        $baduta= Baduta::with(['anak', 'ibu'])->findOrFail($nik);
+        return Inertia::render('Baduta/Show', [
+            'baduta' => $baduta
+        ]);
     }
 
     public function edit($id)
