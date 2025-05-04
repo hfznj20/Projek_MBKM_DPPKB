@@ -7,18 +7,23 @@ use Illuminate\Http\Request;
 use App\Models\Penduduk;
 use App\Models\TPK;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class BadutaController extends Controller
 {
     public function index()
     {
-        $badutas = baduta::all();
+        // Mengambil data dari pasca_persalinan dan penduduk
+        $badutas= DB::table('baduta')
+            ->join('penduduk', 'baduta.penduduk_nik', '=', 'penduduk.nik')
+            ->select('baduta.id', 'baduta.stunting', 'penduduk.nik', 'penduduk.nama','penduduk.kelurahan', 'penduduk.kecamatan')
+            ->get();
+
+
         return Inertia::render('Baduta/Index', [
             'badutas' => $badutas,
         ]);
     }
-
-
 
     public function create(Request $request)
     {
@@ -116,8 +121,8 @@ class BadutaController extends Controller
             'imunisasi_hepatitis_B' => 'nullable|string',
             'meerokok_terpapar' => 'nullable|string',
             'mengisi_KKA' => 'nullable|string',
-            'longitude' => 'required|numeric',
-            'latitude' => 'required|numeric',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
             'kehadiran_posyandu' => 'nullable|string',
             'penyuluhan_KIE' => 'nullable|string',
             'fasilitas_bantuan_sosial' => 'nullable|string',
@@ -162,5 +167,5 @@ class BadutaController extends Controller
         return redirect()->route('baduta.index')->with('success', 'Data Baduta berhasil dihapus');
     }
 
-    
+
 }

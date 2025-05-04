@@ -11,6 +11,7 @@ interface baduta {
   nama: string
   kecamatan: string
   kelurahan: string
+  stunting : string
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -25,6 +26,11 @@ const badutas = ref<baduta[]>(props.badutas as baduta[]);
 
 const router = useRouter();
 const successMessage = ref('');
+
+const detailbaduta = (id: number) => {
+  router.push({ name: 'baduta-detail', params: { id } });
+};
+
 
 const deletebaduta = async (id: number) => {
   if (!confirm('Yakin mau hapus?')) return;
@@ -59,19 +65,25 @@ const editbaduta = (id: number) => {
             <th>Nama</th>
             <th>Kecamatan</th>
             <th>Kelurahan</th>
+            <th>stunting</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(baduta, index) in badutas" :key="baduta.id">
+          <tr v-for="(baduta, index) in badutas" :key="baduta.nik">
             <td>{{ index + 1 }}</td>
             <td>{{ baduta.nik }}</td>
             <td>{{ baduta.nama }}</td>
             <td>{{ baduta.kecamatan }}</td>
             <td>{{ baduta.kelurahan }}</td>
+            <td>{{ baduta.stunting }}</td>
             <td>
-              <button class="btn btn-primary btn-sm" @click="editbaduta(baduta.id)">Edit</button>
-              <button class="btn btn-danger btn-sm" @click="deletebaduta(baduta.id)">Hapus</button>
+                <td>
+  <button class="btn btn-info btn-sm me-1" @click="detailbaduta(baduta.id)">Detail</button>
+  <button class="btn btn-primary btn-sm me-1" @click="editbaduta(baduta.id)">Edit</button>
+  <button class="btn btn-danger btn-sm" @click="deletebaduta(baduta.id)">Hapus</button>
+</td>
+
             </td>
           </tr>
         </tbody>

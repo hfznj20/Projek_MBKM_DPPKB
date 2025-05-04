@@ -48,6 +48,10 @@ Route::post('/penduduk', [PendudukController::class, 'store'])->name('penduduk.s
 
 // Baduta CRUD
 Route::resource('baduta', BadutaController::class);
+Route::get('/baduta', [BadutaController::class, 'index'])->name('baduta.index');
+Route::get('/baduta/{id}', [BadutaController::class, 'show'])->name('baduta-detail');
+
+
 
 // PASPER CRUD
 Route::get('/pasper', [PasperController::class, 'index'])->name('pasper.index');

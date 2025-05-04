@@ -5,6 +5,7 @@ import { ref } from 'vue';
 import { BreadcrumbItem } from '@/types';
 import axios from 'axios'; // pastikan ini diimport
 import Modal from '@/components/Modal.vue';
+import { onMounted } from 'vue'
 
 type Kecamatan = 'Ujung' | 'Bacukiki' | 'Bacukiki Barat' | 'Soreang';
 
@@ -80,6 +81,68 @@ const form = useForm({
   stunting: '',
   penduduk_nik: penduduk_nik.value,
 });
+
+
+
+onMounted(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        form.latitude = position.coords.latitude.toString()
+        form.longitude = position.coords.longitude.toString()
+      },
+      (error) => {
+        console.error('Gagal mengambil lokasi:', error)
+      }
+    )
+  } else {
+    console.warn('Geolocation tidak didukung browser ini.')
+  }
+})
+
+const submitForm = () => {
+  errors.value = [];
+
+  // Cek apakah latitude dan longitude belum terisi
+  if (!form.latitude || !form.longitude) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          form.latitude = position.coords.latitude.toString();
+          form.longitude = position.coords.longitude.toString();
+
+          // Setelah dapat lokasi, baru kirim form
+          form.post('/baduta', {
+            onSuccess: () => {
+              window.location.href = '/penduduk';
+            },
+            onError: () => {
+              errors.value = Object.values(form.errors).flat();
+            },
+          });
+        },
+        (error) => {
+          alert('Gagal mengambil lokasi: ' + error.message);
+        }
+      );
+    } else {
+      alert('Geolocation tidak didukung browser ini.');
+    }
+    return; // hentikan proses sampai lokasi diambil
+  }
+
+  // Jika lokasi sudah tersedia, langsung kirim form
+  form.post('/baduta', {
+    onSuccess: () => {
+      window.location.href = '/penduduk';
+    },
+    onError: () => {
+      errors.value = Object.values(form.errors).flat();
+    },
+  });
+};
+
+
 const namaIbu = ref<string>('');
 
 // Modal
@@ -147,19 +210,7 @@ const checkNIK = async () => {
   }
 };
 
-// Submit Form
-const submitForm = () => {
-  errors.value = [];
 
-  form.post('/baduta', {
-    onSuccess: () => {
-      window.location.href = '/penduduk';
-    },
-    onError: () => {
-      errors.value = Object.values(form.errors).flat();
-    }
-  });
-};
 </script>
 
 <template>
@@ -263,8 +314,8 @@ const submitForm = () => {
         <!-- Step 3 -->
         <div v-if="step === 4">
           <h2>Data Pendampingan Bulanan</h2>
-          <div><label>Longitude:</label><input v-model="form.longitude" type="text" required /></div>
-          <div><label>Latitude:</label><input v-model="form.latitude" type="text" required /></div>
+          <!-- <div><label>Longitude:</label><input v-model.number="form.longitude" type="number" step="0.000001" required /></div>
+<div><label>Latitude:</label><input v-model.number="form.latitude" type="number" step="0.000001" required /></div> -->
           <div>
             <label>Kehadiran Posyandu?</label><br>
             <label><input type="radio" value="Ya" v-model="form.kehadiran_posyandu" /> Ya</label>
