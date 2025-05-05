@@ -19,10 +19,6 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-
-
-
-
 const goToFormPendudukBaru = () => {
   showModal.value = true; // Menampilkan modal untuk input data ibu
 };
@@ -44,8 +40,6 @@ const onKecamatanChange = () => {
 const kelurahanOptions = ref<string[]>([]);
 const step = ref(1);
 const errors = ref<string[]>([]);
-
-
 
 // Opsi dropdown
 const sumberAirOptions = [
@@ -92,7 +86,7 @@ const showModal = ref(false);
 //   step.value = 2; // Melanjutkan ke langkah berikutnya
 // }
 const formIbu = useForm({
-    nik: '',
+  nik: '',
   nama: '',
   tanggal_lahir: '',
   jenis_kelamin: '',
@@ -179,7 +173,7 @@ const submitForm = () => {
         <div v-if="step === 1">
           <div>
             <label>NIK Ibu:</label>
-            <input v-model="form.penduduk_ibu_nik" type="text" />
+            <input v-model="form.penduduk_ibu_nik" type="text" maxlength="16"/>
             <div style="display: flex; gap: 10px; margin-top: 5px;">
               <button type="button" @click="checkNIK">Cek</button>
               <button type="button" @click="goToFormPendudukBaru">Data Baru</button>

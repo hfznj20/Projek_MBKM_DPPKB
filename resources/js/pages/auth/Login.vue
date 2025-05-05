@@ -58,6 +58,7 @@ const submit = () => {
                         :tabindex="1"
                         v-model="form.NIK"
                         placeholder="Masukkan NIK (16 digit)"
+                        maxlength="16" 
                         class="w-full h-10 rounded-full border border-[#E7942A] focus:outline-none focus:border-[#E7942A] focus:ring-4 focus:ring-[#E7942A]/60 transition-all duration-300"
                     />
                     <InputError :message="form.errors.NIK" />

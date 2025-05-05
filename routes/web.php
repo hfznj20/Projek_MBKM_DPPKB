@@ -72,7 +72,9 @@ Route::post('/pasper', [PasperController::class, 'store'])->name('pasper.store')
 Route::get('/catin', [CatinController::class, 'index'])->name('catin.index');
 Route::get('/catin/create', [CatinController::class, 'create'])->name('catin.create');
 Route::post('/catin', [CatinController::class, 'store'])->name('catin.store');
-Route::get('/catin/create/{penduduk_id}', [CatinController::class, 'create'])->name('catin.create');
+// Route untuk menyimpan pasangan kedua
+Route::post('/catin/storePasanganBaru', [CatinController::class, 'storePasanganBaru']);
+
 
 // Form Static Rendering (jika masih dibutuhkan untuk shortcut saja)
 Route::get('/bumil/create', fn () => Inertia::render('bumil/Create'))->name('bumil.create');
