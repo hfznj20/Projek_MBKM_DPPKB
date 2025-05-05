@@ -26,12 +26,14 @@ class BadutaController extends Controller
                 'anak.kelurahan',
                 'ibu.nama as nama_ibu'
             )
+            ->orderBy('baduta.created_at', 'desc')
             ->get();
-
+    
         return Inertia::render('Baduta/Index', [
             'badutas' => $badutas,
         ]);
     }
+    
 
     
     public function create(Request $request)

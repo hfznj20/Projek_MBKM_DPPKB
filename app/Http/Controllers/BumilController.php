@@ -17,11 +17,14 @@ class BumilController extends Controller
         $bumils = DB::table('bumil')
             ->join('penduduk', 'bumil.penduduk_nik', '=', 'penduduk.nik')
             ->select('bumil.id', 'bumil.stunting', 'penduduk.nik', 'penduduk.nama', 'penduduk.kecamatan', 'penduduk.kelurahan')
+            ->orderBy('bumil.created_at', 'desc')
             ->get();
+    
         return Inertia::render('Bumil/Index', [
             'bumils' => $bumils,
         ]);
     }
+    
 
     public function create(Request $request)
     {

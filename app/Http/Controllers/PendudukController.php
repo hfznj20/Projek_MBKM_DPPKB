@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Penduduk;
 use Illuminate\Http\Request;
+use App\Models\Bumil;
+use App\Models\Baduta;
+use App\Models\Catin;
+use App\Models\Pasper;
 
 class PendudukController extends Controller
 {
     public function index()
     {
-        $penduduks = Penduduk::all();
+        $penduduks = Penduduk::orderBy('created_at', 'desc')->get();
+
         return Inertia::render('Penduduk/Index', [
             'penduduks' => $penduduks,
         ]);
@@ -71,7 +76,6 @@ class PendudukController extends Controller
         ]);
     }   
 
-
     public function update(Request $request, $nik)
     {
         $request->validate([
@@ -89,20 +93,56 @@ class PendudukController extends Controller
         ]);
 
         $penduduk = Penduduk::where('nik', $nik)->firstOrFail();
+        $kategoriLama = $penduduk->kategori;
+        $kategoriBaru = $request->kategori;
+    
+        // Jika kategori berubah, hapus data lama di tabel kategori sebelumnya
+        if ($kategoriLama !== $kategoriBaru) {
+            match ($kategoriLama) {
+                'BUMIL' => \App\Models\Bumil::where('penduduk_nik', $nik)->delete(),
+                'BADUTA' => \App\Models\Baduta::where('penduduk_nik', $nik)->delete(),
+                'CATIN' => \App\Models\Catin::where('penduduk_nik', $nik)->delete(),
+                'Pasca Persalinan' => \App\Models\Pasper::where('penduduk_nik', $nik)->delete(),
+                default => null,
+            };
+        }
+
         $penduduk->update($request->all());
 
-        return redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil diperbarui');
+        return match ($penduduk->kategori) {
+            'CATIN' => Inertia::location(route('catin.create', ['nik' => $penduduk->nik])),
+            'BUMIL' => Inertia::location(route('bumil.create', ['nik' => $penduduk->nik])),
+            'Pasca Persalinan' => Inertia::location(route('pasper.create', ['nik' => $penduduk->nik])),
+            'Penduduk' => Inertia::location(route('penduduk.index')),
+            default => redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil disimpan'),
+        };
     }
 
 
     public function destroy($nik)
     {
         $penduduk = Penduduk::where('nik', $nik)->firstOrFail();
+
+        if (!$penduduk) {
+            return back()->withErrors(['error' => 'Data penduduk tidak ditemukan.']);
+        }
+
+        $kategori = $penduduk->kategori;
+
+        // Hapus dari tabel kategori jika ada
+        match ($kategori) {
+            'BUMIL' => Bumil::where('penduduk_nik', $nik)->delete(),
+            'BADUTA' => Baduta::where('penduduk_nik', $nik)->delete(),
+            'CATIN' => Catin::where('penduduk_nik', $nik)->delete(),
+            'Pasca Persalinan' => Pasper::where('penduduk_nik', $nik)->delete(),
+            default => null,
+        };
+
+        // Hapus dari tabel penduduk
         $penduduk->delete();
 
-        return redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil dihapus');
+        return redirect()->back()->with('success', 'Data berhasil dihapus.');
     }
-
 
     public function searchIbu(Request $request, $nik)
     {
@@ -120,7 +160,6 @@ class PendudukController extends Controller
             ]);
         }
     }
-
 
     public function cekNIK(Request $request)
     {

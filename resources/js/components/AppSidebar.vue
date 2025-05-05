@@ -110,16 +110,16 @@ const mainNavItems: NavItem[] = [
     guard: ['TPK']
   },
   {
-      title: 'Catin',
-      href: '/catin',
-      icon: UserRound,
-      guard: ['TPK']
-  },
-  {
     title: 'Pasca Persalinan',
     href: '/pasper',
     icon: Baby,
     guard: ['TPK'],
+  },
+  {
+      title: 'Catin',
+      href: '/catin',
+      icon: UserRound,
+      guard: ['TPK']
   }
   ];
 const footerNavItems: NavItem[] = [

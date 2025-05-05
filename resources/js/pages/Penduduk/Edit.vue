@@ -4,6 +4,7 @@ import { Head, useForm } from '@inertiajs/vue3';
 import { ref, onMounted } from 'vue';
 import { BreadcrumbItem } from '@/types';
 import { router } from '@inertiajs/vue3';
+import { Inertia } from '@inertiajs/inertia';
 
 type Kecamatan = 'Ujung' | 'Bacukiki' | 'Bacukiki Barat' | 'Soreang';
 
@@ -67,9 +68,16 @@ onMounted(() => {
   onKecamatanChange();
 });
 
+const errors = ref<string[]>([]);
 const submitForm = () => {
-    form.put(`/penduduk/${form.nik}`, {
-    preserveScroll: true,
+  form.put(`/penduduk/${form.nik}`, {
+    onSuccess: () => {
+      const kategori = form.kategori.toLowerCase().replace(/\s+/g, '-');
+      Inertia.visit(`/${kategori}/create?nik=${form.nik}`);
+    },
+    onError: () => {
+      errors.value = Object.values(form.errors).flat();
+    }
   });
 };
 </script>
@@ -152,10 +160,9 @@ const submitForm = () => {
           <select v-model="form.kategori" class="form-select" id="kategori" required>
             <option value="">-- Pilih Kategori --</option>
             <option value="Penduduk">Penduduk</option>
-            <option value="CATIN">CATIN</option>
             <option value="BUMIL">BUMIL</option>
-            <option value="BADUTA">BADUTA</option>
-            <option value="Pasca Persalinan">Pasper</option>
+            <option value="Pasca Persalinan">Pasca Persalinan</option>
+            <option value="CATIN">CATIN</option>
           </select>
         </div>
 

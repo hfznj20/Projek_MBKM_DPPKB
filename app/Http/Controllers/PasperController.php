@@ -13,17 +13,24 @@ class PasperController extends Controller
 {
     public function index()
     {
-        // Mengambil data dari pasca_persalinan dan penduduk
         $pasca_persalinan = DB::table('pasca_persalinan')
             ->join('penduduk', 'pasca_persalinan.penduduk_nik', '=', 'penduduk.nik')
-            ->select('pasca_persalinan.id', 'pasca_persalinan.tanggal_persalinan', 'penduduk.nik', 'penduduk.nama', 'penduduk.kecamatan', 'penduduk.kelurahan')
+            ->select(
+                'pasca_persalinan.id',
+                'pasca_persalinan.tanggal_persalinan',
+                'penduduk.nik',
+                'penduduk.nama',
+                'penduduk.kecamatan',
+                'penduduk.kelurahan'
+            )
+            ->orderBy('pasca_persalinan.created_at', 'desc')
             ->get();
-
-
+    
         return Inertia::render('Pasper/Index', [
             'pasper' => $pasca_persalinan,
         ]);
     }
+    
 
     public function create(Request $request)
     {
