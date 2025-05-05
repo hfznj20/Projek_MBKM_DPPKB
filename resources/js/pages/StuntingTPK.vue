@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { EyeIcon, TrashIcon } from '@heroicons/vue/24/outline';
+import { EyeIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import { type BreadcrumbItem } from '@/types';
 import { useRouter } from 'vue-router';
@@ -46,13 +46,6 @@ const viewData = (id: number) => {
   router.push({ name: 'baduta-detail', params: { id } });
 };
 
-
-// Aksi hapus
-const hapusData = (id: number) => {
-  if (confirm(`Apakah Anda yakin ingin menghapus data dengan ID: ${id}?`)) {
-    stuntingData.value = stuntingData.value.filter((data) => data.id !== id);
-  }
-};
 </script>
 
 <template>
@@ -120,9 +113,6 @@ const hapusData = (id: number) => {
               <td class="px-4 py-3 flex items-center space-x-2">
                 <button @click="viewData(data.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />
-                </button>
-                <button @click="hapusData(data.id)" class="text-red-600 hover:text-red-800" title="Hapus">
-                  <TrashIcon class="w-5 h-5" />
                 </button>
               </td>
             </tr>

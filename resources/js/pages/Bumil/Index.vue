@@ -5,10 +5,10 @@ import { Head, usePage } from '@inertiajs/vue3';
 import { type BreadcrumbItem } from '@/types';
 import { EyeIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
-import { useRouter } from 'vue-router';
+import { Inertia } from '@inertiajs/inertia';
 
 interface Bumil {
-  nik: number;
+  nik: string;
   nama: string;
   kecamatan: string;
   kelurahan: string;
@@ -34,25 +34,16 @@ const filteredBumils = computed(() => {
   );
 });
 
-const successMessage = ref('');
-
-// Menambahkan fungsi untuk view data
-const router = useRouter();
-
-const viewData = (id: number) => {
-  // Arahkan ke halaman detail dengan parameter id
-  router.push({ name: 'baduta-detail', params: { id } });
+const viewData = (nik: string) => {
+  Inertia.visit(`/bumil/${nik}`);
 };
 
-const deletebumil = async (_id: number) => {
+const deletebumil = async (nik: string) => {
   if (!confirm('Yakin mau hapus?')) return;
-  try {
-    successMessage.value = 'Data berhasil dihapus';
-    // fetch ulang data jika perlu
-  } catch (error) {
-    console.error('Gagal menghapus data:', error);
-  }
+  Inertia.delete(`/bumil/${nik}`);
 };
+
+
 </script>
 
 <template>

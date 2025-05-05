@@ -5,10 +5,9 @@ import { Head, usePage } from '@inertiajs/vue3';
 import type { BreadcrumbItem } from '@/types';
 import { EyeIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
-import { useRouter } from 'vue-router';
+import { Inertia } from '@inertiajs/inertia';
 
 interface Baduta {
-  id: number;
   nik: string;
   nama: string;
   kecamatan: string;
@@ -37,21 +36,16 @@ const filteredBaduta = computed(() => {
   });
 });
 
-// Menambahkan fungsi untuk view data
-const router = useRouter();
 
-const viewData = (id: number) => {
-  // Arahkan ke halaman detail dengan parameter id
-  router.push({ name: 'baduta-detail', params: { id } });
+const viewData = (nik: string) => {
+  Inertia.visit(`/baduta/${nik}`);
 };
 
-const hapusData = (id: number) => {
-  const confirmDelete = confirm(`Yakin ingin menghapus data dengan ID: ${id}?`);
-  if (confirmDelete) {
-    // Kirim request hapus menggunakan Inertia atau fetch
-    console.log('Hapus data ID', id);
-  }
+const hapusData = async (nik: string) => {
+  if (!confirm('Yakin mau hapus?')) return;
+  Inertia.delete(`/baduta/${nik}`);
 };
+
 </script>
 
 <template>
@@ -109,7 +103,7 @@ const hapusData = (id: number) => {
             <tr v-if="filteredBaduta.length === 0" class="text-center text-gray-500">
               <td colspan="8" class="px-4 py-4">Tidak ada data baduta.</td>
             </tr>
-            <tr v-for="(baduta, index) in filteredBaduta" :key="baduta.id" class="border-t hover:bg-gray-50">
+            <tr v-for="(baduta, index) in filteredBaduta" :key="baduta.nik" class="border-t hover:bg-gray-50">
               <td class="px-4 py-2">{{ index + 1 }}</td>
               <td class="px-4 py-2">{{ baduta.nik }}</td>
               <td class="px-4 py-2">{{ baduta.nama }}</td>
@@ -118,11 +112,11 @@ const hapusData = (id: number) => {
               <td class="px-4 py-2">{{ baduta.kelurahan }}</td>
               <td class="px-4 py-2">{{ baduta.stunting }}</td>
               <td class="px-4 py-2 space-x-2 flex items-center">
-                <button @click="viewData(baduta.id)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
+                <button @click="viewData(baduta.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />
                 </button>
 
-                <button @click="hapusData(baduta.id)" class="text-red-600 hover:text-red-800" title="Hapus">
+                <button @click="hapusData(baduta.nik)" class="text-red-600 hover:text-red-800" title="Hapus">
                   <TrashIcon class="w-5 h-5" />
                 </button>
               </td>

@@ -4,11 +4,11 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { type BreadcrumbItem } from '@/types';
 import { EyeIcon, TrashIcon } from '@heroicons/vue/24/outline';
-import { useRouter } from 'vue-router';
+import { Inertia } from '@inertiajs/inertia';
 
 interface Pasper {
   tanggal_persalinan: string;
-  nik: number;
+  nik: string;
   kecamatan: string;
   kelurahan: string;
   nama: string;
@@ -22,24 +22,16 @@ const breadcrumbs: BreadcrumbItem[] = [
 const { props } = usePage();
 const paspers = ref<Pasper[]>(props.pasper as Pasper[]);
 
-const successMessage = ref('');
 
-// Menambahkan fungsi untuk view data
-const router = useRouter();
-
-const viewData = (nik: number) => {
-  // Arahkan ke halaman detail dengan parameter nik
-  router.push({ name: 'baduta-detail', params: { nik } });
+const viewData = (nik: string) => {
+  Inertia.visit(`/pasper/${nik}`);
 };
-const deletePasper = async (_nik: number) => {
+
+const deletePasper = async (nik: string) => {
   if (!confirm('Yakin mau hapus?')) return;
-  try {
-    successMessage.value = 'Data berhasil dihapus';
-    // reload data if needed
-  } catch (error) {
-    console.error('Gagal menghapus data:', error);
-  }
+  Inertia.delete(`/pasper/${nik}`);
 };
+
 const search = ref('');
 const searchCategory = ref('nik');
 
@@ -52,10 +44,6 @@ const searchCategory = ref('nik');
       <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl">
         Data Pasca Persalinan
       </h1>
-
-      <div v-if="successMessage" class="bg-green-100 text-green-800 px-4 py-2 rounded mt-4">
-        {{ successMessage }}
-      </div>
 
       <!-- Search -->
       <div class="flex flex-col md:flex-row justify-between mb-4 mt-4 space-y-6 md:space-y-0 md:space-x-6">

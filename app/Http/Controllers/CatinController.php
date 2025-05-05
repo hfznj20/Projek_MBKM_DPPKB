@@ -6,13 +6,13 @@ use App\Models\Catin;
 use App\Models\Penduduk;
 use Illuminate\Http\Request;
 use App\Models\TPK;
+use Inertia\Inertia;
 
 class CatinController extends Controller
 {
     public function index()
     {
-        $catins = Catin::all();
-        return view('catin.index', compact('catins'));
+        return Inertia::render('Catin/Index');
     }
 
     public function create($penduduk_id)

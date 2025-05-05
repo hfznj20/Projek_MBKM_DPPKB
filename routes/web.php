@@ -64,6 +64,9 @@ Route::get('/baduta', [BadutaController::class, 'index'])->name('baduta.index');
 Route::get('/baduta/create', [BadutaController::class, 'create'])->name('baduta.create');
 Route::post('/baduta', [BadutaController::class, 'store'])->name('baduta.store');
 Route::get('/Baduta/Index', [BadutaController::class, 'index']);
+Route::delete('/baduta/{nik}', [BadutaController::class, 'destroy'])->name('baduta.destroy');
+Route::get('/baduta/{nik}', [BadutaController::class, 'show'])->name('baduta.show');
+Route::delete('/baduta/{nik}', [BadutaController::class, 'destroy'])->name('baduta.destroy');
 
 // PASPER CRUD
 Route::resource('pasper', PasperController::class);
@@ -71,6 +74,8 @@ Route::get('/pasper', [PasperController::class, 'index'])->name('pasper.index');
 Route::get('/pasper/create', [PasperController::class, 'create'])->name('pasper.create');
 Route::post('/pasper', [PasperController::class, 'store'])->name('pasper.store');
 Route::get('/Pasper/Index', [PasperController::class, 'index']);
+Route::get('/pasper/{nik}', [PasperController::class, 'show'])->name('pasper.show');
+Route::delete('/pasper/{nik}', [PasperController::class, 'destroy'])->name('pasper.destroy');
 
 // CATIN CRUD
 Route::get('/catin', [CatinController::class, 'index'])->name('catin.index');
@@ -83,10 +88,12 @@ Route::get('/bumil', [BumilController::class, 'index'])->name('bumil.index');
 Route::get('/bumil/create', [BumilController::class, 'create'])->name('bumil.create');
 Route::post('/bumil', [BumilController::class, 'store'])->name('bumil.store');
 Route::get('/Bumil/Index', [BumilController::class, 'index']);
+Route::get('/bumil/{nik}', [BumilController::class, 'show'])->name('bumil.show');
+Route::delete('/bumil/{nik}', [BumilController::class, 'destroy'])->name('bumil.destroy');
 
-//cek nama ibu berdasarkan nik
-Route::get('/cek-ibu/{nik}', [PendudukController::class, 'searchIbu']);
-Route::post('/cek-nik', [PendudukController::class, 'cekNIK']);
+// Cek nama ibu berdasarkan NIK
+Route::get('/cek-ibu/{nik}', [PendudukController::class, 'searchIbu'])->name('cek-ibu');
+Route::post('/cek-nik', [PendudukController::class, 'cekNIK'])->name('cek-nik');
 
 
 // Form Static Rendering (jika masih dibutuhkan untuk shortcut saja)

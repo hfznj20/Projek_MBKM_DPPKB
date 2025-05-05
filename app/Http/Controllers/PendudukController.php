@@ -33,7 +33,7 @@ class PendudukController extends Controller
             'RW' => 'required',
             'alamat' => 'required',
             'no_hp' => 'required',
-            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk',
+            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk, penduduk',
         ]);
 
         $penduduk = Penduduk::create([
@@ -55,7 +55,9 @@ class PendudukController extends Controller
             'CATIN' => Inertia::location(route('catin.create', ['nik' => $penduduk->nik])),
             'BUMIL' => Inertia::location(route('bumil.create', ['nik' => $penduduk->nik])),
             'Pasca Persalinan' => Inertia::location(route('pasper.create', ['nik' => $penduduk->nik])),
+            'penduduk' => redirect()->route('baduta.create', ['penduduk_nik' => $penduduk->nik]),
             'Penduduk' => Inertia::location(route('penduduk.index')),
+            default => redirect()->route('penduduk.index')
         };
     }
 
@@ -81,7 +83,7 @@ class PendudukController extends Controller
             'RW' => 'required',
             'alamat' => 'required',
             'no_hp' => 'required',
-            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk',
+            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk,penduduk',
         ]);
 
         $penduduk = Penduduk::where('nik', $nik)->firstOrFail();
