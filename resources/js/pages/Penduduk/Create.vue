@@ -51,7 +51,6 @@ const submitForm = () => {
   form.post('/penduduk', {
     onSuccess: () => {
       let kategoriPath = form.kategori.toLowerCase().replace(/\s+/g, '-');
-      // Gunakan Inertia.visit agar sesuai dengan ekosistem Inertia
       Inertia.visit(`/${kategoriPath}/create?nik=${form.nik}`);
     },
     onError: () => {
@@ -151,7 +150,7 @@ const submitForm = () => {
             <option value="CATIN">CATIN</option>
             <option value="BUMIL">BUMIL</option>
             <option value="BADUTA">BADUTA</option>
-            <option value="Pasca Persalinan">Pasper</option>
+            <option value="Pasca Persalinan">Pasca Persalinan</option>
           </select>
         </div>
 

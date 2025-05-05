@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { type BreadcrumbItem } from '@/types';
-import { EyeIcon, TrashIcon } from '@heroicons/vue/24/outline';
+import { EyeIcon } from '@heroicons/vue/24/outline';
 import { Inertia } from '@inertiajs/inertia';
 
 interface Pasper {
@@ -22,19 +22,21 @@ const breadcrumbs: BreadcrumbItem[] = [
 const { props } = usePage();
 const paspers = ref<Pasper[]>(props.pasper as Pasper[]);
 
+const search = ref('');
+const searchCategory = ref('nama');
+
+const filteredpaspers = computed(() => {
+  const keyword = search.value.toLowerCase();
+  const category = searchCategory.value;
+  
+  return paspers.value.filter((pasper) => {
+    return String(pasper[category as keyof Pasper]).toLowerCase().includes(keyword);
+  });
+});
 
 const viewData = (nik: string) => {
   Inertia.visit(`/pasper/${nik}`);
 };
-
-const deletePasper = async (nik: string) => {
-  if (!confirm('Yakin mau hapus?')) return;
-  Inertia.delete(`/pasper/${nik}`);
-};
-
-const search = ref('');
-const searchCategory = ref('nik');
-
 </script>
 
 <template>
@@ -73,7 +75,8 @@ const searchCategory = ref('nik');
           </svg>
         </div>
       </div>
-
+      
+      <!-- Table -->
       <div class="overflow-x-auto mt-4">
         <table class="min-w-full table-auto border border-gray-300 rounded-lg">
           <thead class="bg-[#F9690C]/90 text-white">
@@ -88,11 +91,11 @@ const searchCategory = ref('nik');
             </tr>
           </thead>
           <tbody>
-            <tr v-if="paspers.length === 0">
-              <td colspan="7" class="text-center text-gray-500 py-4">Tidak ada data pasca persalinan.</td>
+            <tr v-if="filteredpaspers.length === 0" class="text-center text-gray-500">
+              <td colspan="7" class="px-4 py-4">Tidak ada data Pasca Persalinan.</td>
             </tr>
             <tr
-              v-for="(pasper, index) in paspers"
+              v-for="(pasper, index) in filteredpaspers"
               :key="pasper.nik"
               class="border-t hover:bg-gray-50"
             >
@@ -105,9 +108,6 @@ const searchCategory = ref('nik');
               <td class="px-4 py-2 space-x-2 flex items-center">
                 <button @click="viewData(pasper.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />
-                </button>
-                <button @click="deletePasper(pasper.nik)" class="text-red-600 hover:text-red-800">
-                  <TrashIcon class="w-5 h-5" />
                 </button>
               </td>
             </tr>

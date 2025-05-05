@@ -83,7 +83,7 @@ const form = useForm({
 });
 
 
-
+//longtitude
 onMounted(() => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -180,9 +180,8 @@ const submitPendudukBaru = () => {
     step.value = 1;
   },
   onError: () => {
-    // Tangani error kalau ada validasi gagal
-    console.log('Gagal menyimpan data ibu');
-  }
+  console.log(formIbu.errors); // tampilkan error validasi di console
+}
 });
 
 };
@@ -426,10 +425,10 @@ const goToNextStep = () => {
           <button type="button" class="btn btn-secondary me-2" @click="showModal = false">Batal</button>
           <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
-      </form>
-    </Modal>
-  </div>
-</AppLayout>
+        </form>
+      </Modal>
+    </div>
+  </AppLayout>
 </template>
 
 <style scoped>

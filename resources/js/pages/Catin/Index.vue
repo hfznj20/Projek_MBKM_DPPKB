@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { type BreadcrumbItem } from '@/types';
-import { EyeIcon, TrashIcon } from '@heroicons/vue/24/outline';
+import { EyeIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import { Inertia } from '@inertiajs/inertia';
 
@@ -40,12 +40,6 @@ const viewData = (id: number) => {
   Inertia.visit(`/catin/${id}`);
 };
 
-const hapusData = (id: number) => {
-  const confirmDelete = confirm(`Apakah Anda yakin ingin menghapus data catin dengan ID: ${id}?`);
-  if (confirmDelete) {
-    Inertia.delete(`/catin/${id}`);
-  }
-};
 </script>
 
 <template>
@@ -117,9 +111,6 @@ const hapusData = (id: number) => {
               <td class="px-4 py-2 space-x-2 flex items-center">
                 <button @click="viewData(data.id)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />
-                </button>
-                <button @click="hapusData(data.id)" class="text-red-600 hover:text-red-800" title="Hapus">
-                  <TrashIcon class="w-5 h-5" />
                 </button>
               </td>
             </tr>

@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { type BreadcrumbItem } from '@/types';
-import { EyeIcon, TrashIcon } from '@heroicons/vue/24/outline';
+import { EyeIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import { Inertia } from '@inertiajs/inertia';
 
@@ -24,24 +24,21 @@ const { props } = usePage();
 const bumils = ref<Bumil[]>(props.bumils as Bumil[]);
 
 const search = ref('');
-const searchCategory = ref<'nik' | 'nama'>('nama');
+const searchCategory = ref('nama');
 
 const filteredBumils = computed(() => {
   const keyword = search.value.toLowerCase();
   const category = searchCategory.value;
-  return bumils.value.filter((b) =>
-    b[category].toLowerCase().includes(keyword)
-  );
+
+  return bumils.value.filter((bumil) => {
+    return String(bumil[category as keyof Bumil]).toLowerCase().includes(keyword);
+  });
 });
 
 const viewData = (nik: string) => {
   Inertia.visit(`/bumil/${nik}`);
 };
 
-const deletebumil = async (nik: string) => {
-  if (!confirm('Yakin mau hapus?')) return;
-  Inertia.delete(`/bumil/${nik}`);
-};
 
 
 </script>
@@ -64,6 +61,8 @@ const deletebumil = async (nik: string) => {
           >
             <option value="nik">NIK</option>
             <option value="nama">Nama</option>
+            <option value="kecamatan">Kecamatan</option>
+            <option value="kelurahan">Kelurahan</option>
           </select>
         </div>
 
@@ -112,9 +111,6 @@ const deletebumil = async (nik: string) => {
               <td class="px-4 py-2 space-x-2 flex items-center">
                 <button @click="viewData(bumil.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />
-                </button>
-                <button @click="deletebumil(bumil.nik)" class="text-red-600 hover:text-red-800">
-                  <TrashIcon class="w-5 h-5" />
                 </button>
               </td>
             </tr>

@@ -47,7 +47,7 @@ const baduta = props.baduta as Baduta;
         <li><strong>Nama:</strong> {{ baduta.nama }}</li>
         <li><strong>NIK:</strong> {{ baduta.nik }}</li>
         <li><strong>Tanggal Lahir:</strong> {{ baduta.tanggal_lahir }}</li>
-        <li><strong>Usia:</strong> {{ baduta.usia }} bulan </li>
+        <li><strong>Usia:</strong> {{ baduta.usia }}</li>
         <li><strong>Jenis Kelamin:</strong> {{ baduta.jenis_kelamin }}</li>
         <li><strong>Berat Badan:</strong> {{ baduta.berat_badan }} kg</li>
         <li><strong>Tinggi Badan:</strong> {{ baduta.tinggi_badan }} cm</li>

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Inertia\Inertia;
 use App\Models\Penduduk;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ class PendudukController extends Controller
             'RW' => 'required',
             'alamat' => 'required',
             'no_hp' => 'required',
-            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk, penduduk',
+            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk,penduduk',
         ]);
 
         $penduduk = Penduduk::create([
@@ -50,14 +51,15 @@ class PendudukController extends Controller
             'kategori' => $request->kategori,
         ]);
 
+        // Redirect berdasarkan kategori
         return match ($penduduk->kategori) {
             'BADUTA' => Inertia::location(route('baduta.create', ['nik' => $penduduk->nik])),
             'CATIN' => Inertia::location(route('catin.create', ['nik' => $penduduk->nik])),
             'BUMIL' => Inertia::location(route('bumil.create', ['nik' => $penduduk->nik])),
             'Pasca Persalinan' => Inertia::location(route('pasper.create', ['nik' => $penduduk->nik])),
-            'penduduk' => redirect()->route('baduta.create', ['penduduk_nik' => $penduduk->nik]),
+            'penduduk' => Inertia::render('Baduta/Create', ['penduduk_nik' => $penduduk->nik]),
             'Penduduk' => Inertia::location(route('penduduk.index')),
-            default => redirect()->route('penduduk.index')
+            default => redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil disimpan'),
         };
     }
 
@@ -101,6 +103,7 @@ class PendudukController extends Controller
         return redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil dihapus');
     }
 
+
     public function searchIbu(Request $request, $nik)
     {
         $penduduk = Penduduk::where('nik', $nik)->first();
@@ -118,20 +121,21 @@ class PendudukController extends Controller
         }
     }
 
-    public function cekNIK(Request $request)
-{
-    $penduduk = Penduduk::where('nik', $request->nik)->first();
 
-    if ($penduduk) {
-        return response()->json([
-            'status' => 'data ada',
-            'nama' => $penduduk->nama
-        ]);
-    } else {
-        return response()->json([
-            'status' => 'data tidak ada'
-        ]);
+    public function cekNIK(Request $request)
+    {
+        $penduduk = Penduduk::where('nik', $request->nik)->first();
+
+        if ($penduduk) {
+            return response()->json([
+                'status' => 'data ada',
+                'nama' => $penduduk->nama
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'data tidak ada'
+            ]);
+        }
     }
-}
 
 }

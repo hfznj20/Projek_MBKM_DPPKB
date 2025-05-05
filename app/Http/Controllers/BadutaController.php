@@ -33,7 +33,7 @@ class BadutaController extends Controller
         ]);
     }
 
-
+    
     public function create(Request $request)
     {
         $penduduks = Penduduk::all(); // ambil semua penduduk
@@ -98,40 +98,61 @@ class BadutaController extends Controller
 
         return redirect()->route('penduduk.index')->with('success', 'Data Baduta berhasil disimpan');
     }
-
-
+    
     public function show($nik)
     {
-        $baduta = Baduta::with(['bayi', 'ibu'])->where('penduduk_nik', $nik)->firstOrFail();
+        $baduta = Baduta::with(['anak', 'ibu'])->where('penduduk_nik', $nik)->firstOrFail();
 
-        // Hitung usia anak dan ibu
-        $usia_bayi = Carbon::parse($baduta->bayi->tanggal_lahir)->diffInMonths(Carbon::now());
+        // Hitung usia anak dalam tahun dan bulan
+        $lahir_anak = Carbon::parse($baduta->anak->tanggal_lahir);
+        $now = Carbon::now();
+        $diff = $lahir_anak->diff($now);
+
+        $tahun = $diff->y;
+        $bulan = $diff->m;
+        $hari = $diff->d;
+
+        $usia_anak = '';
+        if ($tahun > 0) {
+            $usia_anak .= "{$tahun} tahun ";
+        }
+        if ($bulan > 0) {
+            $usia_anak .= "{$bulan} bulan ";
+        }
+        if ($tahun === 0 && $bulan === 0) {
+            // Jika belum genap 1 bulan
+            $usia_anak .= "{$hari} hari";
+        } elseif ($hari > 0) {
+            $usia_anak .= "{$hari} hari";
+        }
+
+        // Hitung usia ibu dalam tahun
         $usia_ibu = Carbon::parse($baduta->ibu->tanggal_lahir)->age;
-    
+
         return Inertia::render('Baduta/Show', [
             'baduta' => [
-                'nama' => $baduta->bayi->nama,
-                'nik' => $baduta->bayi->nik,
-                'tanggal_lahir' => $baduta->bayi->tanggal_lahir,
-                'usia' => $usia_bayi,
-                'jenis_kelamin' => $baduta->bayi->jenis_kelamin,
-                'alamat' => $baduta->bayi->alamat,
-                'no_hp' => $baduta->bayi->no_hp,
-    
+                'nama' => $baduta->anak->nama,
+                'nik' => $baduta->anak->nik,
+                'tanggal_lahir' => $baduta->anak->tanggal_lahir,
+                'usia' => $usia_anak,
+                'jenis_kelamin' => $baduta->anak->jenis_kelamin,
+                'alamat' => $baduta->anak->alamat,
+                'no_hp' => $baduta->anak->no_hp,
+
                 'berat_badan' => $baduta->berat_badan,
                 'tinggi_badan' => $baduta->tinggi_badan,
                 'asi_eksklusif' => $baduta->asi_eksklusif,
                 'imunisasi_hepatitis_B' => $baduta->imunisasi_hepatitis_B,
                 'mengisi_KKA' => $baduta->mengisi_KKA,
                 'meerokok_terpapar' => $baduta->meerokok_terpapar,
-    
+
                 'nama_ibu' => $baduta->ibu->nama,
                 'nik_ibu' => $baduta->ibu->nik,
                 'tanggal_lahir_ibu' => $baduta->ibu->tanggal_lahir,
                 'usia_ibu' => $usia_ibu,
                 'no_hp' => $baduta->ibu->no_hp,
                 'alamat' => $baduta->ibu->alamat,
-    
+
                 'jumlah_anak_kandung' => $baduta->jumlah_anak_kandung,
                 'tanggal_lahir_anak_terakhir' => $baduta->tanggal_lahir_anak_terakhir,
                 'menggunakan_alat_kontrasepsi' => $baduta->menggunakan_alat_kontrasepsi,
