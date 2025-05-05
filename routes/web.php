@@ -32,4 +32,14 @@ Route::get('/bumil', [UserController::class, 'index5'])->name('bumil');
 Route::get('/catin', [UserController::class, 'index6'])->name('catin');
 Route::get('/pasca-persalinan', [UserController::class, 'index7'])->name('pasca-persalinan');
 Route::get('/kinerja-tpk', [UserController::class, 'index8'])->name('kinerja-tpk');
-Route::get('/manajemen-user', [UserController::class, 'index9'])->name('manajemen-user');
+
+Route::resource('manajemen', ManajemenController::class)
+    ->parameters(['manajemen' => 'NIK'])
+    ->names([
+        'index' => 'manajemen.index',
+        'create' => 'manajemen.create',
+        'store' => 'manajemen.store',
+        'edit' => 'manajemen.edit',
+        'update' => 'manajemen.update',
+        'destroy' => 'manajemen.destroy',
+    ]);

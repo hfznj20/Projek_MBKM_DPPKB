@@ -15,36 +15,28 @@ class RoleSeeder extends Seeder
     {
         // Membuat Role
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $tpkRole   = Role::firstOrCreate(['name'=> 'TPK']);
-
-        // Membuat User Admin
+        $tpkRole = Role::firstOrCreate(['name' => 'TPK']);
+    
+        // Membuat Admin dengan NIK dan email
         $admin = User::firstOrCreate(
-            ['email' => 'admin@gmail.com'],
+            ['NIK' => '1234567890123456'],  // Admin NIK
             [
-                'name' => 'Admin',
-                'password' => bcrypt('password'),
+                'name' => 'Admin', 
+                'email' => 'admin@example.com',  // Tambahkan email
+                'password' => bcrypt('password')
             ]
         );
         $admin->assignRole($adminRole);
-
-        // Membuat User TPK
+    
+        // Membuat TPK dengan NIK dan email
         $tpk = User::firstOrCreate(
-            ['email' => 'TPK@gmail.com'],
+            ['NIK' => '9876543210987654'],  // TPK NIK
             [
-                'name' => 'TPK',
-                'password' => bcrypt('password'),
+                'name' => 'TPK', 
+                'email' => 'tpk@example.com',  // Tambahkan email
+                'password' => bcrypt('password')
             ]
         );
         $tpk->assignRole($tpkRole);
-
-        // Membuat User Muhammad Ikhlashul Amal
-        $amal = User::firstOrCreate(
-            ['email' => 'ikhlashulamal@gmail.com'],
-            [
-                'name' => 'Muhammad Ikhlashul Amal',
-                'password' => bcrypt('opalepale'),
-            ]
-        );
-        $amal->assignRole($adminRole);
     }
 }

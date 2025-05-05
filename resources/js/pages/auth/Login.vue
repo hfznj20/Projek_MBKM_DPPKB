@@ -2,9 +2,7 @@
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Head, useForm } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
 
@@ -28,29 +26,30 @@ const submit = () => {
 
 <template>
     <div class="min-h-screen flex items-center justify-center bg-[#37347E] font-Gintari p-4">
-        <!-- Form login container -->
-        <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-6 sm:p-8 flex flex-col justify-center items-center transition-all">
+        <!-- Container form login -->
+        <div class="relative w-full max-w-sm bg-white rounded-2xl shadow-lg pt-12 px-6 pb-6 flex flex-col justify-start items-center transition-all scale-95 overflow-visible">
             <Head title="Masuk" />
-            
-            <!-- Judul -->
-            <div class="flex aspect-square size-20 items-center justify-center rounded-md bg-transparent text-sidebar-primary-foreground">
-                <!-- Mengakses logo dengan latar belakang transparan -->
-                <img src="/logo.png" alt="DPPKB Logo" class="size-20 object-contain" />
+
+            <!-- Logo di atas card -->
+            <div class="absolute -top-10 flex justify-center w-full">
+                <div class="bg-white rounded-full w-20 h-20 flex items-center justify-center">
+                    <img src="/logo.png" alt="DPPKB Logo" class="w-16 h-16 object-contain" />
                 </div>
-            <h2 class="text-1xl font-semibold text-center mb-2 text-[#37347E]">DPPKB PAREPARE</h2>
-            <p class="text-sm sm:text-base text-center text-gray-500 mb-6">
-            </p>
+            </div>
+
+            <!-- Judul -->
+            <h2 class="text-base font-semibold text-center mb-2 text-[#37347E]">DPPKB PAREPARE</h2>
 
             <!-- Status message -->
-            <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
+            <div v-if="status" class="mb-2 text-center text-xs font-medium text-green-600">
                 {{ status }}
             </div>
 
             <!-- Form -->
-            <form @submit.prevent="submit" class="flex flex-col gap-4 w-full ">
+            <form @submit.prevent="submit" class="flex flex-col gap-3 w-full">
                 <!-- Email -->
-                <div class="grid gap-2">
-                    <Label for="email">ID Pengguna</Label>
+                <div class="grid gap-1">
+                    <label for="email" style="font-size: 0.8rem; text-align: center;">Email</label>
                     <Input
                         id="email"
                         type="email"
@@ -59,20 +58,15 @@ const submit = () => {
                         :tabindex="1"
                         autocomplete="email"
                         v-model="form.email"
-                        placeholder="email@contoh.com"
-                        class="w-full h-10 rounded-full border border-[#E7942A] focus:outline-none focus:border-[#E7942A] focus:ring-4 focus:ring-[#E7942A]/60 transition-all duration-300"
+                        placeholder="Pengguna@gmail.com"
+                        class="w-full h-9 rounded-full border border-[#E7942A] focus:outline-none focus:ring-2 focus:ring-[#E7942A]/40 text-xs sm:text-sm md:text-base transition-all duration-300"
                     />
                     <InputError :message="form.errors.email" />
                 </div>
 
                 <!-- Password -->
                 <div class="grid gap-1">
-                    <div class="flex items-center justify-between">
-                        <Label for="password">Kata Sandi</Label>
-                        <TextLink v-if="canResetPassword" :href="route('password.request')" class="text-sm" :tabindex="5">
-                            Lupa kata sandi?
-                        </TextLink>
-                    </div>
+                    <label for="password" style="font-size: 0.8rem; text-align: center;">Kata Sandi</label>
                     <Input
                         id="password"
                         type="password"
@@ -81,35 +75,25 @@ const submit = () => {
                         autocomplete="current-password"
                         v-model="form.password"
                         placeholder="Kata sandi"
-                        class="w-full h-10 rounded-full border border-[#E7942A] focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-300"
+                        class="w-full h-9 rounded-full border border-[#E7942A] focus:outline-none focus:ring-2 focus:ring-orange-400 text-xs sm:text-sm md:text-base transition-all duration-300"
                     />
                     <InputError :message="form.errors.password" />
                 </div>
 
-                <!-- Checkbox -->
-                <div class="flex items-center space-x-2">
-                    <Checkbox id="remember" v-model="form.remember" :tabindex="3"
-                        class="border-[#1E1E1E] hover:border-orange-500 focus:ring-2 focus:ring-orange-500 transition-colors duration-300"
-                    />
-                    <Label for="remember">Ingat saya</Label>
-                </div>
+                <TextLink v-if="canResetPassword" :href="route('password.request')" class="text-[10px]" :tabindex="5">
+                    Lupa kata sandi?
+                </TextLink>
 
-                <!-- Submit -->
+                <!-- Submit Button -->
                 <Button
                     type="submit"
-                    class="w-full mt-2 bg-orange-500 hover:bg-orange-600 text-white transition-colors duration-300 h-12 rounded-full flex items-center justify-center"
+                    class="w-full mt-1 bg-orange-500 hover:bg-orange-600 text-white transition-colors duration-300 h-10 rounded-full flex items-center justify-center text-xs"
                     :tabindex="4"
                     :disabled="form.processing"
                 >
                     <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin mr-2" />
                     Masuk
                 </Button>
-
-                <!-- Daftar -->
-                <div class="text-center text-sm text-muted-foreground mt-2">
-                    Belum punya akun?
-                    <TextLink :href="route('register')" :tabindex="5">Daftar sekarang</TextLink>
-                </div>
             </form>
         </div>
     </div>
