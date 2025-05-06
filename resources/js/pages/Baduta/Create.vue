@@ -1,32 +1,32 @@
 <script lang="ts" setup>
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { BreadcrumbItem } from '@/types';
 import axios from 'axios'; // pastikan ini diimport
 import Modal from '@/components/Modal.vue';
-import { onMounted } from 'vue'
-
-type Kecamatan = 'Ujung' | 'Bacukiki' | 'Bacukiki Barat' | 'Soreang';
 
 // Ambil 'nik' dari URL (query param)
 const penduduk_nik = ref<string>(new URLSearchParams(window.location.search).get('nik') || '');
+const namaIbu = ref<string>('');
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Baduta TPK',
-    href: '/baduta/create',
+    title: 'Tambah Data Baduta', href: '/baduta/create',
   },
 ];
 
+type Kecamatan = 'Ujung' | 'Bacukiki' | 'Bacukiki Barat' | 'Soreang';
 
+const sumberAirOptions = [
+  "Air kemasan", "Ledeng", "Sumur bor", "Sumur terlindungi", "Sumur tak terlindungi",
+  "Mata air terlindungi", "Mata air tak terlindungi", "Air permukaan", "Air hujan", "Lainnya"
+];
 
-
-
-const goToFormPendudukBaru = () => {
-  showModal.value = true; // Menampilkan modal untuk input data ibu
-};
+const fasilitasBABOptions = [
+  "Jamban milik sendiri", "Jamban pada MCK", "Lainnya", "Tidak Ada"
+];
 
 const kelurahanMap: Record<Kecamatan, string[]> = {
   Ujung: ['Kelurahan Ujung A', 'Kelurahan Ujung B', 'Kelurahan Ujung C'],
@@ -35,6 +35,8 @@ const kelurahanMap: Record<Kecamatan, string[]> = {
   Soreang: ['Kelurahan Soreang A', 'Kelurahan Soreang B', 'Kelurahan Soreang C']
 };
 
+const kelurahanOptions = ref<string[]>([]);
+
 const onKecamatanChange = () => {
   const selected = formIbu.kecamatan;
   kelurahanOptions.value = selected && kelurahanMap[selected as Kecamatan]
@@ -42,23 +44,9 @@ const onKecamatanChange = () => {
     : [];
 };
 
-const kelurahanOptions = ref<string[]>([]);
-const step = ref(1);
-const errors = ref<string[]>([]);
-
-
-
-// Opsi dropdown
-const sumberAirOptions = [
-  "Air kemasan", "Ledeng", "Sumur bor", "Sumur terlindungi", "Sumur tak terlindungi",
-  "Mata air terlindungi", "Mata air tak terlindungi", "Air permukaan", "Air hujan", "Lainnya"
-];
-const fasilitasBABOptions = [
-  "Jamban milik sendiri", "Jamban pada MCK", "Lainnya", "Tidak Ada"
-];
-
 // Form state
 const form = useForm({
+  penduduk_nik: penduduk_nik.value,
   penduduk_ibu_nik: '',
   jumlah_anak_kandung: 0,
   tanggal_lahir_anak_terakhir: '',
@@ -79,9 +67,14 @@ const form = useForm({
   penyuluhan_KIE: '',
   fasilitas_bantuan_sosial: '',
   stunting: '',
-  penduduk_nik: penduduk_nik.value,
 });
 
+const goToFormPendudukBaru = () => {
+  showModal.value = true; // Menampilkan modal untuk input data ibu
+};
+
+const step = ref(1);
+const errors = ref<string[]>([]);
 
 //longtitude
 onMounted(() => {
@@ -99,6 +92,74 @@ onMounted(() => {
     console.warn('Geolocation tidak didukung browser ini.')
   }
 })
+
+
+
+
+// Modal
+const showModal = ref(false);
+
+const formIbu = useForm({
+    nik: '',
+  nama: '',
+  tanggal_lahir: '',
+  jenis_kelamin: '',
+  kecamatan: '' ,
+  kelurahan: '',
+  RT: '',
+  RW: '',
+  alamat: '',
+  no_hp: '',
+  kategori: 'penduduk'
+});
+
+// Cek NIK ibu
+const checkNIK = async () => {
+  try {
+    const response = await axios.post('/cek-nik', {
+      nik: form.penduduk_ibu_nik
+    });
+    
+    if (response.data.status === 'data ada') {
+      namaIbu.value = response.data.nama;
+    } else {
+      namaIbu.value = '';
+      alert("Data tidak ada");
+    }
+  } catch (error: unknown) {
+    namaIbu.value = '';
+    if (axios.isAxiosError(error)) {
+      alert("Terjadi kesalahan: " + error.message);
+    } else {
+      alert("Terjadi kesalahan tidak diketahui");
+    }
+  }
+};
+
+const submitPendudukBaru = () => {
+    formIbu.post('/penduduk', {
+      preserveScroll: true,
+      preserveState: true,
+      onSuccess: () => {
+        form.penduduk_ibu_nik = formIbu.nik;
+        namaIbu.value = formIbu.nama;
+        showModal.value = false;
+        step.value = 1;
+      },
+      onError: () => {
+        console.log(formIbu.errors); // tampilkan error validasi di console
+      }
+    });
+
+};
+
+const goToNextStep = () => {
+  if (step.value === 1 && (!form.penduduk_ibu_nik || !namaIbu.value)) {
+    alert('Silakan isi dan cek NIK Ibu terlebih dahulu.');
+    return;
+  }
+  step.value++;
+};
 
 const submitForm = () => {
   errors.value = [];
@@ -142,82 +203,6 @@ const submitForm = () => {
   });
 };
 
-
-const namaIbu = ref<string>('');
-
-// Modal
-const showModal = ref(false);
-// function handleNext() {
-//   // Pastikan data ibu telah disimpan dan modal tertutup
-//   form.penduduk_ibu_nik = formIbu.nik; // Menyimpan NIK ibu dari form Ibu
-//   namaIbu.value = formIbu.nama; // Menyimpan nama ibu
-//   showModal.value = false; // Menutup modal setelah data disimpan
-//   step.value = 2; // Melanjutkan ke langkah berikutnya
-// }
-const formIbu = useForm({
-    nik: '',
-  nama: '',
-  tanggal_lahir: '',
-  jenis_kelamin: '',
-  kecamatan: '' ,
-  kelurahan: '',
-  RT: '',
-  RW: '',
-  alamat: '',
-  no_hp: '',
-  kategori: 'penduduk'
-});
-
-
-const submitPendudukBaru = () => {
-    formIbu.post('/penduduk', {
-  preserveScroll: true,
-  preserveState: true,
-  onSuccess: () => {
-    form.penduduk_ibu_nik = formIbu.nik;
-    namaIbu.value = formIbu.nama;
-    showModal.value = false;
-    step.value = 1;
-  },
-  onError: () => {
-    console.log(formIbu.errors); // tampilkan error validasi di console
-  }
-});
-
-};
-
-// Cek NIK ibu
-const checkNIK = async () => {
-  try {
-    const response = await axios.post('/cek-nik', {
-      nik: form.penduduk_ibu_nik
-    });
-
-    if (response.data.status === 'data ada') {
-      namaIbu.value = response.data.nama;
-    } else {
-      namaIbu.value = '';
-      alert("Data tidak ada");
-    }
-  } catch (error: unknown) {
-    namaIbu.value = '';
-    if (axios.isAxiosError(error)) {
-      alert("Terjadi kesalahan: " + error.message);
-    } else {
-      alert("Terjadi kesalahan tidak diketahui");
-    }
-  }
-};
-
-const goToNextStep = () => {
-  if (step.value === 1 && (!form.penduduk_ibu_nik || !namaIbu.value)) {
-    alert('Silakan isi dan cek NIK Ibu terlebih dahulu.');
-    return;
-  }
-  step.value++;
-};
-
-
 </script>
 
 <template>
@@ -226,7 +211,13 @@ const goToNextStep = () => {
     <div class="container mt-5">
       <h2 class="mb-4">Tambah Data Penduduk Baduta</h2>
 
-
+      <!-- Error Message -->
+      <div v-if="errors.length" class="alert alert-danger">
+        <ul>
+          <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+        </ul>
+      </div>
+      
       <form @submit.prevent="submitForm">
           <!-- Step 1 -->
           <div v-if="step === 1">
@@ -239,8 +230,8 @@ const goToNextStep = () => {
             <label>NIK Ibu:</label>
             <input v-model="form.penduduk_ibu_nik" type="text" />
             <div style="display: flex; gap: 10px; margin-top: 5px;">
-              <button type="button" @click="checkNIK">Cek</button>
-              <button type="button" @click="goToFormPendudukBaru">Data Baru</button>
+              <button type="button" @click="checkNIK">Cek Data Ibu</button>
+              <button type="button" @click="goToFormPendudukBaru">Tambah Data Baru</button>
             </div>
             <p v-if="namaIbu"><strong>Nama Ibu:</strong> {{ namaIbu }}</p>
           </div>
@@ -286,35 +277,6 @@ const goToNextStep = () => {
                 <option v-for="option in fasilitasBABOptions" :key="option" :value="option">{{ option }}</option>
                 </select>
             </div>
-
-            <div><label>NIK Anak (dari URL):</label><input v-model="form.penduduk_nik" type="text" disabled /></div>
-            <div><label>Berat Badan (kg):</label><input v-model.number="form.berat_badan" type="number" step="0.01" required /></div>
-            <div><label>Tinggi Badan (cm):</label><input v-model.number="form.tinggi_badan" type="number" step="0.1" required /></div>
-            <div><label>Urutan Anak:</label><input v-model.number="form.urutan_anak" type="number" required /></div>
-            <div><label>Umur Kehamilan Saat Lahir (minggu):</label><input v-model.number="form.umur_kehamilan_saat_lahir" type="number" required /></div>
-            <div>
-                <label>ASI Eksklusif?</label><br>
-                <label><input type="radio" value="Ya" v-model="form.asi_eksklusif" /> Ya</label>
-                <label><input type="radio" value="Tidak" v-model="form.asi_eksklusif" /> Tidak</label>
-            </div>
-            <div>
-                <label>Imunisasi Hepatitis B?</label><br>
-                <label><input type="radio" value="Ya" v-model="form.imunisasi_hepatitis_B" /> Ya</label>
-                <label><input type="radio" value="Tidak" v-model="form.imunisasi_hepatitis_B" /> Tidak</label>
-            </div>
-            <div>
-                <label>Terpapar Rokok?</label><br>
-                <label><input type="radio" value="Ya" v-model="form.merokok_terpapar" /> Ya</label>
-                <label><input type="radio" value="Tidak" v-model="form.merokok_terpapar" /> Tidak</label>
-            </div>
-            <div>
-                <label>Mengisi KKA?</label><br>
-                <label><input type="radio" value="Ya" v-model="form.mengisi_KKA" /> Ya</label>
-                <label><input type="radio" value="Tidak" v-model="form.mengisi_KKA" /> Tidak</label>
-            </div>
-
-            <button type="button" @click="step--">Back</button>
-            <button type="button" @click="step++">Next</button>
             <div><label>NIK Anak (dari URL):</label><input v-model="form.penduduk_nik" type="text" disabled /></div>
             <div><label>Berat Badan (kg):</label><input v-model.number="form.berat_badan" type="number" step="0.01" required /></div>
             <div><label>Tinggi Badan (cm):</label><input v-model.number="form.tinggi_badan" type="number" step="0.1" required /></div>
@@ -348,7 +310,6 @@ const goToNextStep = () => {
 
 
         <!-- Step 3 -->
-        <div v-if="step === 4">
         <div v-if="step === 4">
           <h2>Data Pendampingan Bulanan</h2>
           <!-- <div><label>Longitude:</label><input v-model.number="form.longitude" type="number" step="0.000001" required /></div>

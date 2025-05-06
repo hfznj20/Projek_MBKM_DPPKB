@@ -11,30 +11,23 @@ use Illuminate\Support\Facades\Log;
 
 class CatinController extends Controller
 {
-    public function __construct()
-    {
-        // Middleware auth jika diperlukan
-        // $this->middleware('auth');
-    }
-
-    // Menampilkan semua data catin
     public function index()
     {
-        $catins = Catin::all();
-        return view('catin.index', compact('catins'));
-    }
+        $catins = Catin::orderBy('created_at', 'desc')->get();
 
-    // Menampilkan form pendaftaran catin berdasarkan penduduk yang dipilih
+        return Inertia::render('Catin/Index', [
+            'catins' => $catins,
+        ]);
+    }
+    
     public function create(Request $request)
     {
         $penduduks = Penduduk::all();
 
-        // Ambil data catin berdasarkan NIK (jika ada)
         $catin = null;
         if ($request->nik) {
             $catin = Penduduk::where('nik', $request->nik)->first();
         }
-
         return Inertia::render('Catin/Create', [
             'penduduks' => $penduduks,
             'penduduk_nik' => $request->nik,
@@ -42,7 +35,7 @@ class CatinController extends Controller
         ]);
     }
 
-    // Menyimpan data catin
+    
     public function store(Request $request)
     {
         Log::info($request->all());
@@ -63,14 +56,12 @@ class CatinController extends Controller
             'longitude' => 'required|numeric',
             'latitude' => 'required|numeric',
             'fasilitas_bantuan_sosial' => 'nullable|string',
-            // 'stunting' => 'required|string',
         ]);
 
         // Cek apakah pasangan kedua sudah ada
         $pasangan_kedua = Penduduk::where('nik', $request->nik_catin2)->first();
 
         if (!$pasangan_kedua) {
-            // Jika belum ada, buat baru (opsional)
             $pasangan_kedua = Penduduk::create([
                 'nik' => $request->nik,
                 'nama' => $request->nama,
@@ -85,7 +76,6 @@ class CatinController extends Controller
             ]);
         }
 
-        // Simpan data catin
         Catin::create([
             'nik_catin1' => $request->nik_catin1,
             'nik_catin2' => $request->nik_catin2,
@@ -101,13 +91,11 @@ class CatinController extends Controller
             'longitude' => $request->longitude,
             'latitude' => $request->latitude,
             'fasilitas_bantuan_sosial' => $request->fasilitas_bantuan_sosial,
-            // 'stunting' => $request->stunting,
         ]);
 
         return redirect()->route('penduduk.index')->with('success', 'Data Catin berhasil disimpan');
     }
 
-    // Menyimpan data pasangan baru jika belum ada di DB
     public function storePasanganBaru(Request $request)
     {
         $request->validate([
