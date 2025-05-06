@@ -12,15 +12,9 @@ class Catin extends Model
     protected $table = 'catin';
 
     protected $fillable = [
-        'penduduk_id',
-        'nama',
-        'jenis_kelamin',
-        'tanggal_lahir',
-        'kelurahan',
-        'kecamatan',
-        'RT',
-        'RW',
-        'alamat',
+        'nik_catin1',
+        'nik_catin2',
+        'tanggal_pernikahan',
         'tinggi_badan',
         'berat_badan',
         'indeks_massa_tubuh',
@@ -40,9 +34,21 @@ class Catin extends Model
         'fasilitas_bantuan_sosial',
     ];
 
-    // Relasi
+    // Relasi dengan pasangan pertama
+    public function catin1()
+    {
+        return $this->belongsTo(Penduduk::class, 'pasangan_pertama_nik', 'nik');
+    }
+
+    // Relasi dengan pasangan kedua
+    public function catin2()
+    {
+        return $this->belongsTo(Penduduk::class, 'pasangan_kedua_nik', 'nik');
+    }
+
+    // Relasi dengan data ibu jika ada
     public function penduduk()
     {
-        return $this->belongsTo(Penduduk::class);
+        return $this->belongsTo(Penduduk::class, 'penduduk_nik', 'nik');
     }
 }

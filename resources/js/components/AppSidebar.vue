@@ -79,7 +79,7 @@ const mainNavItems: NavItem[] = [
   },
   {
     title: 'Manajemen User',
-    href: '/manajemen-user',
+    href: '/manajemen',
     icon: Settings,
     guard: ['admin']
   },

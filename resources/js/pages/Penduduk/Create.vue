@@ -78,7 +78,8 @@ const submitForm = () => {
       <form @submit.prevent="submitForm">
         <div class="mb-3">
           <label for="nik" class="form-label">nik</label>
-          <input v-model="form.nik" type="text" class="form-control" id="nik" required />
+          <input v-model="form.nik" type="text" class="form-control" id="nik" required maxlength="16"/>
+        
         </div>
 
         <div class="mb-3">

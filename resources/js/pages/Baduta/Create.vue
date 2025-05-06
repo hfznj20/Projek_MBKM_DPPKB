@@ -315,10 +315,40 @@ const goToNextStep = () => {
 
             <button type="button" @click="step--">Back</button>
             <button type="button" @click="step++">Next</button>
+            <div><label>NIK Anak (dari URL):</label><input v-model="form.penduduk_nik" type="text" disabled /></div>
+            <div><label>Berat Badan (kg):</label><input v-model.number="form.berat_badan" type="number" step="0.01" required /></div>
+            <div><label>Tinggi Badan (cm):</label><input v-model.number="form.tinggi_badan" type="number" step="0.1" required /></div>
+            <div><label>Urutan Anak:</label><input v-model.number="form.urutan_anak" type="number" required /></div>
+            <div><label>Umur Kehamilan Saat Lahir (minggu):</label><input v-model.number="form.umur_kehamilan_saat_lahir" type="number" required /></div>
+            <div>
+                <label>ASI Eksklusif?</label><br>
+                <label><input type="radio" value="Ya" v-model="form.asi_eksklusif" /> Ya</label>
+                <label><input type="radio" value="Tidak" v-model="form.asi_eksklusif" /> Tidak</label>
+            </div>
+            <div>
+                <label>Imunisasi Hepatitis B?</label><br>
+                <label><input type="radio" value="Ya" v-model="form.imunisasi_hepatitis_B" /> Ya</label>
+                <label><input type="radio" value="Tidak" v-model="form.imunisasi_hepatitis_B" /> Tidak</label>
+            </div>
+            <div>
+                <label>Terpapar Rokok?</label><br>
+                <label><input type="radio" value="Ya" v-model="form.merokok_terpapar" /> Ya</label>
+                <label><input type="radio" value="Tidak" v-model="form.merokok_terpapar" /> Tidak</label>
+            </div>
+            <div>
+                <label>Mengisi KKA?</label><br>
+                <label><input type="radio" value="Ya" v-model="form.mengisi_KKA" /> Ya</label>
+                <label><input type="radio" value="Tidak" v-model="form.mengisi_KKA" /> Tidak</label>
+            </div>
+
+            <button type="button" @click="step--">Back</button>
+            <button type="button" @click="step++">Next</button>
         </div>
 
 
+
         <!-- Step 3 -->
+        <div v-if="step === 4">
         <div v-if="step === 4">
           <h2>Data Pendampingan Bulanan</h2>
           <!-- <div><label>Longitude:</label><input v-model.number="form.longitude" type="number" step="0.000001" required /></div>
@@ -444,6 +474,21 @@ label {
 button {
   margin-right: 10px;
   margin-top: 15px;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
 }
 .modal-backdrop {
   position: fixed;

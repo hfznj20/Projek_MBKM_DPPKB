@@ -9,6 +9,7 @@ use App\Http\Controllers\BadutaController;
 use App\Http\Controllers\PasperController;
 use App\Http\Controllers\CatinController;
 use App\Http\Controllers\BumilController;
+use App\Http\Controllers\ManajemenController;
 
 // Homepage
 Route::get('/', function () {
@@ -36,7 +37,16 @@ Route::get('/bumil', [UserController::class, 'index5'])->name('bumil');
 Route::get('/catin', [UserController::class, 'index6'])->name('catin');
 Route::get('/pasca-persalinan', [UserController::class, 'index7'])->name('pasca-persalinan');
 Route::get('/kinerja-tpk', [UserController::class, 'index8'])->name('kinerja-tpk');
-Route::get('/manajemen-user', [UserController::class, 'index9'])->name('manajemen-user');
+Route::resource('manajemen', ManajemenController::class)
+    ->parameters(['manajemen' => 'NIK'])
+    ->names([
+        'index' => 'manajemen.index',
+        'create' => 'manajemen.create',
+        'store' => 'manajemen.store',
+        'edit' => 'manajemen.edit',
+        'update' => 'manajemen.update',
+        'destroy' => 'manajemen.destroy',
+    ]);
 
 
 // ========== TPK Pages ==========
@@ -81,6 +91,7 @@ Route::delete('/pasper/{nik}', [PasperController::class, 'destroy'])->name('pasp
 Route::get('/catin', [CatinController::class, 'index'])->name('catin.index');
 Route::get('/catin/create', [CatinController::class, 'create'])->name('catin.create');
 Route::post('/catin', [CatinController::class, 'store'])->name('catin.store');
+Route::post('/catin/storePasanganBaru', [CatinController::class, 'storePasanganBaru']);
 
 //BUMIL CRUD
 Route::resource('bumil', BumilController::class);

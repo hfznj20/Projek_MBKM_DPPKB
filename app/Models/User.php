@@ -13,7 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -24,7 +24,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role'
+        'role',
+        'NIK'
     ];
 
     /**
@@ -49,4 +50,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    // User Model
+    public function manajemen()
+    {
+        return $this->belongsTo(Manajemen::class, 'NIK', 'NIK');
+    }
+
 }
