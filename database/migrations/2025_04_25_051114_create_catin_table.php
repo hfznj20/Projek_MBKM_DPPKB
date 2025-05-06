@@ -12,10 +12,10 @@ return new class extends Migration
             $table->id();
 
             // Relasi ke penduduk: pasangan pria dan wanita
-            $table->string('nik_pria', 16);
-            $table->string('nik_wanita', 16);
-            $table->foreign('nik_pria')->references('nik')->on('penduduk')->onDelete('cascade');
-            $table->foreign('nik_wanita')->references('nik')->on('penduduk')->onDelete('cascade');
+            $table->string('nik_catin1', 16);
+            $table->string('nik_catin2', 16);
+            $table->foreign('nik_catin1')->references('nik')->on('penduduk')->onDelete('cascade');
+            $table->foreign('nik_catin2')->references('nik')->on('penduduk')->onDelete('cascade');
             
             // Tanggal pernikahan
             $table->date('tanggal_pernikahan');
@@ -39,7 +39,7 @@ return new class extends Migration
             $table->text('penyuluhan_KIE')->nullable();
             $table->text('fasilitas_layanan_rujukan')->nullable();
             $table->text('fasilitas_bantuan_sosial')->nullable();
-            $table->text('stunting');
+            // $table->text('stunting');
             $table->timestamps();
         });
     }

@@ -152,7 +152,7 @@ const submitForm = () => {
           <label for="kategori" class="form-label">Kategori</label>
           <select v-model="form.kategori" class="form-select" id="kategori" required>
             <option value="">-- Pilih Kategori --</option>
-            <option value="Penduduk">Penduduk</option>
+            <option value="penduduk">Penduduk</option>
             <option value="CATIN">CATIN</option>
             <option value="BUMIL">BUMIL</option>
             <option value="BADUTA">BADUTA</option>

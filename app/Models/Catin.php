@@ -12,8 +12,8 @@ class Catin extends Model
     protected $table = 'catin';
 
     protected $fillable = [
-        'pasangan_pertama_nik',
-        'pasangan_kedua_nik',
+        'nik_catin1',
+        'nik_catin2',
         'tanggal_pernikahan',
         'tinggi_badan',
         'berat_badan',
@@ -35,13 +35,13 @@ class Catin extends Model
     ];
 
     // Relasi dengan pasangan pertama
-    public function pasanganPertama()
+    public function catin1()
     {
         return $this->belongsTo(Penduduk::class, 'pasangan_pertama_nik', 'nik');
     }
 
     // Relasi dengan pasangan kedua
-    public function pasanganKedua()
+    public function catin2()
     {
         return $this->belongsTo(Penduduk::class, 'pasangan_kedua_nik', 'nik');
     }
