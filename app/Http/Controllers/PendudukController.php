@@ -62,7 +62,7 @@ class PendudukController extends Controller
             'CATIN' => Inertia::location(route('catin.create', ['nik' => $penduduk->nik])),
             'BUMIL' => Inertia::location(route('bumil.create', ['nik' => $penduduk->nik])),
             'Pasca Persalinan' => Inertia::location(route('pasper.create', ['nik' => $penduduk->nik])),
-            'penduduk' => Inertia::render('Baduta/Create', ['penduduk_nik' => $penduduk->nik]),
+            'penduduk' => redirect()->route('baduta.create', ['penduduk_nik' => $penduduk->nik]),
             'Penduduk' => Inertia::location(route('penduduk.index')),
             default => redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil disimpan'),
         };
@@ -112,6 +112,7 @@ class PendudukController extends Controller
         return match ($penduduk->kategori) {
             'CATIN' => Inertia::location(route('catin.create', ['nik' => $penduduk->nik])),
             'BUMIL' => Inertia::location(route('bumil.create', ['nik' => $penduduk->nik])),
+            'BADUTA' => Inertia::location(route('baduta.create', ['nik' => $penduduk->nik])),
             'Pasca Persalinan' => Inertia::location(route('pasper.create', ['nik' => $penduduk->nik])),
             'Penduduk' => Inertia::location(route('penduduk.index')),
             default => redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil disimpan'),

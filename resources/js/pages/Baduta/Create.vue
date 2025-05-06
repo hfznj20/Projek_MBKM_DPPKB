@@ -180,8 +180,8 @@ const submitPendudukBaru = () => {
     step.value = 1;
   },
   onError: () => {
-  console.log(formIbu.errors); // tampilkan error validasi di console
-}
+    console.log(formIbu.errors); // tampilkan error validasi di console
+  }
 });
 
 };
@@ -421,9 +421,10 @@ const goToNextStep = () => {
           <input v-model="formIbu.no_hp" type="text" class="form-control" id="no_hp" required />
         </div>
 
+        <!-- <button type="button" @click="handleNext">Next</button> -->
         <div class="d-flex justify-content-end">
-          <button type="button" class="btn btn-secondary me-2" @click="showModal = false">Batal</button>
-          <button type="submit" class="btn btn-primary">Simpan</button>
+        <button @click="$emit('update:show', false)">Simpan</button>
+        <button type="button" class="btn btn-secondary me-2" @click="showModal = false">Batal</button>
         </div>
         </form>
       </Modal>
