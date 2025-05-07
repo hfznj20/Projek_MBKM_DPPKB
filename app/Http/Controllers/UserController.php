@@ -4,58 +4,23 @@ namespace App\Http\Controllers;
 use App\Models\Penduduk;
 use App\Models\Bumil;
 use App\Models\Baduta;
+use App\Models\Catin;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
     // Method untuk menampilkan halaman manajemen user dengan Inertia.js
-    public function index1()
+    public function indexPenduduk()
     {
-        return Inertia::render('PopulationData'); // 'ManajemenUser' adalah nama komponen Vue.js
+        $penduduks = Penduduk::orderBy('created_at', 'desc')->get();
+
+        return Inertia::render('PopulationData', [
+            'penduduks' => $penduduks,
+        ]);
 
     }
-    public function index2()
-    {
-        return Inertia::render('Stunting'); // 'ManajemenUser' adalah nama komponen Vue.js
-    }
-    public function index3()
-    {
-        return Inertia::render('PanduGenre'); // 'ManajemenUser' adalah nama komponen Vue.js
-    }
-    public function index4()
-    {
-        return Inertia::render('Baduta'); // 'ManajemenUser' adalah nama komponen Vue.js
-    }
-    public function index5()
-    {
-        return Inertia::render('Bumil'); // 'ManajemenUser' adalah nama komponen Vue.js
-    }
-    public function index6()
-    {
-        return Inertia::render('Catin'); // 'ManajemenUser' adalah nama komponen Vue.js
-    }
-    public function index7()
-    {
-        return Inertia::render('PascaPersalinan'); // 'ManajemenUser' adalah nama komponen Vue.js
-    }
-    public function index8()
-    {
-        return Inertia::render('KinerjaTPK'); // 'ManajemenUser' adalah nama komponen Vue.js
-    }
-    public function index9()
-    {
-        return Inertia::render('ManajemenUser'); // 'ManajemenUser' adalah nama komponen Vue.js
-    }
-
-    public function index10()
-    {
-        return Inertia::render('BadutaTPK'); // 'ManajemenUser' adalah nama komponen Vue.js
-    }
-    public function index11()
-    {
-        return Inertia::render('PopulationDataTPK'); // 'ManajemenUser' adalah nama komponen Vue.js
-    }
-    public function index12()
+    public function indexStunting()
     {
         $stuntingData = collect();
 
@@ -67,6 +32,8 @@ class UserController extends Controller
                     'id' => $item->id,
                     'nik' => $item->penduduk?->nik ?? '-',
                     'nama' => $item->penduduk?->nama ?? 'Tidak Ditemukan',
+                    'kecamatan' => $item->penduduk?->kecamatan ?? 'Tidak Ditemukan',
+                    'kelurahan' => $item->penduduk?->kelurahan ?? 'Tidak Ditemukan',
                     'statusStunting' => 'Baduta',
                 ];
             });
@@ -79,6 +46,140 @@ class UserController extends Controller
                     'id' => $item->id,
                     'nik' => $item->penduduk?->nik ?? '-',
                     'nama' => $item->penduduk?->nama ?? 'Tidak Ditemukan',
+                    'kecamatan' => $item->penduduk?->kecamatan ?? 'Tidak Ditemukan',
+                    'kelurahan' => $item->penduduk?->kelurahan ?? 'Tidak Ditemukan',
+                    'statusStunting' => 'Bumil',
+                ];
+            });
+
+        $stuntingData = $baduta->merge($bumil);
+        return Inertia::render('Stunting', [
+            'stuntingData' => $stuntingData,
+        ]);
+        
+
+    }
+    public function index3()
+    {
+        return Inertia::render('PanduGenre');
+    }
+    public function indexBaduta()
+    {
+        $badutas = DB::table('baduta')
+            ->join('penduduk as anak', 'baduta.penduduk_nik', '=', 'anak.nik')
+            ->join('penduduk as ibu', 'baduta.penduduk_ibu_nik', '=', 'ibu.nik')
+            ->select(
+                'baduta.id',
+                'baduta.stunting',
+                'anak.nik',
+                'anak.nama',
+                'anak.kecamatan',
+                'anak.kelurahan',
+                'ibu.nama as nama_ibu'
+            )
+            ->orderBy('baduta.created_at', 'desc')
+            ->get();
+    
+        return Inertia::render('Baduta', [
+            'badutas' => $badutas,
+        ]);
+    }
+    public function indexBumil()
+    {
+        $bumils = DB::table('bumil')
+            ->join('penduduk', 'bumil.penduduk_nik', '=', 'penduduk.nik')
+            ->select('bumil.id', 'bumil.stunting', 'penduduk.nik', 'penduduk.nama', 'penduduk.kecamatan', 'penduduk.kelurahan')
+            ->orderBy('bumil.created_at', 'desc')
+            ->get();
+    
+        return Inertia::render('Bumil', [
+            'bumils' => $bumils,
+        ]);
+    }
+    public function indexCatin()
+    {
+        $catins = Catin::with(['catin1', 'catin2'])->get()->map(function ($catin) {
+            $pria = null;
+            $wanita = null;
+    
+            if ($catin->catin1 && $catin->catin1->jenis_kelamin === 'Laki-laki') {
+                $pria = $catin->catin1;
+            } elseif ($catin->catin1 && $catin->catin1->jenis_kelamin === 'Perempuan') {
+                $wanita = $catin->catin1;
+            }
+    
+            if ($catin->catin2 && $catin->catin2->jenis_kelamin === 'Laki-laki') {
+                $pria = $catin->catin2;
+            } elseif ($catin->catin2 && $catin->catin2->jenis_kelamin === 'Perempuan') {
+                $wanita = $catin->catin2;
+            }
+    
+            return [
+                'id' => $catin->id,
+                'nik' => $catin->nik_catin1,
+                'nama' => $wanita?->nama ?? '-',
+                'nama_pasangan' => $pria?->nama ?? '-',
+                'tanggal_rencana_pernikahan' => $catin->tanggal_pernikahan,
+            ];
+        });
+    
+        return Inertia::render('Catin/Index', [
+            'catins' => $catins,
+        ]);
+        
+    }
+    public function indexPascaPersalinan()
+    {
+        $pasca_persalinan = DB::table('pasca_persalinan')
+            ->join('penduduk', 'pasca_persalinan.penduduk_nik', '=', 'penduduk.nik')
+            ->select(
+                'pasca_persalinan.id',
+                'pasca_persalinan.tanggal_persalinan',
+                'penduduk.nik',
+                'penduduk.nama',
+                'penduduk.kecamatan',
+                'penduduk.kelurahan'
+            )
+            ->orderBy('pasca_persalinan.created_at', 'desc')
+            ->get();
+    
+        return Inertia::render('PascaPersalinan', [
+            'pasper' => $pasca_persalinan,
+        ]);
+    }
+    public function indexKinerjaTPK()
+    {
+        return Inertia::render('KinerjaTPK');
+    }
+
+    public function indexStuntingTPK()
+    {
+        $stuntingData = collect();
+
+        $baduta = Baduta::with('penduduk')
+            ->where('stunting', 'Ya')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'nik' => $item->penduduk?->nik ?? '-',
+                    'nama' => $item->penduduk?->nama ?? 'Tidak Ditemukan',
+                    'kecamatan' => $item->penduduk?->kecamatan ?? 'Tidak Ditemukan',
+                    'kelurahan' => $item->penduduk?->kelurahan ?? 'Tidak Ditemukan',
+                    'statusStunting' => 'Baduta',
+                ];
+            });
+
+        $bumil = Bumil::with('penduduk')
+            ->where('stunting', 'Ya')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'nik' => $item->penduduk?->nik ?? '-',
+                    'nama' => $item->penduduk?->nama ?? 'Tidak Ditemukan',
+                    'kecamatan' => $item->penduduk?->kecamatan ?? 'Tidak Ditemukan',
+                    'kelurahan' => $item->penduduk?->kelurahan ?? 'Tidak Ditemukan',
                     'statusStunting' => 'Bumil',
                 ];
             });
@@ -89,19 +190,5 @@ class UserController extends Controller
         ]);
         
 
-    }
-    
-    public function index13()
-    {
-        return Inertia::render('BumilTPK');
-    }
-
-    public function index14()
-    {
-        return Inertia::render('CatinTPK');
-    }
-    public function index15()
-    {
-        return Inertia::render('PascaPersalinanTPK');
     }
 }

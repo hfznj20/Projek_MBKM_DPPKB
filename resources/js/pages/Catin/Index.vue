@@ -13,7 +13,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface Catin {
-  id: number;
   nik: string;
   nama: string;
   nama_pasangan: string;
@@ -21,7 +20,7 @@ interface Catin {
 }
 
 const { props } = usePage();
-const catinData = ref<Catin[]>(Array.isArray(props.catins) ? props.catins : []);
+const catinData = ref<Catin[]>(props.catins as Catin[]);
 
 const search = ref('');
 const searchCategory = ref('nama');
@@ -36,8 +35,8 @@ const filteredCatin = computed(() => {
   });
 });
 
-const viewData = (id: number) => {
-  Inertia.visit(`/catin/${id}`);
+const viewData = (nik: string) => {
+  Inertia.visit(`/catin/${nik}`);
 };
 
 </script>
@@ -87,7 +86,6 @@ const viewData = (id: number) => {
           <thead class="bg-[#F9690C]/90 text-white">
             <tr>
               <th class="px-4 py-2 text-left">No</th>
-              <th class="px-4 py-2 text-left">NIK</th>
               <th class="px-4 py-2 text-left">Nama Calon Wanita</th>
               <th class="px-4 py-2 text-left">Nama Calon Pria</th>
               <th class="px-4 py-2 text-left">Tanggal Rencana Pernikahan</th>
@@ -99,17 +97,16 @@ const viewData = (id: number) => {
               <td colspan="6" class="px-4 py-4">Tidak ada data catin.</td>
             </tr>
             <tr
-              v-for="(data, index) in filteredCatin"
-              :key="data.id"
+              v-for="(catin, index) in filteredCatin"
+              :key="catin.nik"
               class="border-t hover:bg-gray-50"
             >
               <td class="px-4 py-2">{{ index + 1 }}</td>
-              <td class="px-4 py-2">{{ data.nik }}</td>
-              <td class="px-4 py-2">{{ data.nama }}</td>
-              <td class="px-4 py-2">{{ data.nama_pasangan }}</td>
-              <td class="px-4 py-2">{{ data.tanggal_rencana_pernikahan }}</td>
+              <td class="px-4 py-2">{{ catin.nama }}</td>
+              <td class="px-4 py-2">{{ catin.nama_pasangan }}</td>
+              <td class="px-4 py-2">{{ catin.tanggal_rencana_pernikahan }}</td>
               <td class="px-4 py-2 space-x-2 flex items-center">
-                <button @click="viewData(data.id)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
+                <button @click="viewData(catin.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />
                 </button>
               </td>

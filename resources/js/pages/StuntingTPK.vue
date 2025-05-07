@@ -93,6 +93,8 @@ const viewData = (id: number) => {
               <th class="px-4 py-3 text-left">No</th>
               <th class="px-4 py-3 text-left">NIK</th>
               <th class="px-4 py-3 text-left">Nama</th>
+              <th class="px-4 py-3 text-left">Kecamatan</th>
+              <th class="px-4 py-3 text-left">Kelurahan</th>
               <th class="px-4 py-3 text-left">Kategori</th>
               <th class="px-4 py-3 text-left">Aksi</th>
             </tr>
@@ -109,6 +111,8 @@ const viewData = (id: number) => {
               <td class="px-4 py-3">{{ index + 1 }}</td>
               <td class="px-4 py-3">{{ data.nik }}</td>
               <td class="px-4 py-3">{{ data.nama }}</td>
+              <td class="px-4 py-3">{{ data.kecamatan }}</td>
+              <td class="px-4 py-3">{{ data.kelurahan }}</td>
               <td class="px-4 py-3">{{ data.statusStunting }}</td>
               <td class="px-4 py-3 flex items-center space-x-2">
                 <button @click="viewData(data.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">

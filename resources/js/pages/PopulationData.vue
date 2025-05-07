@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { type BreadcrumbItem } from '@/types';
-import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'; 
-import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
+import { Head, usePage } from '@inertiajs/vue3';
+import type { BreadcrumbItem } from '@/types';
+
+interface Penduduk {
+  nik: string;
+  nama: string;
+  kecamatan: string;
+  kelurahan: string;
+  kategori: string;
+  tpk: string;
+}
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -12,49 +19,21 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Data Penduduk', href: '/population_data' },
 ];
 
-// State untuk pencarian
+const { props } = usePage();
+const penduduks = ref<Penduduk[]>(props.penduduks as Penduduk[]);
+
 const search = ref('');
-const searchCategory = ref('nama'); // Default pencarian adalah berdasarkan nama
+const searchCategory = ref('nama');
 
-// Data penduduk (dummy data)
-const population = ref([
-  { id: 1, nik: '1234567890123456', nama: 'John Doe', kecamatan: 'Kecamatan A', kelurahan: 'Kelurahan X' },
-  { id: 2, nik: '9876543210987654', nama: 'Jane Smith', kecamatan: 'Kecamatan B', kelurahan: 'Kelurahan Y' },
-  { id: 3, nik: '1122334455667788', nama: 'Muhammad Ali', kecamatan: 'Kecamatan C', kelurahan: 'Kelurahan Z' },
-  { id: 4, nik: '9988776655443322', nama: 'Siti Aisyah', kecamatan: 'Kecamatan A', kelurahan: 'Kelurahan X' },
-]);
-
-// Filter penduduk berdasarkan pencarian
-const filteredPopulation = computed(() => {
+const filteredPenduduks = computed(() => {
   const keyword = search.value.toLowerCase();
   const category = searchCategory.value;
 
-  return population.value.filter((warga) => {
-    if (category === 'nik') {
-      return String(warga.nik).toLowerCase().includes(keyword);
-    } else if (category === 'nama') {
-      return warga.nama.toLowerCase().includes(keyword);
-    } else if (category === 'kecamatan') {
-      return warga.kecamatan.toLowerCase().includes(keyword);
-    } else if (category === 'kelurahan') {
-      return warga.kelurahan.toLowerCase().includes(keyword);
-    }
-    return false;
-  });
+  return penduduks.value.filter((penduduk) =>
+    String(penduduk[category as keyof Penduduk] || '').toLowerCase().includes(keyword)
+  );
 });
 
-// Fungsi untuk mengedit data penduduk
-const editData = (id: number) => {
-  alert(`Edit data penduduk dengan ID: ${id}`);
-};
-
-// Fungsi untuk menghapus data penduduk
-const hapusData = (id: number) => {
-  const confirmDelete = confirm(`Apakah Anda yakin ingin menghapus data dengan ID: ${id}?`);
-  if (confirmDelete) {
-    population.value = population.value.filter((warga) => warga.id !== id);
-  }
-};
 </script>
 
 <template>
@@ -65,41 +44,37 @@ const hapusData = (id: number) => {
         Data Penduduk
       </h1>
 
-      <!-- Pencarian dan Dropdown Kategori -->
-      <div class="flex flex-col md:flex-row justify-between mb-4 mt-4 space-y-6 md:space-y-0 md:space-x-6">
+      <!-- Pencarian -->
+      <div class="flex flex-col md:flex-row justify-between mb-4 space-y-4 md:space-y-0 md:space-x-6">
         <div class="flex items-center w-full md:w-1/3 space-x-2">
           <label for="searchCategory" class="text-sm text-black whitespace-nowrap">Kategori</label>
-          <div class="relative w-full">
-            <select
-              id="searchCategory"
-              v-model="searchCategory"
-              class="w-full ml-1 border border-[#F9690C] text-[#F9690C] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9690C]"
-            >
-              <option value="nik">NIK</option>
-              <option value="nama">Nama</option>
-              <option value="kecamatan">Kecamatan</option>
-              <option value="kelurahan">Kelurahan</option>
-            </select>
-          </div>
+          <select
+            id="searchCategory"
+            v-model="searchCategory"
+            class="w-full border border-[#F9690C] text-[#F9690C] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#F9690C]"
+          >
+            <option value="nik">NIK</option>
+            <option value="nama">Nama</option>
+            <option value="kecamatan">Kecamatan</option>
+            <option value="kelurahan">Kelurahan</option>
+            <option value="kategori">Kategori</option>
+          </select>
         </div>
 
-        <!-- Input Pencarian -->
         <div class="relative w-full md:w-1/3">
           <input
             v-model="search"
             type="text"
             placeholder="Cari..."
-            class="w-full border border-[#F9690C] rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9690C] placeholder-[#F9690C]"
+            class="w-full border border-[#F9690C] rounded-lg px-3 py-2 pr-10 text-sm focus:ring-2 focus:ring-[#F9690C] placeholder-[#F9690C]"
           />
-          <MagnifyingGlassIcon
-            class="w-5 h-5 text-[#F9690C] absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none"
-          />
+          <MagnifyingGlassIcon class="w-5 h-5 text-[#F9690C] absolute right-3 top-1/2 transform -translate-y-1/2" />
         </div>
       </div>
 
       <!-- Tabel Data -->
       <div class="overflow-x-auto">
-        <table class="min-w-full table-auto border border-gray-300 rounded-lg">
+        <table class="min-w-full border border-gray-300 rounded-lg">
           <thead class="bg-[#F9690C]/90 text-white">
             <tr>
               <th class="px-4 py-2 text-left">No</th>
@@ -107,39 +82,22 @@ const hapusData = (id: number) => {
               <th class="px-4 py-2 text-left">Nama</th>
               <th class="px-4 py-2 text-left">Kecamatan</th>
               <th class="px-4 py-2 text-left">Kelurahan</th>
-              <th class="px-4 py-2 text-left">Aksi</th>
+              <th class="px-4 py-2 text-left">Kategori</th>
+              <th class="px-4 py-2 text-left">TPK</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-if="filteredPopulation.length === 0" class="text-center text-gray-500">
-              <td colspan="6" class="px-4 py-4">Tidak ada data penduduk.</td>
+            <tr v-if="filteredPenduduks.length === 0" class="text-center text-gray-500">
+              <td colspan="7" class="px-4 py-4">Tidak ada data penduduk.</td>
             </tr>
-            <tr
-              v-for="(warga, index) in filteredPopulation"
-              :key="warga.id"
-              class="border-t hover:bg-gray-50"
-            >
+            <tr v-for="(penduduk, index) in filteredPenduduks" :key="penduduk.nik" class="border-t hover:bg-gray-50">
               <td class="px-4 py-2">{{ index + 1 }}</td>
-              <td class="px-4 py-2">{{ warga.nik }}</td>
-              <td class="px-4 py-2">{{ warga.nama }}</td>
-              <td class="px-4 py-2">{{ warga.kecamatan }}</td>
-              <td class="px-4 py-2">{{ warga.kelurahan }}</td>
-              <td class="px-4 py-2 space-x-2 flex items-center">
-                <button
-                  @click="editData(warga.id)"
-                  class="text-blue-600 hover:text-blue-800"
-                  title="Edit"
-                >
-                  <PencilIcon class="w-5 h-5" />
-                </button>
-                <button
-                  @click="hapusData(warga.id)"
-                  class="text-red-600 hover:text-red-800"
-                  title="Hapus"
-                >
-                  <TrashIcon class="w-5 h-5" />
-                </button>
-              </td>
+              <td class="px-4 py-2">{{ penduduk.nik }}</td>
+              <td class="px-4 py-2">{{ penduduk.nama }}</td>
+              <td class="px-4 py-2">{{ penduduk.kecamatan }}</td>
+              <td class="px-4 py-2">{{ penduduk.kelurahan }}</td>
+              <td class="px-4 py-2">{{ penduduk.kategori }}</td>
+              <td class="px-4 py-2">{{ penduduk.tpk }}</td>
             </tr>
           </tbody>
         </table>

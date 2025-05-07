@@ -24,6 +24,7 @@ import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
 {
+    // ===== Admin Section =====
     title: 'Beranda',
     href: '/dashboard',
     icon: Home,
@@ -37,7 +38,7 @@ const mainNavItems: NavItem[] = [
   },
   {
     title: 'Stunting',
-    href: '/stunting',
+    href: '/stunting-admin',
     icon: ActivitySquare,
     guard: ['admin']
   },
@@ -49,26 +50,26 @@ const mainNavItems: NavItem[] = [
   },
   {
     title: 'Baduta',
-    href: '/baduta',
+    href: '/bayi',
     icon: Baby,
     guard: ['admin']
   },
   {
     title: 'Bumil',
-    href: '/bumil',
+    href: '/ibu',
     icon: HeartPulse,
-    guard: ['admin']
-  },
-  {
-    title: 'Catin',
-    href: '/catin',
-    icon: UserRound,
     guard: ['admin']
   },
   {
     title: 'Pasca Persalinan',
     href: '/pasca-persalinan',
     icon: HeartPulse,
+    guard: ['admin']
+  },
+  {
+    title: 'Catin',
+    href: '/calon-pengantin',
+    icon: UserRound,
     guard: ['admin']
   },
   {
