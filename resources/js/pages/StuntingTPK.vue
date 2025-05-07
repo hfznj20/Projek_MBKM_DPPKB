@@ -2,51 +2,50 @@
 import { ref, computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { type BreadcrumbItem } from '@/types';
-import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline';
+import { EyeIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
+import { type BreadcrumbItem } from '@/types';
+import { useRouter } from 'vue-router';
 
+// Props dari server (Laravel Controller)
+const props = defineProps<{ stuntingData: any[] }>();
+
+// Data breadcrumb
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Beranda', href: '/dashboard' },
-  { title: 'Data Stunting TPK', href: '/stunting-tpk' },
+  { title: 'Data Stunting', href: '/stunting-tpk' },
 ];
 
+// Salin props ke ref agar bisa dimodifikasi secara lokal
+const stuntingData = ref([...props.stuntingData]);
+
+// Pencarian
 const search = ref('');
 const searchCategory = ref('nama');
 
-// Data stunting
-const stuntingData = ref<any[]>([]);
-
-// Filter data berdasarkan pencarian
+// Filter berdasarkan kategori pencarian
 const filteredStunting = computed(() => {
   const keyword = search.value.toLowerCase();
-  const category = searchCategory.value;
 
   return stuntingData.value.filter((data) => {
-    if (category === 'nama') {
-      return data.nama.toLowerCase().includes(keyword);
-    } else if (category === 'nik') {
-      return String(data.nik).toLowerCase().includes(keyword);
-    } else if (category === 'kecamatan') {
-      return data.kecamatan?.toLowerCase().includes(keyword);
-    } else if (category === 'kelurahan') {
-      return data.kelurahan?.toLowerCase().includes(keyword);
-    }
-    return false;
+    return (
+      String(data.nik).toLowerCase().includes(keyword) ||
+      data.nama.toLowerCase().includes(keyword) ||
+      data.kecamatan?.toLowerCase().includes(keyword) ||
+      data.kelurahan?.toLowerCase().includes(keyword)
+    );
   });
 });
 
-// Aksi edit
-const editData = (id: number) => {
-  alert(`Edit data dengan ID: ${id}`);
+
+// Menambahkan fungsi untuk view data
+const router = useRouter();
+
+const viewData = (id: number) => {
+  // Arahkan ke halaman detail dengan parameter id
+  router.push({ name: 'baduta-detail', params: { id } });
 };
 
-// Aksi hapus
-const hapusData = (id: number) => {
-  if (confirm(`Apakah Anda yakin ingin menghapus data dengan ID: ${id}?`)) {
-    stuntingData.value = stuntingData.value.filter((data) => data.id !== id);
-  }
-};
 </script>
 
 <template>
@@ -54,7 +53,7 @@ const hapusData = (id: number) => {
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6 space-y-6">
       <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-xl">
-        Data Stunting TPK
+        Data Stunting
       </h1>
 
       <!-- Pencarian dan Dropdown -->
@@ -94,7 +93,7 @@ const hapusData = (id: number) => {
               <th class="px-4 py-3 text-left">No</th>
               <th class="px-4 py-3 text-left">NIK</th>
               <th class="px-4 py-3 text-left">Nama</th>
-              <th class="px-4 py-3 text-left">Status Stunting</th>
+              <th class="px-4 py-3 text-left">Kategori</th>
               <th class="px-4 py-3 text-left">Aksi</th>
             </tr>
           </thead>
@@ -112,19 +111,8 @@ const hapusData = (id: number) => {
               <td class="px-4 py-3">{{ data.nama }}</td>
               <td class="px-4 py-3">{{ data.statusStunting }}</td>
               <td class="px-4 py-3 flex items-center space-x-2">
-                <button
-                  @click="editData(data.id)"
-                  class="text-blue-600 hover:text-blue-800"
-                  title="Edit"
-                >
-                  <PencilIcon class="w-5 h-5" />
-                </button>
-                <button
-                  @click="hapusData(data.id)"
-                  class="text-red-600 hover:text-red-800"
-                  title="Hapus"
-                >
-                  <TrashIcon class="w-5 h-5" />
+                <button @click="viewData(data.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
+                  <EyeIcon class="w-5 h-5" />
                 </button>
               </td>
             </tr>
@@ -136,5 +124,5 @@ const hapusData = (id: number) => {
 </template>
 
 <style scoped>
-/* Styling tambahan bisa disini */
+/* Styling tambahan jika perlu */
 </style>

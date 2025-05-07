@@ -8,21 +8,20 @@ import axios from 'axios';
 
 // Ambil 'nik' dari URL (query param)
 const penduduk_nik = ref<string>(new URLSearchParams(window.location.search).get('nik') || '');
-const namaCatin = ref<string>('');
+const namaPasangan = ref<string>('');
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Tambah Data Catin', href: '/catin/create' },
 ];
 
-// Opsi dropdown
+type Kecamatan = 'Ujung' | 'Bacukiki' | 'Bacukiki Barat' | 'Soreang';
+
 const sumberAirOptions = [
   "Air kemasan/Isi ulang", "Ledeng/PAM", "Sumur bor/Pompa", "Sumur terlindungi",
   "Sumur tak terlindungi", "Mata air terlindungi", "Mata air tak terlindungi",
   "Air permukaan (sungai/danau/waduk/kolam/irigasi)", "Air hujan", "Lainnya"
 ];
-
-type Kecamatan = 'Ujung' | 'Bacukiki' | 'Bacukiki Barat' | 'Soreang';
 
 const fasilitasBABOptions = [
   "Jamban milik sendiri dengan leher angsa dan tangki septik/IPAL",
@@ -37,6 +36,13 @@ const kelurahanMap: Record<Kecamatan, string[]> = {
 };
 
 const kelurahanOptions = ref<string[]>([]);
+
+const onKecamatanChange = () => {
+  const selected = formPasangan.kecamatan;
+  kelurahanOptions.value = selected && kelurahanMap[selected as Kecamatan]
+    ? kelurahanMap[selected as Kecamatan]
+    : [];
+};
 
 // Form state untuk Catin
 const form = useForm({
@@ -64,7 +70,34 @@ const form = useForm({
   penduduk_nik: penduduk_nik.value,
 });
 
+const goToFormPendudukBaru = () => {
+  showModal.value = true;
+};
+
+// Step Control
+const step = ref(1);
+const errors = ref<string[]>([]);
+
+//lokasi
+onMounted(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        form.latitude = position.coords.latitude.toString()
+        form.longitude = position.coords.longitude.toString()
+      },
+      (error) => {
+        console.error('Gagal mengambil lokasi:', error)
+      }
+    )
+  } else {
+    console.warn('Geolocation tidak didukung browser ini.')
+  }
+})
+
 // Form state untuk Pasangan Baru
+const showModal = ref(false);
+
 const formPasangan = useForm({
   nik: '',
   nama: '',
@@ -76,40 +109,8 @@ const formPasangan = useForm({
   RW: '',
   alamat: '',
   no_hp: '',
-  kategori: 'penduduk'
+  kategori: 'CATIN'
 });
-
-const errors = ref<string[]>([]);
-const showModal = ref(false);
-const namaPasangan = ref<string>('');
-
-// Step Control
-const step = ref(1);
-
-// Fetch catin data when component mounts
-onMounted(async () => {
-  if (penduduk_nik.value) {
-    try {
-      const response = await axios.post('/cek-nik', {
-        nik: penduduk_nik.value
-      });
-
-      if (response.data.status === 'data ada') {
-        namaCatin.value = response.data.nama;
-        form.nama = response.data.nama;
-      }
-    } catch (error) {
-      console.error('Error fetching catin data:', error);
-    }
-  }
-});
-
-const onKecamatanChange = () => {
-  const selected = formPasangan.kecamatan;
-  kelurahanOptions.value = selected && kelurahanMap[selected as Kecamatan]
-    ? kelurahanMap[selected as Kecamatan]
-    : [];
-};
 
 // Cek data pasangan
 const checkPasangan = async () => {
@@ -151,8 +152,55 @@ const submitPasangan = () => {
   });
 };
 
+
+const nextStep = () => {
+  step.value++;
+};
+
+const prevStep = () => {
+  step.value--;
+};
+
+const goToNextStep = () => {
+  if (step.value === 1 && (!form.nik_catin2 || !namaPasangan.value)) {
+    alert('Silakan isi dan cek NIK Ibu terlebih dahulu.');
+    return;
+  }
+  step.value++;
+};
+
 // Submit Form Catin
 const submitForm = () => {
+  errors.value = [];
+
+  // Cek apakah latitude dan longitude belum terisi
+  if (!form.latitude || !form.longitude) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          form.latitude = position.coords.latitude.toString();
+          form.longitude = position.coords.longitude.toString();
+
+          // Setelah dapat lokasi, baru kirim form
+          form.post('/baduta', {
+            onSuccess: () => {
+              window.location.href = '/penduduk';
+            },
+            onError: () => {
+              errors.value = Object.values(form.errors).flat();
+            },
+          });
+        },
+        (error) => {
+          alert('Gagal mengambil lokasi: ' + error.message);
+        }
+      );
+    } else {
+      alert('Geolocation tidak didukung browser ini.');
+    }
+    return; // hentikan proses sampai lokasi diambil
+  }
+
   form.post('/catin', {
     onSuccess: () => {
       window.location.href = '/penduduk';
@@ -163,17 +211,6 @@ const submitForm = () => {
   });
 };
 
-const nextStep = () => {
-  step.value++;
-};
-
-const prevStep = () => {
-  step.value--;
-};
-
-const goToFormPendudukBaru = () => {
-  showModal.value = true;
-};
 </script>
 
 <template>
@@ -191,8 +228,14 @@ const goToFormPendudukBaru = () => {
 
       <!-- Step 1: Data Catin -->
       <div v-if="step === 1">
-        <h3>Data Catin</h3>
-      
+        <h3>Data Pasangan</h3>
+        
+        <div v-if="errors.length" class="alert alert-danger">
+          <ul>
+            <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+          </ul>
+        </div>
+
         <!-- NIK Catin -->
         <div class="mb-3">
           <label class="form-label">NIK Catin</label>
@@ -219,7 +262,7 @@ const goToFormPendudukBaru = () => {
           <button type="button" @click="goToFormPendudukBaru" class="btn btn-warning">Tambah Pasangan Baru</button>
         </div>
 
-        <button class="btn btn-primary mt-3" @click="nextStep" :disabled="!namaPasangan">Next</button>
+        <button type="button" @click="goToNextStep">Next</button>
       </div>
 
       <!-- Step 2: Form Data Kesehatan Catin -->
@@ -284,15 +327,6 @@ const goToFormPendudukBaru = () => {
       <!-- Step 3: Data Pendampingan Bulanan -->
       <div v-if="step === 3">
         <h3>Data Pendampingan</h3>
-        <div class="mb-3">
-          <label class="form-label">Longitude</label>
-          <input v-model="form.longitude" type="text" class="form-control" />
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Latitude</label>
-          <input v-model="form.latitude" type="text" class="form-control" />
-        </div>
 
         <button type="button" @click="prevStep" class="btn btn-secondary">Back</button>
         <button type="submit" class="btn btn-success" @click="submitForm">Simpan Data</button>

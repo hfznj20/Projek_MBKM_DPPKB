@@ -7,23 +7,30 @@ use App\Models\Penduduk;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
-
+use Carbon\Carbon;
 
 class PasperController extends Controller
 {
     public function index()
     {
-        // Mengambil data dari pasca_persalinan dan penduduk
         $pasca_persalinan = DB::table('pasca_persalinan')
             ->join('penduduk', 'pasca_persalinan.penduduk_nik', '=', 'penduduk.nik')
-            ->select('pasca_persalinan.id', 'pasca_persalinan.tanggal_persalinan', 'penduduk.nik', 'penduduk.nama')
+            ->select(
+                'pasca_persalinan.id',
+                'pasca_persalinan.tanggal_persalinan',
+                'penduduk.nik',
+                'penduduk.nama',
+                'penduduk.kecamatan',
+                'penduduk.kelurahan'
+            )
+            ->orderBy('pasca_persalinan.created_at', 'desc')
             ->get();
-
-
+    
         return Inertia::render('Pasper/Index', [
             'pasper' => $pasca_persalinan,
         ]);
     }
+    
 
     public function create(Request $request)
     {
@@ -83,14 +90,37 @@ class PasperController extends Controller
 
 
         // Redirect ke halaman Pasper
-        return redirect()->route('pasper.index')->with('success', 'Data Pasper berhasil disimpan');
+        return redirect()->route('penduduk.index')->with('success', 'Data Pasper berhasil disimpan');
     }
 
     public function show($nik)
     {
-        $pasper = Pasper::findOrFail($nik);
+        $pasper = Pasper::with('penduduk')->where('penduduk_nik', $nik)->firstOrFail();
+    
+        $penduduk = $pasper->penduduk;
+        $usia = Carbon::parse($penduduk->tanggal_lahir)->age;
+    
         return Inertia::render('Pasper/Show', [
-            'pasper' => $pasper,
+            'pasper' => [
+                'nama' => $penduduk->nama,
+                'nik' => $penduduk->nik,
+                'tempat_lahir' => $penduduk->tempat_lahir,
+                'tanggal_lahir' => $penduduk->tanggal_lahir,
+                'jenis_kelamin' => $penduduk->jenis_kelamin,
+                'alamat' => $penduduk->alamat,
+                'no_hp' => $penduduk->no_hp,
+                'usia' => $usia,
+    
+                'tanggal_persalinan' => $pasper->tanggal_persalinan,
+                'tempat_persalinan' => $pasper->tempat_persalinan,
+                'penolong_persalinan' => $pasper->penolong_persalinan,
+                'cara_persalinan' => $pasper->cara_persalinan,
+                'keadaan_bayi' => $pasper->keadaan_bayi,
+                'menggunakan_alat_kontrasepsi' => $pasper->menggunakan_alat_kontrasepsi,
+                'meerokok_terpapar' => $pasper->meerokok_terpapar,
+                'sumber_air_minum' => $pasper->sumber_air_minum,
+                'fasilitas_BAB' => $pasper->fasilitas_BAB,
+            ],
         ]);
     }
 
@@ -150,10 +180,9 @@ class PasperController extends Controller
 
     public function destroy($nik)
     {
-        // Cari dan hapus data Pasper
-        $pasper = Pasper::findOrFail($nik);
+        $pasper = Pasper::where('penduduk_nik', $nik)->firstOrFail();
         $pasper->delete();
 
-        return redirect()->route('pasper.index')->with('success', 'Data Pasper berhasil dihapus');
+        return redirect()->route('pasper.index')->with('success', 'Data pasper berhasil dihapus.');
     }
 }

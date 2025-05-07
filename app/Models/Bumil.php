@@ -10,9 +10,9 @@ class Bumil extends Model
     use HasFactory;
 
     protected $table = 'bumil';
-
+ 
     protected $fillable = [
-        'penduduk_id',
+        'penduduk_nik',
         'usia_kehamilan',
         'TUF',
         'jumlah_anak_kandung',
@@ -34,10 +34,11 @@ class Bumil extends Model
         'penyuluhan_KIE',
         'fasilitas_layanan_rujukan',
         'fasilitas_bantuan_sosial',
+        'stunting',
     ];
 
     public function penduduk()
     {
-        return $this->belongsTo(Penduduk::class);
+        return $this->belongsTo(Penduduk::class, 'penduduk_nik', 'nik');
     }
 }

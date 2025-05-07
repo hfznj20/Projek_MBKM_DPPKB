@@ -1,36 +1,52 @@
 <script lang="ts" setup>
 import AppLayout from '@/layouts/AppLayout.vue';
+import { Head, useForm } from '@inertiajs/vue3';
+import { ref, onMounted } from 'vue';
 import { BreadcrumbItem } from '@/types';
-import { ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
-import { useForm } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 
 type Kecamatan = 'Ujung' | 'Bacukiki' | 'Bacukiki Barat' | 'Soreang';
 
+const props = defineProps<{
+  penduduk: {
+    nik: string;
+    nama: string;
+    tanggal_lahir: string;
+    jenis_kelamin: string;
+    kecamatan: Kecamatan;
+    kelurahan: string;
+    RT: string;
+    RW: string;
+    alamat: string;
+    no_hp: string;
+    kategori: string;
+  };
+}>();
+
+
 const form = useForm({
-  nik: '',
-  nama: '',
-  tanggal_lahir: '',
-  jenis_kelamin: '',
-  kecamatan: '' as Kecamatan | '',
-  kelurahan: '',
-  RT: '',
-  RW: '',
-  alamat: '',
-  no_hp: '',
-  kategori: ''
+  nik: props.penduduk.nik,
+  nama: props.penduduk.nama,
+  tanggal_lahir: props.penduduk.tanggal_lahir,
+  jenis_kelamin: props.penduduk.jenis_kelamin,
+  kecamatan: props.penduduk.kecamatan,
+  kelurahan: props.penduduk.kelurahan,
+  RT: props.penduduk.RT,
+  RW: props.penduduk.RW,
+  alamat: props.penduduk.alamat,
+  no_hp: props.penduduk.no_hp,
+  kategori: props.penduduk.kategori,
 });
 
-// Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Tambah Data Penduduk',
-    href: '/penduduk/create',
+    title: 'Edit Data Penduduk',
+    href: `/penduduk/${props.penduduk.nik}/edit`,
   },
 ];
 
-const errors = ref<string[]>([]);
+
 const kelurahanOptions = ref<string[]>([]);
 
 const kelurahanMap: Record<Kecamatan, string[]> = {
@@ -47,39 +63,35 @@ const onKecamatanChange = () => {
     : [];
 };
 
+// Isi kelurahan saat pertama kali mount
+onMounted(() => {
+  onKecamatanChange();
+});
+
+const errors = ref<string[]>([]);
 const submitForm = () => {
-  form.post('/penduduk', {
+  form.put(`/penduduk/${form.nik}`, {
     onSuccess: () => {
-      let kategoriPath = form.kategori.toLowerCase().replace(/\s+/g, '-');
-      Inertia.visit(`/${kategoriPath}/create?nik=${form.nik}`);
+      const kategori = form.kategori.toLowerCase().replace(/\s+/g, '-');
+      Inertia.visit(`/${kategori}/create?nik=${form.nik}`);
     },
     onError: () => {
       errors.value = Object.values(form.errors).flat();
     }
   });
 };
-
-
-
 </script>
 
 <template>
-  <Head title="Penduduk TPK" />
+  <Head title="Edit Penduduk" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="container mt-5">
-      <h2 class="mb-4">Tambah Data Penduduk</h2>
-
-      <div v-if="errors.length" class="alert alert-danger">
-        <ul>
-          <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
-        </ul>
-      </div>
+      <h2 class="mb-4">Edit Data Penduduk</h2>
 
       <form @submit.prevent="submitForm">
         <div class="mb-3">
-          <label for="nik" class="form-label">nik</label>
-          <input v-model="form.nik" type="text" class="form-control" id="nik" required maxlength="16"/>
-        
+          <label for="nama" class="form-label">NIK</label>
+          <input v-model="form.nik" type="text" class="form-control" id="nik" readonly />
         </div>
 
         <div class="mb-3">
@@ -155,7 +167,8 @@ const submitForm = () => {
           </select>
         </div>
 
-        <button type="submit" class="btn btn-success">Simpan</button>
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+        <button type="button" class="btn btn-secondary" @click="router.visit('/penduduk')">Batal</button>
       </form>
     </div>
   </AppLayout>

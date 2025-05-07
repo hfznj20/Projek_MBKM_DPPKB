@@ -1,27 +1,32 @@
 <script lang="ts" setup>
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { BreadcrumbItem } from '@/types';
 import axios from 'axios'; // pastikan ini diimport
 import Modal from '@/components/Modal.vue';
 
-type Kecamatan = 'Ujung' | 'Bacukiki' | 'Bacukiki Barat' | 'Soreang';
-
 // Ambil 'nik' dari URL (query param)
 const penduduk_nik = ref<string>(new URLSearchParams(window.location.search).get('nik') || '');
+const namaIbu = ref<string>('');
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Baduta TPK',
-    href: '/baduta/create',
+    title: 'Tambah Data Baduta', href: '/baduta/create',
   },
 ];
 
-const goToFormPendudukBaru = () => {
-  showModal.value = true; // Menampilkan modal untuk input data ibu
-};
+type Kecamatan = 'Ujung' | 'Bacukiki' | 'Bacukiki Barat' | 'Soreang';
+
+const sumberAirOptions = [
+  "Air kemasan", "Ledeng", "Sumur bor", "Sumur terlindungi", "Sumur tak terlindungi",
+  "Mata air terlindungi", "Mata air tak terlindungi", "Air permukaan", "Air hujan", "Lainnya"
+];
+
+const fasilitasBABOptions = [
+  "Jamban milik sendiri", "Jamban pada MCK", "Lainnya", "Tidak Ada"
+];
 
 const kelurahanMap: Record<Kecamatan, string[]> = {
   Ujung: ['Kelurahan Ujung A', 'Kelurahan Ujung B', 'Kelurahan Ujung C'],
@@ -30,6 +35,8 @@ const kelurahanMap: Record<Kecamatan, string[]> = {
   Soreang: ['Kelurahan Soreang A', 'Kelurahan Soreang B', 'Kelurahan Soreang C']
 };
 
+const kelurahanOptions = ref<string[]>([]);
+
 const onKecamatanChange = () => {
   const selected = formIbu.kecamatan;
   kelurahanOptions.value = selected && kelurahanMap[selected as Kecamatan]
@@ -37,21 +44,9 @@ const onKecamatanChange = () => {
     : [];
 };
 
-const kelurahanOptions = ref<string[]>([]);
-const step = ref(1);
-const errors = ref<string[]>([]);
-
-// Opsi dropdown
-const sumberAirOptions = [
-  "Air kemasan", "Ledeng", "Sumur bor", "Sumur terlindungi", "Sumur tak terlindungi",
-  "Mata air terlindungi", "Mata air tak terlindungi", "Air permukaan", "Air hujan", "Lainnya"
-];
-const fasilitasBABOptions = [
-  "Jamban milik sendiri", "Jamban pada MCK", "Lainnya", "Tidak Ada"
-];
-
 // Form state
 const form = useForm({
+  penduduk_nik: penduduk_nik.value,
   penduduk_ibu_nik: '',
   jumlah_anak_kandung: 0,
   tanggal_lahir_anak_terakhir: '',
@@ -72,21 +67,40 @@ const form = useForm({
   penyuluhan_KIE: '',
   fasilitas_bantuan_sosial: '',
   stunting: '',
-  penduduk_nik: penduduk_nik.value,
 });
-const namaIbu = ref<string>('');
+
+const goToFormPendudukBaru = () => {
+  showModal.value = true; // Menampilkan modal untuk input data ibu
+};
+
+const step = ref(1);
+const errors = ref<string[]>([]);
+
+//longtitude
+onMounted(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        form.latitude = position.coords.latitude.toString()
+        form.longitude = position.coords.longitude.toString()
+      },
+      (error) => {
+        console.error('Gagal mengambil lokasi:', error)
+      }
+    )
+  } else {
+    console.warn('Geolocation tidak didukung browser ini.')
+  }
+})
+
+
+
 
 // Modal
 const showModal = ref(false);
-// function handleNext() {
-//   // Pastikan data ibu telah disimpan dan modal tertutup
-//   form.penduduk_ibu_nik = formIbu.nik; // Menyimpan NIK ibu dari form Ibu
-//   namaIbu.value = formIbu.nama; // Menyimpan nama ibu
-//   showModal.value = false; // Menutup modal setelah data disimpan
-//   step.value = 2; // Melanjutkan ke langkah berikutnya
-// }
+
 const formIbu = useForm({
-  nik: '',
+    nik: '',
   nama: '',
   tanggal_lahir: '',
   jenis_kelamin: '',
@@ -96,27 +110,8 @@ const formIbu = useForm({
   RW: '',
   alamat: '',
   no_hp: '',
-  kategori: 'Penduduk'
+  kategori: 'penduduk'
 });
-
-
-const submitPendudukBaru = () => {
-    formIbu.post('/penduduk', {
-  preserveScroll: true,
-  preserveState: true,
-  onSuccess: () => {
-    form.penduduk_ibu_nik = formIbu.nik;
-    namaIbu.value = formIbu.nama;
-    showModal.value = false;
-    step.value = 1;
-  },
-  onError: () => {
-    // Tangani error kalau ada validasi gagal
-    console.log('Gagal menyimpan data ibu');
-  }
-});
-
-};
 
 // Cek NIK ibu
 const checkNIK = async () => {
@@ -124,7 +119,7 @@ const checkNIK = async () => {
     const response = await axios.post('/cek-nik', {
       nik: form.penduduk_ibu_nik
     });
-
+    
     if (response.data.status === 'data ada') {
       namaIbu.value = response.data.nama;
     } else {
@@ -141,19 +136,73 @@ const checkNIK = async () => {
   }
 };
 
-// Submit Form
+const submitPendudukBaru = () => {
+    formIbu.post('/penduduk', {
+      preserveScroll: true,
+      preserveState: true,
+      onSuccess: () => {
+        form.penduduk_ibu_nik = formIbu.nik;
+        namaIbu.value = formIbu.nama;
+        showModal.value = false;
+        step.value = 1;
+      },
+      onError: () => {
+        console.log(formIbu.errors); // tampilkan error validasi di console
+      }
+    });
+
+};
+
+const goToNextStep = () => {
+  if (step.value === 1 && (!form.penduduk_ibu_nik || !namaIbu.value)) {
+    alert('Silakan isi dan cek NIK Ibu terlebih dahulu.');
+    return;
+  }
+  step.value++;
+};
+
 const submitForm = () => {
   errors.value = [];
 
+  // Cek apakah latitude dan longitude belum terisi
+  if (!form.latitude || !form.longitude) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          form.latitude = position.coords.latitude.toString();
+          form.longitude = position.coords.longitude.toString();
+
+          // Setelah dapat lokasi, baru kirim form
+          form.post('/baduta', {
+            onSuccess: () => {
+              window.location.href = '/penduduk';
+            },
+            onError: () => {
+              errors.value = Object.values(form.errors).flat();
+            },
+          });
+        },
+        (error) => {
+          alert('Gagal mengambil lokasi: ' + error.message);
+        }
+      );
+    } else {
+      alert('Geolocation tidak didukung browser ini.');
+    }
+    return; // hentikan proses sampai lokasi diambil
+  }
+
+  // Jika lokasi sudah tersedia, langsung kirim form
   form.post('/baduta', {
     onSuccess: () => {
       window.location.href = '/penduduk';
     },
     onError: () => {
       errors.value = Object.values(form.errors).flat();
-    }
+    },
   });
 };
+
 </script>
 
 <template>
@@ -162,25 +211,31 @@ const submitForm = () => {
     <div class="container mt-5">
       <h2 class="mb-4">Tambah Data Penduduk Baduta</h2>
 
+      <!-- Error Message -->
       <div v-if="errors.length" class="alert alert-danger">
         <ul>
           <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
         </ul>
       </div>
-
+      
       <form @submit.prevent="submitForm">
-        <!-- Step 1 -->
-        <div v-if="step === 1">
+          <!-- Step 1 -->
+          <div v-if="step === 1">
+            <div v-if="errors.length" class="alert alert-danger">
+              <ul>
+                <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+              </ul>
+            </div>
           <div>
             <label>NIK Ibu:</label>
-            <input v-model="form.penduduk_ibu_nik" type="text" maxlength="16"/>
+            <input v-model="form.penduduk_ibu_nik" type="text" />
             <div style="display: flex; gap: 10px; margin-top: 5px;">
-              <button type="button" @click="checkNIK">Cek</button>
-              <button type="button" @click="goToFormPendudukBaru">Data Baru</button>
+              <button type="button" @click="checkNIK">Cek Data Ibu</button>
+              <button type="button" @click="goToFormPendudukBaru">Tambah Data Baru</button>
             </div>
             <p v-if="namaIbu"><strong>Nama Ibu:</strong> {{ namaIbu }}</p>
           </div>
-          <button type="button" @click="step++">Next</button>
+          <button type="button" @click="goToNextStep">Next</button>
         </div>
 
         <div v-if="step === 2">
@@ -222,7 +277,6 @@ const submitForm = () => {
                 <option v-for="option in fasilitasBABOptions" :key="option" :value="option">{{ option }}</option>
                 </select>
             </div>
-
             <div><label>NIK Anak (dari URL):</label><input v-model="form.penduduk_nik" type="text" disabled /></div>
             <div><label>Berat Badan (kg):</label><input v-model.number="form.berat_badan" type="number" step="0.01" required /></div>
             <div><label>Tinggi Badan (cm):</label><input v-model.number="form.tinggi_badan" type="number" step="0.1" required /></div>
@@ -254,11 +308,12 @@ const submitForm = () => {
         </div>
 
 
+
         <!-- Step 3 -->
         <div v-if="step === 4">
           <h2>Data Pendampingan Bulanan</h2>
-          <div><label>Longitude:</label><input v-model="form.longitude" type="text" required /></div>
-          <div><label>Latitude:</label><input v-model="form.latitude" type="text" required /></div>
+          <!-- <div><label>Longitude:</label><input v-model.number="form.longitude" type="number" step="0.000001" required /></div>
+<div><label>Latitude:</label><input v-model.number="form.latitude" type="number" step="0.000001" required /></div> -->
           <div>
             <label>Kehadiran Posyandu?</label><br>
             <label><input type="radio" value="Ya" v-model="form.kehadiran_posyandu" /> Ya</label>
@@ -337,45 +392,33 @@ const submitForm = () => {
           </select>
         </div>
 
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="RT" class="form-label">RT</label>
-            <input v-model="formIbu.RT" type="text" id="RT" class="form-control" required />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="RW" class="form-label">RW</label>
-            <input v-model="formIbu.RW" type="text" id="RW" class="form-control" required />
-          </div>
+        <div class="mb-3">
+          <label for="rt" class="form-label">RT</label>
+          <input v-model="formIbu.RT" type="text" class="form-control" id="rt" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="rw" class="form-label">RW</label>
+          <input v-model="formIbu.RW" type="text" class="form-control" id="rw" required />
         </div>
 
         <div class="mb-3">
           <label for="alamat" class="form-label">Alamat</label>
-          <textarea v-model="formIbu.alamat" id="alamat" class="form-control" rows="3" required></textarea>
+          <input v-model="formIbu.alamat" type="text" class="form-control" id="alamat" required />
         </div>
 
         <div class="mb-3">
-          <label for="no_hp" class="form-label">No HP</label>
+          <label for="no_hp" class="form-label">No. HP</label>
           <input v-model="formIbu.no_hp" type="text" class="form-control" id="no_hp" required />
         </div>
 
-        <!-- <div class="mb-3">
-          <label for="kategori" class="form-label">Kategori</label>
-          <select v-model="formIbu.kategori" class="form-select" id="kategori" required>
-            <option value="">-- Pilih Kategori --</option>
-            <option value="Penduduk">Penduduk</option>
-            <option value="CATIN">CATIN</option>
-            <option value="BUMIL">BUMIL</option>
-            <option value="BADUTA">BADUTA</option>
-            <option value="Pasca Persalinan">Pasper</option>
-          </select>
-        </div> -->
-
         <!-- <button type="button" @click="handleNext">Next</button> -->
-        <button @click="$emit('update:show', false)">Tutup</button>
-
+        <div class="d-flex justify-content-end">
+        <button @click="$emit('update:show', false)">Simpan</button>
+        <button type="button" class="btn btn-secondary me-2" @click="showModal = false">Batal</button>
+        </div>
         </form>
       </Modal>
-
     </div>
   </AppLayout>
 </template>
@@ -392,6 +435,21 @@ label {
 button {
   margin-right: 10px;
   margin-top: 15px;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
 }
 .modal-backdrop {
   position: fixed;

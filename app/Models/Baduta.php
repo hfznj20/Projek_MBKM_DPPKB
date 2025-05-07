@@ -36,7 +36,7 @@ class Baduta extends Model
     ];
 
     // Relasi ke Penduduk (bayi)
-    public function bayi()
+    public function anak()
     {
         return $this->belongsTo(Penduduk::class, 'penduduk_nik', 'nik');
     }
@@ -45,6 +45,10 @@ class Baduta extends Model
     public function ibu()
     {
         return $this->belongsTo(Penduduk::class, 'penduduk_ibu_nik', 'nik');
+    }
+    public function penduduk()
+    {
+        return $this->belongsTo(Penduduk::class, 'penduduk_nik', 'nik');
     }
 
 }

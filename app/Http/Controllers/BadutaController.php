@@ -7,19 +7,35 @@ use Illuminate\Http\Request;
 use App\Models\Penduduk;
 use App\Models\TPK;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class BadutaController extends Controller
 {
     public function index()
     {
-        $badutas = baduta::all();
+        $badutas = DB::table('baduta')
+            ->join('penduduk as anak', 'baduta.penduduk_nik', '=', 'anak.nik')
+            ->join('penduduk as ibu', 'baduta.penduduk_ibu_nik', '=', 'ibu.nik')
+            ->select(
+                'baduta.id',
+                'baduta.stunting',
+                'anak.nik',
+                'anak.nama',
+                'anak.kecamatan',
+                'anak.kelurahan',
+                'ibu.nama as nama_ibu'
+            )
+            ->orderBy('baduta.created_at', 'desc')
+            ->get();
+    
         return Inertia::render('Baduta/Index', [
             'badutas' => $badutas,
         ]);
     }
+    
 
-
-
+    
     public function create(Request $request)
     {
         $penduduks = Penduduk::all(); // ambil semua penduduk
@@ -82,54 +98,109 @@ class BadutaController extends Controller
             'stunting' => $request->stunting,
         ]);
 
-        return redirect()->route('baduta.index')->with('success', 'Data Baduta berhasil disimpan');
+        return redirect()->route('penduduk.index')->with('success', 'Data Baduta berhasil disimpan');
     }
-    public function show($id)
+    
+    public function show($nik)
     {
-        $baduta = Baduta::findOrFail($id);
-        return view('baduta.show', compact('baduta'));
+        $baduta = Baduta::with(['anak', 'ibu'])->where('penduduk_nik', $nik)->firstOrFail();
+
+        // Hitung usia anak dalam tahun dan bulan
+        $lahir_anak = Carbon::parse($baduta->anak->tanggal_lahir);
+        $now = Carbon::now();
+        $diff = $lahir_anak->diff($now);
+
+        $tahun = $diff->y;
+        $bulan = $diff->m;
+        $hari = $diff->d;
+
+        $usia_anak = '';
+        if ($tahun > 0) {
+            $usia_anak .= "{$tahun} tahun ";
+        }
+        if ($bulan > 0) {
+            $usia_anak .= "{$bulan} bulan ";
+        }
+        if ($tahun === 0 && $bulan === 0) {
+            // Jika belum genap 1 bulan
+            $usia_anak .= "{$hari} hari";
+        } elseif ($hari > 0) {
+            $usia_anak .= "{$hari} hari";
+        }
+
+        // Hitung usia ibu dalam tahun
+        $usia_ibu = Carbon::parse($baduta->ibu->tanggal_lahir)->age;
+
+        return Inertia::render('Baduta/Show', [
+            'baduta' => [
+                'nama' => $baduta->anak->nama,
+                'nik' => $baduta->anak->nik,
+                'tanggal_lahir' => $baduta->anak->tanggal_lahir,
+                'usia' => $usia_anak,
+                'jenis_kelamin' => $baduta->anak->jenis_kelamin,
+                'alamat' => $baduta->anak->alamat,
+                'no_hp' => $baduta->anak->no_hp,
+
+                'berat_badan' => $baduta->berat_badan,
+                'tinggi_badan' => $baduta->tinggi_badan,
+                'asi_eksklusif' => $baduta->asi_eksklusif,
+                'imunisasi_hepatitis_B' => $baduta->imunisasi_hepatitis_B,
+                'mengisi_KKA' => $baduta->mengisi_KKA,
+                'meerokok_terpapar' => $baduta->meerokok_terpapar,
+
+                'nama_ibu' => $baduta->ibu->nama,
+                'nik_ibu' => $baduta->ibu->nik,
+                'tanggal_lahir_ibu' => $baduta->ibu->tanggal_lahir,
+                'usia_ibu' => $usia_ibu,
+                'no_hp' => $baduta->ibu->no_hp,
+                'alamat' => $baduta->ibu->alamat,
+
+                'jumlah_anak_kandung' => $baduta->jumlah_anak_kandung,
+                'tanggal_lahir_anak_terakhir' => $baduta->tanggal_lahir_anak_terakhir,
+                'menggunakan_alat_kontrasepsi' => $baduta->menggunakan_alat_kontrasepsi,
+                'sumber_air_minum' => $baduta->sumber_air_minum,
+                'fasilitas_BAB' => $baduta->fasilitas_BAB,
+            ]
+        ]);
     }
 
-    public function edit($id)
+    public function edit($penduduk_nik)
     {
-        $baduta = Baduta::findOrFail($id);
+        $baduta = Baduta::findOrFail($penduduk_nik);
         return view('baduta.edit', compact('baduta'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $penduduk_nik)
     {
-        // Validasi data yang dikirim dari form
         $request->validate([
-            'penduduk_id' => 'required|exists:penduduk,id',
-            'penduduk_ibu_id' => 'required|exists:penduduk,id',
-            'usia_kehamilan' => 'required|integer',
-            'jumlah_anak_kandung' => 'required|integer',
-            'tanggal_lahir_anak_terakhir' => 'required|string',
-            'berat_badan' => 'required|integer',
-            'tinggi_badan' => 'required|integer',
-            'urutan_anak' => 'required|integer',
-            'umur_kehamilan_saat_lahir' => 'required|integer',
-            'menggunakan_alat_kontrasepsi' => 'nullable|string',
-            'sumber_air_minum' => 'nullable|string',
-            'fasilitas_BAB' => 'nullable|string',
-            'asi_eksklusif' => 'nullable|string',
-            'imunisasi_hepatitis_B' => 'nullable|string',
-            'meerokok_terpapar' => 'nullable|string',
-            'mengisi_KKA' => 'nullable|string',
-            'longitude' => 'required|numeric',
-            'latitude' => 'required|numeric',
-            'kehadiran_posyandu' => 'nullable|string',
-            'penyuluhan_KIE' => 'nullable|string',
-            'fasilitas_bantuan_sosial' => 'nullable|string',
-            'stunting' => 'required|string',
+                'penduduk_nik' => 'required|exists:penduduk,nik', // nik bayi
+                'penduduk_ibu_nik' => 'required|exists:penduduk,nik', // nik ibu
+                'jumlah_anak_kandung' => 'required|integer',
+                'tanggal_lahir_anak_terakhir' => 'required|date',
+                'berat_badan' => 'required|integer',
+                'tinggi_badan' => 'required|integer',
+                'urutan_anak' => 'required|integer',
+                'umur_kehamilan_saat_lahir' => 'required|integer',
+                'menggunakan_alat_kontrasepsi' => 'nullable|string',
+                'sumber_air_minum' => 'nullable|string',
+                'fasilitas_BAB' => 'nullable|string',
+                'asi_eksklusif' => 'nullable|string',
+                'imunisasi_hepatitis_B' => 'nullable|string',
+                'meerokok_terpapar' => 'nullable|string',
+                'mengisi_KKA' => 'nullable|string',
+                'longitude' => 'required|numeric',
+                'latitude' => 'required|numeric',
+                'kehadiran_posyandu' => 'nullable|string',
+                'penyuluhan_KIE' => 'nullable|string',
+                'fasilitas_bantuan_sosial' => 'nullable|string',
+                'stunting' => 'required|string',
         ]);
 
         // Cari data Baduta yang akan diperbarui
         $baduta = Baduta::findOrFail($id);
         $baduta->update([
-            'penduduk_id' => $request->penduduk_id,
-            'penduduk_ibu_id' => $request->penduduk_ibu_id,
-            'usia_kehamilan' => $request->usia_kehamilan,
+            'penduduk_nik' => $request->penduduk_nik,
+            'penduduk_ibu_nik' => $request->penduduk_ibu_nik,
             'jumlah_anak_kandung' => $request->jumlah_anak_kandung,
             'tanggal_lahir_anak_terakhir' => $request->tanggal_lahir_anak_terakhir,
             'berat_badan' => $request->berat_badan,
@@ -154,13 +225,14 @@ class BadutaController extends Controller
         return redirect()->route('baduta.index')->with('success', 'Data Baduta berhasil diperbarui');
     }
 
-    public function destroy($id)
+    public function destroy($nik)
     {
-        $baduta = Baduta::findOrFail($id);
+        $baduta = Baduta::where('penduduk_nik', $nik)->firstOrFail();
         $baduta->delete();
 
-        return redirect()->route('baduta.index')->with('success', 'Data Baduta berhasil dihapus');
+        return redirect()->route('baduta.index')->with('success', 'Data Baduta berhasil dihapus.');
     }
+
 
     
 }
