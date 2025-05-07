@@ -234,5 +234,6 @@ class BadutaController extends Controller
     }
 
 
-    
+
+
 }

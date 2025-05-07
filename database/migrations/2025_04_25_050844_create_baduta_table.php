@@ -30,7 +30,7 @@ return new class extends Migration
             $table->text('imunisasi_hepatitis_B')->nullable();
             $table->text('meerokok_terpapar')->nullable();
             $table->text('mengisi_KKA')->nullable();
-            $table->decimal('longitude', 10, 7);
+            $table->decimal('longitude', 12, 8);
             $table->decimal('latitude', 10, 7);
             $table->text('kehadiran_posyandu')->nullable();
             $table->text('penyuluhan_KIE')->nullable();

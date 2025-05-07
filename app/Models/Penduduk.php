@@ -48,4 +48,14 @@ class Penduduk extends Model
     {
         return $this->hasOne(Pasper::class, 'penduduk_nik', 'nik');
     }
+    public function badutaAnak()
+{
+    return $this->hasOne(Baduta::class, 'penduduk_nik', 'nik');
+}
+
+public function badutaIbu()
+{
+    return $this->hasMany(Baduta::class, 'penduduk_ibu_nik', 'nik');
+}
+
 }
