@@ -91,6 +91,7 @@ Route::delete('/pasper/{nik}', [PasperController::class, 'destroy'])->name('pasp
 Route::get('/catin', [CatinController::class, 'index'])->name('catin.index');
 Route::get('/catin/create', [CatinController::class, 'create'])->name('catin.create');
 Route::post('/catin', [CatinController::class, 'store'])->name('catin.store');
+Route::get('/catin/{nik}', [CatinController::class, 'show'])->name('catin.show');
 Route::post('/catin/storePasanganBaru', [CatinController::class, 'storePasanganBaru']);
 
 //BUMIL CRUD

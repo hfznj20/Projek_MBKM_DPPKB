@@ -152,7 +152,10 @@ const submitForm = () => {
 
         <div class="mb-3">
           <label for="no_hp" class="form-label">No HP</label>
-          <input v-model="form.no_hp" type="text" class="form-control" id="no_hp" required />
+          <input v-model="form.no_hp" type="text" class="form-control" id="no_hp" pattern="^\+62\d{10,12}$" minlength="12"  placeholder="Contoh: +6281234567890" required />
+          <div v-if="form.no_hp && !form.no_hp.match(/^\+62\d{10,12}$/)" class="text-danger">
+            Nomor telepon harus dimulai dengan +62 dan memiliki minimal 12 digit.
+          </div>
         </div>
 
         <div class="mb-3">

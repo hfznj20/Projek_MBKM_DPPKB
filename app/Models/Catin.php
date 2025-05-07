@@ -37,13 +37,13 @@ class Catin extends Model
     // Relasi dengan pasangan pertama
     public function catin1()
     {
-        return $this->belongsTo(Penduduk::class, 'pasangan_pertama_nik', 'nik');
+        return $this->belongsTo(Penduduk::class, 'nik_catin1', 'nik');
     }
 
     // Relasi dengan pasangan kedua
     public function catin2()
     {
-        return $this->belongsTo(Penduduk::class, 'pasangan_kedua_nik', 'nik');
+        return $this->belongsTo(Penduduk::class, 'nik_catin2', 'nik');
     }
 
     // Relasi dengan data ibu jika ada
