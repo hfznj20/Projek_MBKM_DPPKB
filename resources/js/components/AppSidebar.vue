@@ -24,23 +24,10 @@ import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
 {
-    // ===== Admin Section =====
     title: 'Beranda',
     href: '/dashboard',
     icon: Home,
     guard: undefined
-  },
-  {
-    title: 'Data Penduduk',
-    href: '/population_data',
-    icon: Users,
-    guard: ['admin']
-  },
-  {
-    title: 'Stunting',
-    href: '/stunting-admin',
-    icon: ActivitySquare,
-    guard: ['admin']
   },
   {
     title: 'Pandu Genre',
@@ -49,34 +36,40 @@ const mainNavItems: NavItem[] = [
     guard: ['admin']
   },
   {
+    title: 'Data Penduduk',
+    href: '/penduduk',
+    icon: Users,
+    guard: undefined
+  },
+  {
+    title: 'Stunting',
+    href: '/stunting-tpk',
+    icon: ActivitySquare,
+    guard: undefined
+  },
+  {
     title: 'Baduta',
-    href: '/bayi',
+    href: '/baduta',
     icon: Baby,
-    guard: ['admin']
+    guard: undefined
   },
   {
     title: 'Bumil',
-    href: '/ibu',
+    href: '/bumil',
     icon: HeartPulse,
-    guard: ['admin']
+    guard: undefined
   },
   {
     title: 'Pasca Persalinan',
-    href: '/pasca-persalinan',
-    icon: HeartPulse,
-    guard: ['admin']
+    href: '/pasper',
+    icon: Baby,
+    guard: undefined,
   },
   {
     title: 'Catin',
-    href: '/calon-pengantin',
+    href: '/catin',
     icon: UserRound,
-    guard: ['admin']
-  },
-  {
-    title: 'Kinerja TPK',
-    href: '/kinerja-tpk',
-    icon: ClipboardList,
-    guard: ['admin']
+    guard: undefined
   },
   {
     title: 'Manajemen User',
@@ -84,49 +77,11 @@ const mainNavItems: NavItem[] = [
     icon: Settings,
     guard: ['admin']
   },
-
-  // ===== TPK Section =====
-  {
-    title: 'Data Penduduk',
-    href: '/penduduk',
-    icon: Users,
-    guard: ['TPK']
-  },
-  {
-    title: 'Stunting',
-    href: '/stunting-tpk',
-    icon: ActivitySquare,
-    guard: ['TPK']
-  },
-  {
-    title: 'Baduta',
-    href: '/baduta',
-    icon: Baby,
-    guard: ['TPK']
-  },
-  {
-    title: 'Bumil',
-    href: '/bumil',
-    icon: HeartPulse,
-    guard: ['TPK']
-  },
-  {
-    title: 'Pasca Persalinan',
-    href: '/pasper',
-    icon: Baby,
-    guard: ['TPK'],
-  },
-  {
-      title: 'Catin',
-      href: '/catin',
-      icon: UserRound,
-      guard: ['TPK']
-  }
-  ];
+];
 const footerNavItems: NavItem[] = [
-    {
-      title: 'Github Repo',
-      href: 'https://github.com/laravel/vue-starter-kit',
+  {
+    title: 'Github Repo',
+    href: 'https://github.com/laravel/vue-starter-kit',
       icon: Folder,
       guard: undefined
     },

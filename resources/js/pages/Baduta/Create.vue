@@ -228,7 +228,7 @@ const submitForm = () => {
             </div>
           <div>
             <label>NIK Ibu:</label>
-            <input v-model="form.penduduk_ibu_nik" type="text" />
+            <input v-model="form.penduduk_ibu_nik" type="text" placeholder="Masukkan NIK Ibu" maxlength="16"/>
             <div style="display: flex; gap: 10px; margin-top: 5px;">
               <button type="button" @click="checkNIK">Cek Data Ibu</button>
               <button type="button" @click="goToFormPendudukBaru">Tambah Data Baru</button>
@@ -408,8 +408,11 @@ const submitForm = () => {
         </div>
 
         <div class="mb-3">
-          <label for="no_hp" class="form-label">No. HP</label>
-          <input v-model="formIbu.no_hp" type="text" class="form-control" id="no_hp" required />
+          <label for="no_hp" class="form-label">No HP</label>
+          <input v-model="formIbu.no_hp" type="text" class="form-control" id="no_hp" pattern="^\+62\d{10,12}$" minlength="12"  placeholder="Contoh: +6281234567890" required />
+          <div v-if="formIbu.no_hp && !formIbu.no_hp.match(/^\+62\d{10,12}$/)" class="text-danger">
+            Nomor telepon harus dimulai dengan +62 dan memiliki minimal 12 digit.
+          </div>
         </div>
 
         <!-- <button type="button" @click="handleNext">Next</button> -->

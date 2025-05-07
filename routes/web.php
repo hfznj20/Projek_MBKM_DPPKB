@@ -29,14 +29,14 @@ require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 
 // ========== Admin Pages ==========
-Route::get('/population_data', [UserController::class, 'indexPenduduk'])->name('population_data');
-Route::get('/stunting-admin', [UserController::class, 'indexStunting'])->name('stunting-admin');
+// Route::get('/population_data', [UserController::class, 'indexPenduduk'])->name('population_data');
+// Route::get('/stunting-admin', [UserController::class, 'indexStunting'])->name('stunting-admin');
 Route::get('/pandu-genre', [UserController::class, 'index3'])->name('pandu-genre');
-Route::get('/bayi', [UserController::class, 'indexBaduta'])->name('bayi');
-Route::get('/ibu', [UserController::class, 'indexBumil'])->name('ibu');
-Route::get('/calon-pengantin', [UserController::class, 'indexCatin'])->name('calon-pengantin');
-Route::get('/pasca-persalinan', [UserController::class, 'indexPascaPersalinan'])->name('pasca-persalinan');
-Route::get('/kinerja-tpk', [UserController::class, 'indexKinerjaTPK'])->name('kinerja-tpk');
+// Route::get('/bayi', [UserController::class, 'indexBaduta'])->name('bayi');
+// Route::get('/ibu', [UserController::class, 'indexBumil'])->name('ibu');
+// Route::get('/calon-pengantin', [UserController::class, 'indexCatin'])->name('calon-pengantin');
+// Route::get('/pasca-persalinan', [UserController::class, 'indexPascaPersalinan'])->name('pasca-persalinan');
+// Route::get('/kinerja-tpk', [UserController::class, 'indexKinerjaTPK'])->name('kinerja-tpk');
 Route::resource('manajemen', ManajemenController::class)
     ->parameters(['manajemen' => 'NIK'])
     ->names([
@@ -47,7 +47,7 @@ Route::resource('manajemen', ManajemenController::class)
         'update' => 'manajemen.update',
         'destroy' => 'manajemen.destroy',
     ]);
-
+Route::get('/manajemen/{NIK}', [ManajemenController::class, 'show'])->name('manajemen.show');
 
 // ========== TPK Pages ==========
 Route::get('/stunting-tpk', [UserController::class, 'indexStuntingTPK'])->name('stunting-tpk');

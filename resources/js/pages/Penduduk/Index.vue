@@ -12,6 +12,7 @@ interface Penduduk {
   kecamatan: string;
   kelurahan: string;
   kategori: string;
+  niktpk: string;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -76,6 +77,7 @@ const deletePenduduk = async (nik: string) => {
             <option value="kecamatan">Kecamatan</option>
             <option value="kelurahan">Kelurahan</option>
             <option value="kategori">Kategori</option>
+            <option value="niktpk">TPK</option>
           </select>
         </div>
 
@@ -101,6 +103,7 @@ const deletePenduduk = async (nik: string) => {
               <th class="px-4 py-2 text-left">Kecamatan</th>
               <th class="px-4 py-2 text-left">Kelurahan</th>
               <th class="px-4 py-2 text-left">Kategori</th>
+              <th class="px-4 py-2 text-left">TPK</th>
               <th class="px-4 py-2 text-left">Aksi</th>
             </tr>
           </thead>
@@ -115,6 +118,7 @@ const deletePenduduk = async (nik: string) => {
               <td class="px-4 py-2">{{ penduduk.kecamatan }}</td>
               <td class="px-4 py-2">{{ penduduk.kelurahan }}</td>
               <td class="px-4 py-2">{{ penduduk.kategori }}</td>
+              <td class="px-4 py-2">{{ penduduk.niktpk }}</td>
               <td class="px-4 py-2 space-x-2 flex items-center">
                 <button @click="editPenduduk(penduduk.nik)" class="text-blue-600 hover:text-blue-800" title="Edit">
                   <PencilIcon class="w-5 h-5" />

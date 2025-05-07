@@ -14,7 +14,9 @@ class BadutaController extends Controller
 {
     public function index()
     {
-        $badutas = DB::table('baduta')
+        $user = auth()->user();
+
+        $query = DB::table('baduta')
             ->join('penduduk as anak', 'baduta.penduduk_nik', '=', 'anak.nik')
             ->join('penduduk as ibu', 'baduta.penduduk_ibu_nik', '=', 'ibu.nik')
             ->select(
@@ -24,10 +26,16 @@ class BadutaController extends Controller
                 'anak.nama',
                 'anak.kecamatan',
                 'anak.kelurahan',
-                'ibu.nama as nama_ibu'
+                'ibu.nama as nama_ibu',
+                'baduta.niktpk'
             )
-            ->orderBy('baduta.created_at', 'desc')
-            ->get();
+            ->orderBy('baduta.created_at', 'desc');
+
+            if ($user->name !== 'Admin') {
+                $query->where('baduta.niktpk', $user->NIK);
+            }
+    
+            $badutas = $query->get();
     
         return Inertia::render('Baduta/Index', [
             'badutas' => $badutas,
@@ -96,6 +104,7 @@ class BadutaController extends Controller
             'penyuluhan_KIE' => $request->penyuluhan_KIE,
             'fasilitas_bantuan_sosial' => $request->fasilitas_bantuan_sosial,
             'stunting' => $request->stunting,
+            'niktpk' => auth()->user()->NIK,
         ]);
 
         return redirect()->route('penduduk.index')->with('success', 'Data Baduta berhasil disimpan');

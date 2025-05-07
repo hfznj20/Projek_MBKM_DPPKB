@@ -13,7 +13,13 @@ class UserController extends Controller
     // Method untuk menampilkan halaman manajemen user dengan Inertia.js
     public function indexPenduduk()
     {
-        $penduduks = Penduduk::orderBy('created_at', 'desc')->get();
+        $user = auth()->user();
+
+        $penduduks = $user->name === 'Admin'
+            ? Penduduk::orderBy('created_at', 'desc')->get()
+            : Penduduk::where('niktpk', $user->NIK)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
         return Inertia::render('PopulationData', [
             'penduduks' => $penduduks,
@@ -65,7 +71,9 @@ class UserController extends Controller
     }
     public function indexBaduta()
     {
-        $badutas = DB::table('baduta')
+        $user = auth()->user();
+
+        $query = DB::table('baduta')
             ->join('penduduk as anak', 'baduta.penduduk_nik', '=', 'anak.nik')
             ->join('penduduk as ibu', 'baduta.penduduk_ibu_nik', '=', 'ibu.nik')
             ->select(
@@ -75,10 +83,16 @@ class UserController extends Controller
                 'anak.nama',
                 'anak.kecamatan',
                 'anak.kelurahan',
-                'ibu.nama as nama_ibu'
+                'ibu.nama as nama_ibu',
+                'baduta.niktpk'
             )
-            ->orderBy('baduta.created_at', 'desc')
-            ->get();
+            ->orderBy('baduta.created_at', 'desc');
+
+            if ($user->name !== 'Admin') {
+                $query->where('baduta.niktpk', $user->NIK);
+            }
+    
+            $badutas = $query->get();
     
         return Inertia::render('Baduta', [
             'badutas' => $badutas,
@@ -86,11 +100,25 @@ class UserController extends Controller
     }
     public function indexBumil()
     {
-        $bumils = DB::table('bumil')
+        $user = auth()->user();
+        $query = DB::table('bumil')
             ->join('penduduk', 'bumil.penduduk_nik', '=', 'penduduk.nik')
-            ->select('bumil.id', 'bumil.stunting', 'penduduk.nik', 'penduduk.nama', 'penduduk.kecamatan', 'penduduk.kelurahan')
-            ->orderBy('bumil.created_at', 'desc')
-            ->get();
+            ->select(
+                'bumil.id',
+                'bumil.stunting',
+                'penduduk.nik',
+                'penduduk.nama',
+                'penduduk.kecamatan',
+                'penduduk.kelurahan',
+                'bumil.niktpk'
+            )
+            ->orderBy('bumil.created_at', 'desc');
+
+            if ($user->name !== 'Admin') {
+                $query->where('bumil.niktpk', $user->NIK);
+            }
+
+            $bumils = $query->get();
     
         return Inertia::render('Bumil', [
             'bumils' => $bumils,
@@ -98,6 +126,17 @@ class UserController extends Controller
     }
     public function indexCatin()
     {
+        $user = auth()->user();
+
+        $query = Catin::orderBy('created_at', 'desc');
+
+        // Jika bukan admin, filter berdasarkan niktpk
+        if ($user->name !== 'Admin') {
+            $query->where('catin.niktpk', $user->NIK);
+        }
+
+        $catins = $query->get();
+        
         $catins = Catin::with(['catin1', 'catin2'])->get()->map(function ($catin) {
             $pria = null;
             $wanita = null;
@@ -132,7 +171,8 @@ class UserController extends Controller
     
     public function indexPascaPersalinan()
     {
-        $pasca_persalinan = DB::table('pasca_persalinan')
+        $user = auth()->user();
+        $query = DB::table('pasca_persalinan')
             ->join('penduduk', 'pasca_persalinan.penduduk_nik', '=', 'penduduk.nik')
             ->select(
                 'pasca_persalinan.id',
@@ -142,8 +182,12 @@ class UserController extends Controller
                 'penduduk.kecamatan',
                 'penduduk.kelurahan'
             )
-            ->orderBy('pasca_persalinan.created_at', 'desc')
-            ->get();
+            ->orderBy('pasca_persalinan.created_at', 'desc');
+            if ($user->name !== 'Admin') {
+                $query->where('pasca_persalinan.niktpk', $user->NIK);
+            }
+
+            $pasca_persalinan = $query->get();
     
         return Inertia::render('PascaPersalinan', [
             'pasper' => $pasca_persalinan,

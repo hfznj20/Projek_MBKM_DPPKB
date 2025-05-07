@@ -13,7 +13,8 @@ class PasperController extends Controller
 {
     public function index()
     {
-        $pasca_persalinan = DB::table('pasca_persalinan')
+        $user = auth()->user();
+        $query = DB::table('pasca_persalinan')
             ->join('penduduk', 'pasca_persalinan.penduduk_nik', '=', 'penduduk.nik')
             ->select(
                 'pasca_persalinan.id',
@@ -23,10 +24,14 @@ class PasperController extends Controller
                 'penduduk.kecamatan',
                 'penduduk.kelurahan'
             )
-            ->orderBy('pasca_persalinan.created_at', 'desc')
-            ->get();
+            ->orderBy('pasca_persalinan.created_at', 'desc');
+            if ($user->name !== 'Admin') {
+                $query->where('pasca_persalinan.niktpk', $user->NIK);
+            }
+
+            $pasca_persalinan = $query->get();
     
-        return Inertia::render('Pasper/Index', [
+        return Inertia::render('PascaPersalinan', [
             'pasper' => $pasca_persalinan,
         ]);
     }
@@ -86,6 +91,7 @@ class PasperController extends Controller
                 'meminum_table_tambah_darah' => $request->meminum_table_tambah_darah,
                 'penyuluhan_KIE' => $request->penyuluhan_KIE,
                 'fasilitas_layanan_rujukan' => $request->fasilitas_layanan_rujukan,
+                'niktpk' => auth()->user()->NIK,
             ]);
 
 

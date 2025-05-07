@@ -35,6 +35,7 @@ class Bumil extends Model
         'fasilitas_layanan_rujukan',
         'fasilitas_bantuan_sosial',
         'stunting',
+        'niktpk'
     ];
 
     public function penduduk()

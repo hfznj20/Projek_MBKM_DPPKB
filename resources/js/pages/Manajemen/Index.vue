@@ -67,6 +67,12 @@ function confirmDelete(NIK: string) {
                                 >
                                     Edit
                                 </Link>
+                                <Link
+                                    :href="route('manajemen.show', { NIK: item.NIK })"
+                                    class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                                >
+                                    Detail
+                                </Link>
 
                                 <button
                                     @click="confirmDelete(item.NIK)"

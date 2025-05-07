@@ -36,6 +36,7 @@ return new class extends Migration
             $table->text('penyuluhan_KIE')->nullable();
             $table->text('fasilitas_bantuan_sosial')->nullable();
             $table->text('stunting');
+            $table->string('niktpk');
             $table->timestamps();
         });
     }

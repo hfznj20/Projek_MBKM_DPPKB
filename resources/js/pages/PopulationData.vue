@@ -10,7 +10,7 @@ interface Penduduk {
   kecamatan: string;
   kelurahan: string;
   kategori: string;
-  tpk: string;
+  niktpk: string;
 }
 
 // Breadcrumbs
@@ -58,6 +58,8 @@ const filteredPenduduks = computed(() => {
             <option value="kecamatan">Kecamatan</option>
             <option value="kelurahan">Kelurahan</option>
             <option value="kategori">Kategori</option>
+            <option value="niktpk">TPK</option>
+
           </select>
         </div>
 
@@ -97,7 +99,7 @@ const filteredPenduduks = computed(() => {
               <td class="px-4 py-2">{{ penduduk.kecamatan }}</td>
               <td class="px-4 py-2">{{ penduduk.kelurahan }}</td>
               <td class="px-4 py-2">{{ penduduk.kategori }}</td>
-              <td class="px-4 py-2">{{ penduduk.tpk }}</td>
+              <td class="px-4 py-2">{{ penduduk.niktpk }}</td>
             </tr>
           </tbody>
         </table>

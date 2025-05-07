@@ -26,6 +26,7 @@ class Penduduk extends Model
         'alamat',
         'no_hp',
         'kategori',
+        'niktpk'
     ];
 
     // Relasi satu ke satu dengan model terkait berdasarkan foreign key 'nik'
@@ -48,14 +49,10 @@ class Penduduk extends Model
     {
         return $this->hasOne(Pasper::class, 'penduduk_nik', 'nik');
     }
-    public function badutaAnak()
-{
-    return $this->hasOne(Baduta::class, 'penduduk_nik', 'nik');
-}
+    public function penduduk()
+    {
+        return $this->belongsTo(Penduduk::class, 'penduduk_nik', 'nik');
+    }
 
-public function badutaIbu()
-{
-    return $this->hasMany(Baduta::class, 'penduduk_ibu_nik', 'nik');
-}
 
 }

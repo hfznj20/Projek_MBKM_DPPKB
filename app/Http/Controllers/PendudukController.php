@@ -14,7 +14,13 @@ class PendudukController extends Controller
 {
     public function index()
     {
-        $penduduks = Penduduk::orderBy('created_at', 'desc')->get();
+        $user = auth()->user();
+
+        $penduduks = $user->name === 'Admin'
+            ? Penduduk::orderBy('created_at', 'desc')->get()
+            : Penduduk::where('niktpk', $user->NIK)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
         return Inertia::render('Penduduk/Index', [
             'penduduks' => $penduduks,
@@ -54,6 +60,7 @@ class PendudukController extends Controller
             'alamat' => $request->alamat,
             'no_hp' => $request->no_hp,
             'kategori' => $request->kategori,
+            'niktpk' => auth()->user()->NIK,
         ]);
 
         // Redirect berdasarkan kategori

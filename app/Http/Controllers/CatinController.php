@@ -14,6 +14,17 @@ class CatinController extends Controller
     // Menampilkan semua data catin
     public function index()
     {
+        $user = auth()->user();
+
+        $query = Catin::orderBy('created_at', 'desc');
+
+        // Jika bukan admin, filter berdasarkan niktpk
+        if ($user->name !== 'Admin') {
+            $query->where('catin.niktpk', $user->NIK);
+        }
+
+        $catins = $query->get();
+        
         $catins = Catin::with(['catin1', 'catin2'])->get()->map(function ($catin) {
             $pria = null;
             $wanita = null;
@@ -123,6 +134,7 @@ class CatinController extends Controller
             'longitude' => $request->longitude,
             'latitude' => $request->latitude,
             'fasilitas_bantuan_sosial' => $request->fasilitas_bantuan_sosial,
+            'niktpk' => auth()->user()->NIK,
         ]);
 
         // Redirect ke halaman daftar penduduk
@@ -132,7 +144,6 @@ class CatinController extends Controller
     // Menyimpan data pasangan baru jika belum ada di DB
     public function storePasanganBaru(Request $request)
     {
-        // Validasi data pasangan baru
         $request->validate([
             'nik' => 'required|digits:16|unique:penduduk,nik',
             'nama' => 'required|string|max:255',
@@ -146,7 +157,6 @@ class CatinController extends Controller
             'no_hp' => 'required|string|max:16',
         ]);
 
-        // Simpan pasangan baru ke database
         $pasangan = Penduduk::create([
             'nik' => $request->nik,
             'nama' => $request->nama,
@@ -158,12 +168,17 @@ class CatinController extends Controller
             'RW' => $request->RW,
             'alamat' => $request->alamat,
             'no_hp' => $request->no_hp,
-            'kategori' => 'CATIN',
+            'niktpk' => auth()->user()->NIK,
         ]);
 
         return Inertia::render('Catin/Create', [
-            'successMessage' => 'Pasangan berhasil disimpan.'
+            'successMessage' => 'Pasangan berhasil disimpan'
         ]);
+        // return response()->json([
+        //     'status' => 'success',
+        //     'nik' => $pasangan->nik,
+        //     'nama' => $pasangan->nama,
+        // ]);
     }
    
    public function show($nik)

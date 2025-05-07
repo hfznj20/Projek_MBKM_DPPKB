@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Manajemen;
 use App\Models\User;
+use App\Models\Penduduk;
+use App\Models\Baduta;
+use App\Models\Catin;
+use App\Models\Pasper;
+use App\Models\Bumil;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -15,7 +20,7 @@ class ManajemenController extends Controller
      */
     public function index()
     {
-        $manajemens = Manajemen::get(); 
+        $manajemens = Manajemen::get();
         return Inertia::render('Manajemen/Index', [
             'manajemens' => $manajemens,
         ]);
@@ -59,7 +64,7 @@ class ManajemenController extends Controller
 
         $user->assignRole('TPK');
 
-        return redirect()->route('manajemen.index') 
+        return redirect()->route('manajemen.index')
             ->with('success', 'Data manajemen dan akun TPK berhasil dibuat!');
     }
 
@@ -104,4 +109,29 @@ class ManajemenController extends Controller
 
         return redirect()->route('manajemen.index')->with('success', 'Data berhasil dihapus!');
     }
+
+    public function show($nik)
+    {
+        $manajemen = Manajemen::where('NIK', $nik)->firstOrFail();
+
+        $data = [
+            'penduduk' => Penduduk::where('niktpk', $nik)->count(),
+            // 'penduduk' => Penduduk::where('jenis_kelamin', $nik)->count(),
+            'baduta' => Baduta::where('niktpk', $nik)->count(),
+            'catin' => Catin::where('niktpk', $nik)->count(),
+            'bumil' => Bumil::where('niktpk', $nik)->count(),
+            'pasper' => Pasper::where('niktpk', $nik)->count(),
+        ];
+        $genderCount = [
+            'Laki' => Penduduk::where('niktpk', $nik)->where('jenis_kelamin', 'Laki-laki')->count(),
+            'Perempuan' => Penduduk::where('niktpk', $nik)->where('jenis_kelamin', 'Perempuan')->count(),
+        ];
+
+        return Inertia::render('Manajemen/Show', [
+            'tpk' => $manajemen,
+            'dataInput' => $data,
+            'genderCount' => $genderCount,
+        ]);
+    }
+
 }

@@ -30,6 +30,7 @@ return new class extends Migration
             $table->text('meminum_table_tambah_darah')->nullable();
             $table->text('penyuluhan_KIE')->nullable();
             $table->text('fasilitas_layanan_rujukan')->nullable();
+            $table->string('niktpk');
             $table->timestamps();
         });
     }

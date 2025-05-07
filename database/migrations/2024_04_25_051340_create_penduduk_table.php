@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('alamat');
             $table->string('no_hp', 16);
             $table->enum('kategori', ['CATIN', 'BUMIL', 'BADUTA', 'Pasca Persalinan', 'Penduduk']);
+            $table->string('niktpk');
             $table->timestamps();
         });
     }

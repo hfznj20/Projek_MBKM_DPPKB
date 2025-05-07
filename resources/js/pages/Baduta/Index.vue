@@ -14,6 +14,7 @@ interface Baduta {
   kelurahan: string;
   nama_ibu: string;
   stunting: string;
+  niktpk: string;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -64,6 +65,7 @@ const viewData = (nik: string) => {
             <option value="nama_ibu">Nama Ibu</option>
             <option value="kecamatan">Kecamatan</option>
             <option value="kelurahan">Kelurahan</option>
+            <option value="niktpk">TPK</option>
           </select>
         </div>
 
@@ -90,6 +92,7 @@ const viewData = (nik: string) => {
               <th class="px-4 py-2 text-left">Kecamatan</th>
               <th class="px-4 py-2 text-left">Kelurahan</th>
               <th class="px-4 py-2 text-left">Status Stunting</th>
+              <th class="px-4 py-2 text-left">TPK</th>
               <th class="px-4 py-2 text-left">Aksi</th>
             </tr>
           </thead>
@@ -105,6 +108,7 @@ const viewData = (nik: string) => {
               <td class="px-4 py-2">{{ baduta.kecamatan }}</td>
               <td class="px-4 py-2">{{ baduta.kelurahan }}</td>
               <td class="px-4 py-2">{{ baduta.stunting }}</td>
+              <td class="px-4 py-2">{{ baduta.niktpk }}</td>
               <td class="px-4 py-2 space-x-2 flex items-center">
                 <button @click="viewData(baduta.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />

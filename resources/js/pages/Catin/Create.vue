@@ -406,10 +406,14 @@ const goToFormPendudukBaru = () => {
             <textarea v-model="formPasangan.alamat" id="alamat" class="form-control" rows="3" required></textarea>
           </div>
 
-          <div class="mb-3">
-            <label for="no_hp" class="form-label">No HP</label>
-            <input v-model="formPasangan.no_hp" type="text" class="form-control" id="no_hp" required />
+        <div class="mb-3">
+          <label for="no_hp" class="form-label">No HP</label>
+          <input v-model="formPasangan.no_hp" type="text" class="form-control" id="no_hp" pattern="^\+62\d{10,12}$" minlength="12"  placeholder="Contoh: +6281234567890" required />
+          <div v-if="formPasangan.no_hp && !formPasangan.no_hp.match(/^\+62\d{10,12}$/)" class="text-danger">
+            Nomor telepon harus dimulai dengan +62 dan memiliki minimal 12 digit.
           </div>
+        </div>
+
           <button type="button" class="btn btn-success" @click="submitPasangan">Simpan Data</button>
           <button type="button" class="btn btn-secondary" @click="showModal = false">Tutup</button>
         </form>

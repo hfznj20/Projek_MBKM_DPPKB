@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Bumil;
 use App\Models\Penduduk;
 use Illuminate\Http\Request;
-use App\Models\TPK;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -14,11 +13,26 @@ class BumilController extends Controller
 {
     public function index()
     {
-        $bumils = DB::table('bumil')
+        $user = auth()->user();
+        $query = DB::table('bumil')
             ->join('penduduk', 'bumil.penduduk_nik', '=', 'penduduk.nik')
-            ->select('bumil.id', 'bumil.stunting', 'penduduk.nik', 'penduduk.nama', 'penduduk.kecamatan', 'penduduk.kelurahan')
-            ->orderBy('bumil.created_at', 'desc')
-            ->get();
+            ->select(
+                'bumil.id',
+                'bumil.stunting',
+                'penduduk.nik',
+                'penduduk.nama',
+                'penduduk.kecamatan',
+                'penduduk.kelurahan',
+                'bumil.niktpk'
+            )
+            ->orderBy('bumil.created_at', 'desc');
+
+            if ($user->name !== 'Admin') {
+                $query->where('bumil.niktpk', $user->NIK);
+            }
+
+            $bumils = $query->get();
+    
     
         return Inertia::render('Bumil/Index', [
             'bumils' => $bumils,
@@ -63,7 +77,10 @@ class BumilController extends Controller
             'stunting' => 'required|string',
         ]);
  
-        Bumil::create($request->all());
+        Bumil::create(array_merge(
+            $request->all(),
+            ['niktpk' => auth()->user()->NIK]
+        ));
 
         return redirect()->route('penduduk.index')->with('success', 'Data Bumil berhasil disimpan');
     }
@@ -98,6 +115,7 @@ class BumilController extends Controller
                 'sumber_air_minum' => $bumil->sumber_air_minum,
                 'fasilitas_BAB' => $bumil->fasilitas_BAB,
                 'meerokok_terpapar' => $bumil->meerokok_terpapar,
+                'niktpk' => $bumil->niktpk,
             ],
         ]);
     }
@@ -137,8 +155,11 @@ class BumilController extends Controller
             'stunting' => 'required|string',
         ]);
 
-        $bumil = Bumil::findOrFail($nik);
-        $bumil->update($request->all());
+        $bumil = Bumil::where('penduduk_nik', $nik)->firstOrFail();
+        $bumil->update(array_merge(
+            $request->all(),
+            ['niktpk' => auth()->user()->NIK]
+        ));
 
         return redirect()->route('penduduk.index')->with('success', 'Data Bumil berhasil diperbarui');
     }

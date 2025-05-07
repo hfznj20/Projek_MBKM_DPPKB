@@ -32,7 +32,8 @@ class Baduta extends Model
         'kehadiran_posyandu',
         'penyuluhan_KIE',
         'fasilitas_bantuan_sosial',
-        'stunting'
+        'stunting',
+        'niktpk'
     ];
 
     // Relasi ke Penduduk (bayi)

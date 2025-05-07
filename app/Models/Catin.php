@@ -32,6 +32,7 @@ class Catin extends Model
         'penyuluhan_KIE',
         'fasilitas_layanan_rujukan',
         'fasilitas_bantuan_sosial',
+        'niktpk'
     ];
 
     // Relasi dengan pasangan pertama

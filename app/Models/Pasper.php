@@ -30,11 +30,12 @@ class Pasper extends Model
         'meminum_table_tambah_darah',
         'penyuluhan_KIE',
         'fasilitas_layanan_rujukan',
+        'niktpk'
     ];
 
     // Relasi dengan model Penduduk
     public function penduduk()
     {
-        return $this->belongsTo(Penduduk::class);
+        return $this->belongsTo(Penduduk::class, 'penduduk_nik', 'nik');
     }
 }
