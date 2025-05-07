@@ -102,6 +102,7 @@ class UserController extends Controller
             $pria = null;
             $wanita = null;
     
+            // Deteksi mana pria dan wanita
             if ($catin->catin1 && $catin->catin1->jenis_kelamin === 'Laki-laki') {
                 $pria = $catin->catin1;
             } elseif ($catin->catin1 && $catin->catin1->jenis_kelamin === 'Perempuan') {
@@ -116,18 +117,19 @@ class UserController extends Controller
     
             return [
                 'id' => $catin->id,
-                'nik' => $catin->nik_catin1,
-                'nama' => $wanita?->nama ?? '-',
-                'nama_pasangan' => $pria?->nama ?? '-',
+                'nik_catin1' => $wanita?->nik ?? '-',
+                'nama_catin1' => $wanita?->nama ?? '-',
+                'nik_catin2' => $pria?->nik ?? '-',
+                'nama_catin2' => $pria?->nama ?? '-',
                 'tanggal_rencana_pernikahan' => $catin->tanggal_pernikahan,
             ];
         });
     
-        return Inertia::render('Catin/Index', [
+        return Inertia::render('Catin', [
             'catins' => $catins,
         ]);
-        
     }
+    
     public function indexPascaPersalinan()
     {
         $pasca_persalinan = DB::table('pasca_persalinan')

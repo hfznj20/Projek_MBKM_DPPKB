@@ -13,17 +13,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface Catin {
-  nik: string;
-  nama: string;
-  nama_pasangan: string;
+  id: number;
+  nik_catin1: string;
+  nama_catin1: string;
+  nik_catin2: string;
+  nama_catin2: string;
   tanggal_rencana_pernikahan: string;
 }
 
 const { props } = usePage();
-const catinData = ref<Catin[]>(props.catins as Catin[]);
+const catinData = ref<Catin[]>(Array.isArray(props.catins) ? props.catins : []);
 
 const search = ref('');
-const searchCategory = ref('nama');
+const searchCategory = ref('nama_catin1');
 
 const filteredCatin = computed(() => {
   const keyword = search.value.toLowerCase();
@@ -38,33 +40,31 @@ const filteredCatin = computed(() => {
 const viewData = (nik: string) => {
   Inertia.visit(`/catin/${nik}`);
 };
-
 </script>
 
 <template>
-  <Head title="Catin TPK" />
+  <Head title="Data Catin" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6">
       <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl">
         Data Catin TPK
       </h1>
 
-      <!-- Search & Category -->
+      <!-- Search -->
       <div class="flex flex-col md:flex-row justify-between mb-4 mt-4 space-y-6 md:space-y-0 md:space-x-6">
         <div class="flex items-center w-full md:w-1/3 space-x-2">
           <label for="searchCategory" class="text-sm text-black whitespace-nowrap">Kategori</label>
-          <div class="relative w-full">
-            <select
-              id="searchCategory"
-              v-model="searchCategory"
-              class="w-full ml-1 border border-[#F9690C] text-[#F9690C] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9690C]"
-            >
-              <option value="nik">NIK</option>
-              <option value="nama">Nama Calon Wanita</option>
-              <option value="nama_pasangan">Nama Calon Pria</option>
-              <option value="tanggal_rencana_pernikahan">Tanggal Rencana Pernikahan</option>
-            </select>
-          </div>
+          <select
+            id="searchCategory"
+            v-model="searchCategory"
+            class="w-full ml-1 border border-[#F9690C] text-[#F9690C] rounded-lg px-3 py-2 text-sm"
+          >
+            <option value="nik_catin1">NIK Calon Wanita</option>
+            <option value="nama_catin1">Nama Calon Wanita</option>
+            <option value="nik_catin2">NIK Calon Pria</option>
+            <option value="nama_catin2">Nama Calon Pria</option>
+            <option value="tanggal_rencana_pernikahan">Tanggal Rencana Pernikahan</option>
+          </select>
         </div>
 
         <div class="relative w-full md:w-1/3">
@@ -72,10 +72,10 @@ const viewData = (nik: string) => {
             v-model="search"
             type="text"
             placeholder="Cari..."
-            class="w-full border border-[#F9690C] rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9690C] placeholder-[#F9690C]"
+            class="w-full border border-[#F9690C] rounded-lg px-3 py-2 pr-10 text-sm placeholder-[#F9690C]"
           />
           <MagnifyingGlassIcon
-            class="w-5 h-5 text-[#F9690C] absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none"
+            class="w-5 h-5 text-[#F9690C] absolute right-3 top-1/2 transform -translate-y-1/2"
           />
         </div>
       </div>
@@ -86,7 +86,9 @@ const viewData = (nik: string) => {
           <thead class="bg-[#F9690C]/90 text-white">
             <tr>
               <th class="px-4 py-2 text-left">No</th>
+              <th class="px-4 py-2 text-left">NIK Calon Wanita</th>
               <th class="px-4 py-2 text-left">Nama Calon Wanita</th>
+              <th class="px-4 py-2 text-left">NIK Calon Pria</th>
               <th class="px-4 py-2 text-left">Nama Calon Pria</th>
               <th class="px-4 py-2 text-left">Tanggal Rencana Pernikahan</th>
               <th class="px-4 py-2 text-left">Aksi</th>
@@ -94,19 +96,17 @@ const viewData = (nik: string) => {
           </thead>
           <tbody>
             <tr v-if="filteredCatin.length === 0" class="text-center text-gray-500">
-              <td colspan="6" class="px-4 py-4">Tidak ada data catin.</td>
+              <td colspan="7" class="px-4 py-4">Tidak ada data catin.</td>
             </tr>
-            <tr
-              v-for="(catin, index) in filteredCatin"
-              :key="catin.nik"
-              class="border-t hover:bg-gray-50"
-            >
+            <tr v-for="(data, index) in filteredCatin" :key="data.id" class="border-t hover:bg-gray-50">
               <td class="px-4 py-2">{{ index + 1 }}</td>
-              <td class="px-4 py-2">{{ catin.nama }}</td>
-              <td class="px-4 py-2">{{ catin.nama_pasangan }}</td>
-              <td class="px-4 py-2">{{ catin.tanggal_rencana_pernikahan }}</td>
-              <td class="px-4 py-2 space-x-2 flex items-center">
-                <button @click="viewData(catin.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
+              <td class="px-4 py-2">{{ data.nik_catin1 }}</td>
+              <td class="px-4 py-2">{{ data.nama_catin1 }}</td>
+              <td class="px-4 py-2">{{ data.nik_catin2 }}</td>
+              <td class="px-4 py-2">{{ data.nama_catin2 }}</td>
+              <td class="px-4 py-2">{{ data.tanggal_rencana_pernikahan }}</td>
+              <td class="px-4 py-2">
+                <button @click="viewData(data.nik_catin1)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />
                 </button>
               </td>

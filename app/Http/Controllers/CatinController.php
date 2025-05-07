@@ -4,20 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Catin;
 use App\Models\Penduduk;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\TPK;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class CatinController extends Controller
 {
+    // Menampilkan semua data catin
     public function index()
     {
         $catins = Catin::with(['catin1', 'catin2'])->get()->map(function ($catin) {
             $pria = null;
             $wanita = null;
     
+            // Deteksi mana pria dan wanita
             if ($catin->catin1 && $catin->catin1->jenis_kelamin === 'Laki-laki') {
                 $pria = $catin->catin1;
             } elseif ($catin->catin1 && $catin->catin1->jenis_kelamin === 'Perempuan') {
@@ -32,9 +33,10 @@ class CatinController extends Controller
     
             return [
                 'id' => $catin->id,
-                'nik' => $catin->nik_catin1,
-                'nama' => $wanita?->nama ?? '-',
-                'nama_pasangan' => $pria?->nama ?? '-',
+                'nik_catin1' => $wanita?->nik ?? '-',
+                'nama_catin1' => $wanita?->nama ?? '-',
+                'nik_catin2' => $pria?->nik ?? '-',
+                'nama_catin2' => $pria?->nama ?? '-',
                 'tanggal_rencana_pernikahan' => $catin->tanggal_pernikahan,
             ];
         });
@@ -42,18 +44,19 @@ class CatinController extends Controller
         return Inertia::render('Catin/Index', [
             'catins' => $catins,
         ]);
-        
     }
 
-    
+    // Menampilkan form pendaftaran catin berdasarkan penduduk yang dipilih
     public function create(Request $request)
     {
         $penduduks = Penduduk::all();
 
+        // Ambil data catin berdasarkan NIK (jika ada)
         $catin = null;
         if ($request->nik) {
-            $catin = Penduduk::where('nik', $request->nik)->first();
+            $catin = Catin::where('nik_catin1', $request->nik)->orWhere('nik_catin2', $request->nik)->first();
         }
+
         return Inertia::render('Catin/Create', [
             'penduduks' => $penduduks,
             'penduduk_nik' => $request->nik,
@@ -61,10 +64,11 @@ class CatinController extends Controller
         ]);
     }
 
-    
+    // Menyimpan data catin
     public function store(Request $request)
     {
-        Log::info($request->all());
+        // Log semua request yang masuk untuk debugging
+        Log::info('Menyimpan data catin: ', $request->all());
 
         // Validasi input
         $request->validate([
@@ -84,24 +88,26 @@ class CatinController extends Controller
             'fasilitas_bantuan_sosial' => 'nullable|string',
         ]);
 
-        // Cek apakah pasangan kedua sudah ada
+        // Cek apakah pasangan kedua sudah ada di database
         $pasangan_kedua = Penduduk::where('nik', $request->nik_catin2)->first();
 
         if (!$pasangan_kedua) {
+            // Jika pasangan kedua belum ada, buat pasangan baru
             $pasangan_kedua = Penduduk::create([
-                'nik' => $request->nik,
-                'nama' => $request->nama,
-                'tanggal_lahir' => $request->tanggal_lahir,
-                'jenis_kelamin' => $request->jenis_kelamin,
-                'kecamatan' => $request->kecamatan,
-                'kelurahan' => $request->kelurahan,
-                'RT' => $request->RT,
-                'RW' => $request->RW,
-                'alamat' => $request->alamat,
-                'no_hp' => $request->no_hp,
+                'nik' => $request->nik_catin2,
+                'nama' => $request->nama_catin2,
+                'tanggal_lahir' => $request->tanggal_lahir_catin2,
+                'jenis_kelamin' => $request->jenis_kelamin_catin2,
+                'kecamatan' => $request->kecamatan_catin2,
+                'kelurahan' => $request->kelurahan_catin2,
+                'RT' => $request->RT_catin2,
+                'RW' => $request->RW_catin2,
+                'alamat' => $request->alamat_catin2,
+                'no_hp' => $request->no_hp_catin2,
             ]);
         }
 
+        // Simpan data catin
         Catin::create([
             'nik_catin1' => $request->nik_catin1,
             'nik_catin2' => $request->nik_catin2,
@@ -119,11 +125,14 @@ class CatinController extends Controller
             'fasilitas_bantuan_sosial' => $request->fasilitas_bantuan_sosial,
         ]);
 
+        // Redirect ke halaman daftar penduduk
         return redirect()->route('penduduk.index')->with('success', 'Data Catin berhasil disimpan');
     }
 
+    // Menyimpan data pasangan baru jika belum ada di DB
     public function storePasanganBaru(Request $request)
     {
+        // Validasi data pasangan baru
         $request->validate([
             'nik' => 'required|digits:16|unique:penduduk,nik',
             'nama' => 'required|string|max:255',
@@ -137,6 +146,7 @@ class CatinController extends Controller
             'no_hp' => 'required|string|max:16',
         ]);
 
+        // Simpan pasangan baru ke database
         $pasangan = Penduduk::create([
             'nik' => $request->nik,
             'nama' => $request->nama,
@@ -148,62 +158,63 @@ class CatinController extends Controller
             'RW' => $request->RW,
             'alamat' => $request->alamat,
             'no_hp' => $request->no_hp,
+            'kategori' => 'CATIN',
         ]);
 
-        return response()->json([
-            'status' => 'success',
-            'nik' => $pasangan->nik,
-            'nama' => $pasangan->nama,
-        ]);
-    }
-
-    public function show($nik)
-    {
-        $catin = Catin::with(['catin1', 'catin2'])
-            ->where('nik_catin1', $nik)
-            ->orWhere('nik_catin2', $nik)
-            ->firstOrFail();
-
-        // Tambahkan blok ini DI SINI
-        $catin_wanita = null;
-        $catin_pria = null;
-
-        if ($catin->catin1 && $catin->catin1->jenis_kelamin === 'Perempuan') {
-            $catin_wanita = $catin->catin1;
-        } elseif ($catin->catin2 && $catin->catin2->jenis_kelamin === 'Perempuan') {
-            $catin_wanita = $catin->catin2;
-        }
-
-        if ($catin->catin1 && $catin->catin1->jenis_kelamin === 'Laki-laki') {
-            $catin_pria = $catin->catin1;
-        } elseif ($catin->catin2 && $catin->catin2->jenis_kelamin === 'Laki-laki') {
-            $catin_pria = $catin->catin2;
-        }
-
-        // Jika perlu usia, tambahkan ini juga (opsional)
-        $usia_wanita = $catin_wanita ? Carbon::parse($catin_wanita->tanggal_lahir)->age : null;
-        $usia_pria = $catin_pria ? Carbon::parse($catin_pria->tanggal_lahir)->age : null;
-
-        return Inertia::render('Catin/Show', [
-            'catin' => [
-                'tanggal_pernikahan' => $catin->tanggal_pernikahan,
-                'tinggi_badan' => $catin->tinggi_badan,
-                'berat_badan' => $catin->berat_badan,
-                'indeks_massa_tubuh' => $catin->indeks_massa_tubuh,
-                'kadar_hemoglobin' => $catin->kadar_hemoglobin,
-                'LILA' => $catin->LILA,
-                'menggunakan_alat_kontrasepsi' => $catin->menggunakan_alat_kontrasepsi,
-                'catin_wanita_meerokok_terpapar' => $catin->catin_wanita_meerokok_terpapar,
-                'catin_pria_meerokok_terpapar' => $catin->catin_pria_meerokok_terpapar,
-                'sumber_air_minum' => $catin->sumber_air_minum,
-                'fasilitas_BAB' => $catin->fasilitas_BAB,
-                'catin_wanita' => $catin_wanita,
-                'catin_pria' => $catin_pria,
-                'usia_wanita' => $usia_wanita,
-                'usia_pria' => $usia_pria,
-            ],
+        return Inertia::render('Catin/Create', [
+            'successMessage' => 'Pasangan berhasil disimpan.'
         ]);
     }
+   
+   public function show($nik)
+   {
+       $catin = Catin::with(['catin1', 'catin2'])->where('nik_catin1', $nik)
+                     ->orWhere('nik_catin2', $nik)->firstOrFail();
 
+       $catin1 = $catin->catin1;
+       $usia1 = Carbon::parse($catin1->tanggal_lahir)->age;
+       $catin2 = $catin->catin2;
+       $usia2 = Carbon::parse($catin2->tanggal_lahir)->age;
+
+       return Inertia::render('Catin/Show', [
+           'catin' => [
+               'catin1' => [
+                   'nama' => $catin1->nama,
+                   'nik' => $catin1->nik,
+                   'tempat_lahir' => $catin1->tempat_lahir,
+                   'tanggal_lahir' => $catin1->tanggal_lahir,
+                   'jenis_kelamin' => $catin1->jenis_kelamin,
+                   'alamat' => $catin1->alamat,
+                   'no_hp' => $catin1->no_hp,
+                   'usia' => $usia1, 
+               ],
+               'catin2' => [
+                   'nama' => $catin2->nama,
+                   'nik' => $catin2->nik,
+                   'tempat_lahir' => $catin2->tempat_lahir,
+                   'tanggal_lahir' => $catin2->tanggal_lahir,
+                   'jenis_kelamin' => $catin2->jenis_kelamin,
+                   'alamat' => $catin2->alamat,
+                   'no_hp' => $catin2->no_hp,
+                   'usia' => $usia2, 
+               ],
+
+               'tanggal_pernikahan' => $catin->tanggal_pernikahan,
+               'tinggi_badan' => $catin->tinggi_badan,
+               'berat_badan' => $catin->berat_badan,
+               'indeks_massa_tubuh' => $catin->indeks_massa_tubuh,
+               'kadar_hemoglobin' => $catin->kadar_hemoglobin,
+               'LILA' => $catin->LILA,
+               'menggunakan_alat_kontrasepsi' => $catin->menggunakan_alat_kontrasepsi,
+               'catin_wanita_meerokok_terpapar' => $catin->catin_wanita_meerokok_terpapar,
+               'catin_pria_meerokok_terpapar' => $catin->catin_pria_meerokok_terpapar,
+               'sumber_air_minum' => $catin->sumber_air_minum,
+               'fasilitas_BAB' => $catin->fasilitas_BAB,
+               'longitude' => $catin->longitude,
+               'latitude' => $catin->latitude,
+               'fasilitas_bantuan_sosial' => $catin->fasilitas_bantuan_sosial,
+           ],
+       ]);
+   }
 
 }
