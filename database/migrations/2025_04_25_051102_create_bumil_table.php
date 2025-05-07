@@ -6,46 +6,43 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
-        Schema::create('_b_u_m_i_l_', function (Blueprint $table) {
-            $table->id('nik'); // Gunakan string jika ini benar-benar NIK, atau cukup 'id' jika auto increment
-$table->string('usia_kehamilan'); // Misal: "12 minggu"
-$table->string('tuf'); // Tanggal Ukuran Fundus atau sejenis, mohon konfirmasi istilah
-$table->integer('jumlah_anak_kandung');
-$table->date('tanggal_lahir_anak_terakhir');
-$table->integer('tinggi_badan'); // dalam cm
-$table->integer('bb_sebelum_hamil'); // dalam kg
-$table->integer('bb_saat_ini'); // dalam kg
-$table->decimal('imt', 5, 2); // Indeks Massa Tubuh, lebih tepat pakai decimal
-$table->string('kadar_hemoglobin'); // typo: 'hemogoblin' jadi 'hemoglobin'
-$table->integer('lila'); // Lingkar Lengan Atas (cm)
+        Schema::create('bumil', function (Blueprint $table) {
+            $table->id();
+            // Ganti foreignId ke NIK
+            $table->string('penduduk_nik', 16);
+            $table->foreign('penduduk_nik')->references('nik')->on('penduduk')->onDelete('cascade');
 
-$table->string('penggunaan_kontrasepsi');
-$table->enum('paparan_rokok', ['ya', 'tidak']);
-$table->string('sumber_air');
-$table->string('fasilitas_buang_air'); // misalnya "jamban sehat", dll
-
-$table->decimal('longitude', 10, 7);
-$table->decimal('latitude', 10, 7);
-
-$table->string('tablet_tambah_darah'); // Bisa pakai enum kalau opsinya pasti
-$table->string('riwayat_penyuluhan'); // Bisa diubah ke text jika panjang
-$table->string('fasilitas_bantuan'); // Misal: PKH, BPJS, KIS, dll
-
-$table->timestamps();
-
+            $table->integer('usia_kehamilan');
+            $table->integer('TUF');
+            $table->integer('jumlah_anak_kandung');
+            $table->date('tgl_lahir_ank_terakhir');
+            $table->integer('tinggi_badan');
+            $table->integer('berat_badan_sebelum_hamil');
+            $table->integer('berat_badan_saat_ini');
+            $table->integer('indeks_massa_tubuh');
+            $table->integer('kadar_hemoglobin');
+            $table->integer('LILA');
+            $table->text('menggunakan_alat_kontrasepsi')->nullable();
+            $table->text('meerokok_terpapar')->nullable();
+            $table->text('sumber_air_minum')->nullable();
+            $table->text('fasilitas_BAB')->nullable();
+            $table->decimal('longitude', 10, 7);
+            $table->decimal('latitude', 10, 7);
+            $table->text('mendapatkan_tablet_tambah_darah')->nullable();
+            $table->text('meminum_table_tambah_darah')->nullable();
+            $table->text('penyuluhan_KIE')->nullable();
+            $table->text('fasilitas_layanan_rujukan')->nullable();
+            $table->text('fasilitas_bantuan_sosial')->nullable();
+            $table->text('stunting');
+            $table->string('niktpk');
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('_b_u_m_i_l_');
+        Schema::dropIfExists('bumil');
     }
 };

@@ -6,44 +6,46 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('catin', function (Blueprint $table) {
-            $table->id('NIK');
-            $table->string('Nama_lengkap');
-            $table->string('jenis_kelamin');
-            $table->date('tanggal_lahir');
-            $table->integer('no_hp');
-            $table->string('kecamatan', );
-            $table->string('kelurahan', );
-            $table->string('RT', );
-            $table->string('RW', );
-            $table->string('alamat');
-            $table->integer('tb_wanita');
-            $table->integer('tb_pria');
-            $table->integer('kadar_hemogoblin');
-            $table->integer('terpapar_rokok_wanita');
-            $table->string('sumber_air');
-            $table->string('fasilitas_buang_air');
-            $table->decimal('longtitude');
-            $table->decimal('latitude');
-            $table->string('riwayat_tablet_tambah_darah');
-            $table->string('penyuluhan');
-            $table->string('fasilitas_pelayanan');
+            $table->id();
 
+            // Relasi ke penduduk: pasangan pria dan wanita
+            $table->string('nik_catin1', 16);
+            $table->string('nik_catin2', 16);
+            $table->foreign('nik_catin1')->references('nik')->on('penduduk')->onDelete('cascade');
+            $table->foreign('nik_catin2')->references('nik')->on('penduduk')->onDelete('cascade');
+            
+            // Tanggal pernikahan
+            $table->date('tanggal_pernikahan');
+            
+            // Data kesehatan Catin
+            $table->integer('tinggi_badan');
+            $table->integer('berat_badan');
+            $table->integer('indeks_massa_tubuh');
+            $table->integer('kadar_hemoglobin');
+            $table->integer('LILA');
+            
+            $table->text('menggunakan_alat_kontrasepsi')->nullable();
+            $table->text('catin_wanita_merokok_terpapar')->nullable();
+            $table->text('catin_pria_merokok_terpapar')->nullable();
+            $table->text('sumber_air_minum')->nullable();
+            $table->text('fasilitas_BAB')->nullable();
+            $table->decimal('longitude', 10, 7);
+            $table->decimal('latitude', 10, 7);
+            $table->text('mendapatkan_tablet_tambah_darah')->nullable();
+            $table->text('meminum_table_tambah_darah')->nullable();
+            $table->text('penyuluhan_KIE')->nullable();
+            $table->text('fasilitas_layanan_rujukan')->nullable();
+            $table->text('fasilitas_bantuan_sosial')->nullable();
+            $table->string('niktpk');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('catin');
     }
 };
-

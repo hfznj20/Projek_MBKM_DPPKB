@@ -6,34 +6,36 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('pasca_persalinan', function (Blueprint $table) {
-            $table->id('NIK');
-            $table->string('cara_persalinan');
-            $table->string('penolong_persalinan');
-            $table->string('pemberian_penyuluhan_KIE');
-            $table->string('komplikasi_masa_nifas');
-            $table->integer('IMD');
-            $table->string('keadaan_bayi');
-            $table->string('tempat_jamban');
-            $table->string('tempat_persalinan');
-            $table->string('akses_air_minum');
-            $table->string('alasan_ber_KB');
-            $table->string('metode_berKB');
-            $table->string('pengunaan_KB_persalinan');
-            $table->integer('tanggal_kunjungan');
+            $table->id();
+
+            // Relasi ke penduduk menggunakan NIK
+            $table->string('penduduk_nik', 16);
+            $table->foreign('penduduk_nik')->references('nik')->on('penduduk')->onDelete('cascade');
+
+            $table->date('tanggal_persalinan');
+            $table->text('tempat_persalinan');
+            $table->text('penolong_persalinan');
+            $table->text('cara_persalinan');
+            $table->text('keadaan_bayi');
+            $table->text('menggunakan_alat_kontrasepsi')->nullable();
+            $table->text('meerokok_terpapar')->nullable();
+            $table->text('sumber_air_minum')->nullable();
+            $table->text('fasilitas_BAB')->nullable();
+            $table->decimal('longitude', 10, 7);
+            $table->decimal('latitude', 10, 7);
+            $table->text('mendapatkan_tablet_tambah_darah')->nullable();
+            $table->text('meminum_table_tambah_darah')->nullable();
+            $table->text('penyuluhan_KIE')->nullable();
+            $table->text('fasilitas_layanan_rujukan')->nullable();
+            $table->string('niktpk');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('pasca_persalinan');
     }

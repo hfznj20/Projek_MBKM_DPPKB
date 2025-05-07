@@ -6,36 +6,43 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
-        Schema::create('_b_a_d_u_t_a', function (Blueprint $table) {
-            $table->id('nik'); // Nomor Induk Kependudukan
-$table->integer('berat_badan'); // BB saat lahir (dalam gram)
-$table->integer('tinggi_badan'); // TB saat lahir (dalam cm)
-$table->integer('urutan_anak'); // Anak ke-berapa
-$table->string('umur_kehamilan_saat_lahir'); // Misal: "38 minggu"
-$table->enum('asi_eksklusif', ['ya', 'tidak']); // Pemberian ASI eksklusif
-$table->enum('imunisasi_hepatitis_b', ['lengkap', 'tidak lengkap']); // Status imunisasi Hepatitis B
-$table->enum('paparan_rokok', ['ya', 'tidak']); // Terpapar asap rokok
-$table->string('kondisi_kesehatan_anak'); // KKA - ringkasan kondisi
-$table->decimal('longitude', 10, 7); // Koordinat geografis
-$table->decimal('latitude', 10, 7);
-$table->date('tanggal_kehadiran_posyandu'); // Kehadiran ke Posyandu
-$table->string('partisipasi_penyuluhan'); // Mengikuti penyuluhan (jenis atau status)
-$table->string('akses_fasilitas_bantuan'); // Misal: "PKH", "BPJS", dsb.
-$table->timestamps();
+        Schema::create('baduta', function (Blueprint $table) {
+            $table->id();
+            // Tambahkan kolom dulu
+            $table->string('penduduk_nik', 16);
+            $table->string('penduduk_ibu_nik', 16);
+            // Foreign key relasi ke tabel penduduk (kolom nik)
+            $table->foreign('penduduk_nik')->references('nik')->on('penduduk')->onDelete('cascade');
+            $table->foreign('penduduk_ibu_nik')->references('nik')->on('penduduk')->onDelete('cascade');
 
+            $table->integer('jumlah_anak_kandung');
+            $table->date('tanggal_lahir_anak_terakhir');
+            $table->integer('berat_badan');
+            $table->integer('tinggi_badan');
+            $table->integer('urutan_anak');
+            $table->integer('umur_kehamilan_saat_lahir');
+            $table->text('menggunakan_alat_kontrasepsi')->nullable();
+            $table->text('sumber_air_minum')->nullable();
+            $table->text('fasilitas_BAB')->nullable();
+            $table->text('asi_eksklusif')->nullable();
+            $table->text('imunisasi_hepatitis_B')->nullable();
+            $table->text('meerokok_terpapar')->nullable();
+            $table->text('mengisi_KKA')->nullable();
+            $table->decimal('longitude', 10, 7);
+            $table->decimal('latitude', 10, 7);
+            $table->text('kehadiran_posyandu')->nullable();
+            $table->text('penyuluhan_KIE')->nullable();
+            $table->text('fasilitas_bantuan_sosial')->nullable();
+            $table->text('stunting');
+            $table->string('niktpk');
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('_b_a_d_u_t_a');
+        Schema::dropIfExists('baduta');
     }
 };

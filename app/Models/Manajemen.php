@@ -21,4 +21,9 @@ class Manajemen extends Model
     {
         return $this->hasOne(User::class, 'NIK', 'NIK');
     }
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> f8229fd0ccc0906669accab8c056dbe0625f7e5d
