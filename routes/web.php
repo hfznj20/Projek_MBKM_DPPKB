@@ -10,6 +10,7 @@ use App\Http\Controllers\PasperController;
 use App\Http\Controllers\CatinController;
 use App\Http\Controllers\BumilController;
 use App\Http\Controllers\ManajemenController;
+use App\Http\Controllers\PandugenreController;
 
 // Homepage
 Route::get('/', function () {
@@ -29,14 +30,7 @@ require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 
 // ========== Admin Pages ==========
-// Route::get('/population_data', [UserController::class, 'indexPenduduk'])->name('population_data');
-// Route::get('/stunting-admin', [UserController::class, 'indexStunting'])->name('stunting-admin');
-Route::get('/pandu-genre', [UserController::class, 'index3'])->name('pandu-genre');
-// Route::get('/bayi', [UserController::class, 'indexBaduta'])->name('bayi');
-// Route::get('/ibu', [UserController::class, 'indexBumil'])->name('ibu');
-// Route::get('/calon-pengantin', [UserController::class, 'indexCatin'])->name('calon-pengantin');
-// Route::get('/pasca-persalinan', [UserController::class, 'indexPascaPersalinan'])->name('pasca-persalinan');
-// Route::get('/kinerja-tpk', [UserController::class, 'indexKinerjaTPK'])->name('kinerja-tpk');
+//Manajemen User TPK
 Route::resource('manajemen', ManajemenController::class)
     ->parameters(['manajemen' => 'NIK'])
     ->names([
@@ -48,6 +42,16 @@ Route::resource('manajemen', ManajemenController::class)
         'destroy' => 'manajemen.destroy',
     ]);
 Route::get('/manajemen/{NIK}', [ManajemenController::class, 'show'])->name('manajemen.show');
+
+//Pandu Genre
+Route::resource('pandugenre', PandugenreController::class);
+Route::get('/pandu-genre', [PandugenreController::class, 'index'])->name('pandugenre.index');
+Route::get('/pandu-genre/create', [PandugenreController::class, 'create'])->name('pandugenre.create');
+Route::get('/check-baduta/{nik}', [PandugenreController::class, 'checkBaduta']);
+Route::post('/pandugenre', [PandugenreController::class, 'store'])->name('pandugenre.store');
+Route::delete('/pandu-genre/{nik}', [PandugenreController::class, 'destroy'])->name('pandu-genre.destroy');
+Route::get('/pandu-genre/{nik}', [PandugenreController::class, 'show'])->name('pandu-genre.show');
+
 
 // ========== TPK Pages ==========
 Route::get('/stunting-tpk', [UserController::class, 'indexStuntingTPK'])->name('stunting-tpk');
@@ -71,7 +75,6 @@ Route::post('/baduta', [BadutaController::class, 'store'])->name('baduta.store')
 Route::get('/Baduta/Index', [BadutaController::class, 'index']);
 Route::delete('/baduta/{nik}', [BadutaController::class, 'destroy'])->name('baduta.destroy');
 Route::get('/baduta/{nik}', [BadutaController::class, 'show'])->name('baduta.show');
-Route::delete('/baduta/{nik}', [BadutaController::class, 'destroy'])->name('baduta.destroy');
 
 // PASPER CRUD
 Route::resource('pasper', PasperController::class);
