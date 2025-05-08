@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Penduduk;
 use App\Models\Baduta;
-use App\Models\PanduGenre;
+use App\Models\Pandugenre;
+use App\Models\Pandugenrekunjungan;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -98,9 +99,10 @@ class PandugenreController extends Controller
 
     public function show($nik)
     {
-        $pandugenre = PanduGenre::with('penduduk')->where('nik', $nik)->firstOrFail();
+        $pandugenre = PanduGenre::with(['penduduk', 'kunjungan'])->where('nik', $nik)->firstOrFail();
         $penduduk = $pandugenre->penduduk;
-        // Hitung usia anak dalam tahun dan bulan
+
+        // Hitung usia anak
         $lahir_anak = Carbon::parse($penduduk->tanggal_lahir);
         $now = Carbon::now();
         $diff = $lahir_anak->diff($now);
@@ -110,14 +112,9 @@ class PandugenreController extends Controller
         $hari = $diff->d;
 
         $usia_anak = '';
-        if ($tahun > 0) {
-            $usia_anak .= "{$tahun} tahun ";
-        }
-        if ($bulan > 0) {
-            $usia_anak .= "{$bulan} bulan ";
-        }
+        if ($tahun > 0) $usia_anak .= "{$tahun} tahun ";
+        if ($bulan > 0) $usia_anak .= "{$bulan} bulan ";
         if ($tahun === 0 && $bulan === 0) {
-            // Jika belum genap 1 bulan
             $usia_anak .= "{$hari} hari";
         } elseif ($hari > 0) {
             $usia_anak .= "{$hari} hari";
@@ -133,12 +130,20 @@ class PandugenreController extends Controller
                 'alamat' => $penduduk->alamat,
                 'no_hp' => $penduduk->no_hp,
                 'usia' => $usia_anak,
-
                 'terapi_gizi' => $pandugenre->terapi_gizi,
                 'terapi_psikososial' => $pandugenre->terapi_psikososial,
                 'kunjungan_rumah' => $pandugenre->kunjungan_rumah
             ],
+            'kunjungan' => $pandugenre->kunjungan->map(function ($k) {
+                return [
+                    'id' => $k->id,
+                    'tanggal_kunjungan' => $k->tanggal_kunjungan,
+                    'berat_badan' => $k->berat_badan,
+                    'tinggi_badan' => $k->tinggi_badan,
+                ];
+            }),
         ]);
+        
     }
 
     public function destroy($nik)
@@ -147,5 +152,39 @@ class PandugenreController extends Controller
     
         return redirect()->route('pandugenre.index')->with('success', 'Data berhasil dihapus.');
     }
+
+    public function createKunjungan($nik)
+    {
+        return Inertia::render('Pandugenre/KunjunganCreate', [
+            'nik' => $nik,
+        ]);
+    }
+
+    public function storeKunjungan(Request $request)
+    {
+        $request->validate([
+            'nik' => 'required|exists:penduduk,nik',
+            'tanggal_kunjungan' => 'required|date',
+            'berat_badan' => 'required|numeric',
+            'tinggi_badan' => 'required|numeric',
+            'terapi_gizi' => 'nullable|string',
+            'terapi_psikososial' => 'nullable|string',
+            'kunjungan_rumah' => 'nullable|string',
+        ]);
+
+        Pandugenrekunjungan::create($request->all());
+
+        return redirect()->back()->with('success', 'Data kunjungan berhasil disimpan.');
+    }
+
+    public function showKunjungan($nik, $id)
+    {
+        $kunjungan = Pandugenrekunjungan::findOrFail($id);
+        return Inertia::render('Pandugenre/KunjunganShow', [
+            'kunjungan' => $kunjungan,
+        ]);
+    }
+
+
     
 }

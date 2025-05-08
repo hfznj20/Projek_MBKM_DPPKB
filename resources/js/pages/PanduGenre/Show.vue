@@ -2,6 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import type { BreadcrumbItem } from '@/types';
+import PerkembanganChart from '@/components/PerkembanganChart.vue';
 
 interface Pandugenre {
   nama: string;
@@ -19,7 +20,16 @@ interface Pandugenre {
   kunjungan_rumah : string;
 }
 
+interface Kunjungan {
+  id: number;
+  tanggal_kunjungan: string;
+  berat_badan: number;
+  tinggi_badan: number;
+}
+
+
 const { props } = usePage();
+const kunjungan = props.kunjungan as Kunjungan[];
 const pandugenre = props.pandugenre as Pandugenre;
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -59,15 +69,50 @@ const breadcrumbs: BreadcrumbItem[] = [
           </ul>
         </div>
 
+        <div class="mt-6 border border-orange-400 rounded p-4">
+          <h2 class="text-lg font-bold mb-4">Kunjungan</h2>
+          <div v-if="kunjungan.length > 0">
+            <div class="grid grid-cols-3 font-semibold border-b pb-2 mb-2">
+              <div>Kunjungan ke-</div>
+              <div>Tanggal Kunjungan</div>
+              <div>Detail</div>
+            </div>
+            <div
+              v-for="(item, index) in kunjungan"
+              :key="item.id"
+              class="grid grid-cols-3 py-1 border-b text-sm"
+            >
+              <div>Kunjungan ke-{{ index + 1 }}</div>
+              <div>{{ item.tanggal_kunjungan }}</div>
+              <div>
+                <Link
+                  :href="`/pandu-genre/${pandugenre.nik}/kunjungan/${item.id}`"
+                  class="text-blue-600 hover:underline"
+                >
+                  Detail >>
+                </Link>
+              </div>
+            </div>
+          </div>
+          <div v-else class="text-sm text-gray-500">
+            Belum ada data kunjungan.
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <h2 class="text-lg font-bold mb-4">Grafik Perkembangan Baduta</h2>
+          <PerkembanganChart :kunjungan="kunjungan" />
+        </div>
+
     </div>
     <!-- Tombol -->
     <div class="text-right">
-        <Link
-          href="/baduta/tambah-kunjungan"
-          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded shadow"
-        >
-          Tambah Kunjungan
-        </Link>
+      <Link
+        :href="`/pandu-genre/${pandugenre.nik}/kunjungan/create`"
+        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded shadow"
+      >
+        Tambah Kunjungan
+      </Link>
       </div>
   </AppLayout>
 </template>

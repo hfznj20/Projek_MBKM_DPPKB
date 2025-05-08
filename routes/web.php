@@ -48,10 +48,13 @@ Route::resource('pandugenre', PandugenreController::class);
 Route::get('/pandu-genre', [PandugenreController::class, 'index'])->name('pandugenre.index');
 Route::get('/pandu-genre/create', [PandugenreController::class, 'create'])->name('pandugenre.create');
 Route::get('/check-baduta/{nik}', [PandugenreController::class, 'checkBaduta']);
-Route::post('/pandugenre', [PandugenreController::class, 'store'])->name('pandugenre.store');
+Route::post('/pandu-genre', [PandugenreController::class, 'store'])->name('pandugenre.store');
 Route::delete('/pandu-genre/{nik}', [PandugenreController::class, 'destroy'])->name('pandu-genre.destroy');
 Route::get('/pandu-genre/{nik}', [PandugenreController::class, 'show'])->name('pandu-genre.show');
-
+//kunjungan
+Route::get('/pandu-genre/{nik}/kunjungan/create', [PandugenreController::class, 'createKunjungan']);
+Route::post('/pandu-genre/kunjungan', [PanduGenreController::class, 'storeKunjungan']);
+Route::get('/pandu-genre/{nik}/kunjungan/{id}', [PanduGenreController::class, 'showKunjungan']);
 
 // ========== TPK Pages ==========
 Route::get('/stunting-tpk', [UserController::class, 'indexStuntingTPK'])->name('stunting-tpk');

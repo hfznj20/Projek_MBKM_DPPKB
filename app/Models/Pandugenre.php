@@ -22,4 +22,10 @@ class PanduGenre extends Model
     {
         return $this->belongsTo(Penduduk::class, 'nik', 'nik');
     }
+    public function kunjungan()
+    {
+        return $this->hasMany(Pandugenrekunjungan::class, 'nik', 'nik');
+    }
+
+
 }

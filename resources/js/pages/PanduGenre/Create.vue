@@ -62,7 +62,7 @@ const confirmNonStunting = () => {
 }
 
 const submit = () => {
-  form.post('/pandugenre', {
+  form.post('/pandu-genre', {
     onSuccess: () => {
       step.value = 1
       form.reset()
