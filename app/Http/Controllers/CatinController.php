@@ -49,6 +49,7 @@ class CatinController extends Controller
                 'nik_catin2' => $pria?->nik ?? '-',
                 'nama_catin2' => $pria?->nama ?? '-',
                 'tanggal_rencana_pernikahan' => $catin->tanggal_pernikahan,
+                'niktpk' => $catin->niktpk,
             ];
         });
     

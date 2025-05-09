@@ -19,11 +19,16 @@ interface Catin {
   nik_catin2: string;
   nama_catin2: string;
   tanggal_rencana_pernikahan: string;
+  niktpk: string;
 }
 
-const { props } = usePage();
-const catinData = ref<Catin[]>(Array.isArray(props.catins) ? props.catins : []);
+const { props } = usePage<{
+  auth: { user: { role: string } };
+  catins: Catin[];
+}>();
 
+const user = props.auth.user;
+const catins = ref<Catin[]>(props.catins);
 const search = ref('');
 const searchCategory = ref('nama_catin1');
 
@@ -31,7 +36,7 @@ const filteredCatin = computed(() => {
   const keyword = search.value.toLowerCase();
   const category = searchCategory.value;
 
-  return catinData.value.filter((data) => {
+  return catins.value.filter((data) => {
     const value = data[category as keyof Catin];
     return String(value).toLowerCase().includes(keyword);
   });
@@ -47,7 +52,7 @@ const viewData = (nik: string) => {
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6">
       <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl">
-        Data Catin TPK
+        Data Catin
       </h1>
 
       <!-- Search -->
@@ -91,6 +96,7 @@ const viewData = (nik: string) => {
               <th class="px-4 py-2 text-left">NIK Calon Pria</th>
               <th class="px-4 py-2 text-left">Nama Calon Pria</th>
               <th class="px-4 py-2 text-left">Tanggal Rencana Pernikahan</th>
+              <th v-if="user.role !== 'TPK'" class="px-4 py-2 text-left">TPK</th>
               <th class="px-4 py-2 text-left">Aksi</th>
             </tr>
           </thead>
@@ -105,6 +111,7 @@ const viewData = (nik: string) => {
               <td class="px-4 py-2">{{ data.nik_catin2 }}</td>
               <td class="px-4 py-2">{{ data.nama_catin2 }}</td>
               <td class="px-4 py-2">{{ data.tanggal_rencana_pernikahan }}</td>
+              <td v-if="user.role !== 'TPK'" class="px-4 py-2">{{ data.niktpk }}</td>
               <td class="px-4 py-2">
                 <button @click="viewData(data.nik_catin1)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />

@@ -12,15 +12,21 @@ interface Pasper {
   kecamatan: string;
   kelurahan: string;
   nama: string;
+  niktpk?: string; // Tambahkan jika belum ada
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Beranda', href: '/dashboard' },
-  { title: 'Pasca Persalinan', href: '/pasper' },
+  { title: 'Pasca Persalinan', href: '/pasca-persalinan' },
 ];
 
-const { props } = usePage();
-const paspers = ref<Pasper[]>(props.pasper as Pasper[]);
+const { props } = usePage<{
+  pasper: Pasper[];
+  auth?: { user?: { role?: string } };
+}>();
+
+const paspers = ref<Pasper[]>(props.pasper ?? []);
+const userRole = props.auth?.user?.role ?? '';
 
 const search = ref('');
 const searchCategory = ref('nama');
@@ -28,9 +34,10 @@ const searchCategory = ref('nama');
 const filteredpaspers = computed(() => {
   const keyword = search.value.toLowerCase();
   const category = searchCategory.value;
-  
+
   return paspers.value.filter((pasper) => {
-    return String(pasper[category as keyof Pasper]).toLowerCase().includes(keyword);
+    const value = pasper[category as keyof Pasper];
+    return String(value ?? '').toLowerCase().includes(keyword);
   });
 });
 
@@ -39,8 +46,9 @@ const viewData = (nik: string) => {
 };
 </script>
 
+
 <template>
-  <Head title="Pasca Persalinan TPK" />
+  <Head title="Pasca Persalinan" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6">
       <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl">
@@ -75,7 +83,7 @@ const viewData = (nik: string) => {
           </svg>
         </div>
       </div>
-      
+
       <!-- Table -->
       <div class="overflow-x-auto mt-4">
         <table class="min-w-full table-auto border border-gray-300 rounded-lg">
@@ -87,12 +95,13 @@ const viewData = (nik: string) => {
               <th class="px-4 py-2 text-left">Kecamatan</th>
               <th class="px-4 py-2 text-left">Kelurahan</th>
               <th class="px-4 py-2 text-left">Tanggal Persalinan</th>
+              <th v-if="userRole !== 'TPK'" class="px-4 py-2 text-left">TPK</th>
               <th class="px-4 py-2 text-left">Aksi</th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="filteredpaspers.length === 0" class="text-center text-gray-500">
-              <td colspan="7" class="px-4 py-4">Tidak ada data Pasca Persalinan.</td>
+              <td :colspan="userRole !== 'TPK' ? 8 : 7" class="px-4 py-4">Tidak ada data Pasca Persalinan.</td>
             </tr>
             <tr
               v-for="(pasper, index) in filteredpaspers"
@@ -105,6 +114,7 @@ const viewData = (nik: string) => {
               <td class="px-4 py-2">{{ pasper.kecamatan }}</td>
               <td class="px-4 py-2">{{ pasper.kelurahan }}</td>
               <td class="px-4 py-2">{{ pasper.tanggal_persalinan }}</td>
+              <td v-if="userRole !== 'TPK'" class="px-4 py-2">{{ pasper.niktpk }}</td>
               <td class="px-4 py-2 space-x-2 flex items-center">
                 <button @click="viewData(pasper.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />

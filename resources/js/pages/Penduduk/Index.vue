@@ -20,9 +20,13 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Data Penduduk', href: '/penduduk' },
 ];
 
-const { props } = usePage();
-const penduduks = ref<Penduduk[]>(props.penduduks as Penduduk[]);
+const { props } = usePage<{
+  auth: { user: { role: string } };
+  penduduks: Penduduk[];
+}>();
 
+const user = props.auth.user;
+const penduduks = ref<Penduduk[]>(props.penduduks);
 const search = ref('');
 const searchCategory = ref('nama');
 
@@ -43,6 +47,7 @@ const deletePenduduk = async (nik: string) => {
   if (!confirm('Yakin mau hapus?')) return;
   Inertia.delete(`/penduduk/${nik}`);
 };
+
 </script>
 
 <template>
@@ -54,7 +59,7 @@ const deletePenduduk = async (nik: string) => {
       </h1>
 
       <!-- Tombol Tambah Data -->
-      <div class="flex justify-end my-4">
+      <div v-if="user.role !== 'admin'" class="flex justify-end my-4">
         <Link
           href="/penduduk/create"
           class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700"
@@ -64,7 +69,7 @@ const deletePenduduk = async (nik: string) => {
       </div>
 
       <!-- Pencarian -->
-      <div class="flex flex-col md:flex-row justify-between mb-4 space-y-4 md:space-y-0 md:space-x-6">
+      <div class="flex flex-col md:flex-row my-4 justify-between mb-4 space-y-4 md:space-y-0 md:space-x-6">
         <div class="flex items-center w-full md:w-1/3 space-x-2">
           <label for="searchCategory" class="text-sm text-black whitespace-nowrap">Kategori</label>
           <select
@@ -103,8 +108,9 @@ const deletePenduduk = async (nik: string) => {
               <th class="px-4 py-2 text-left">Kecamatan</th>
               <th class="px-4 py-2 text-left">Kelurahan</th>
               <th class="px-4 py-2 text-left">Kategori</th>
-              <th class="px-4 py-2 text-left">TPK</th>
-              <th class="px-4 py-2 text-left">Aksi</th>
+              <th v-if="user.role !== 'TPK'" class="px-4 py-2 text-left">TPK</th>
+              <th v-if="user.role !== 'admin'" class="px-4 py-2 text-left">Aksi</th>
+
             </tr>
           </thead>
           <tbody>
@@ -118,8 +124,8 @@ const deletePenduduk = async (nik: string) => {
               <td class="px-4 py-2">{{ penduduk.kecamatan }}</td>
               <td class="px-4 py-2">{{ penduduk.kelurahan }}</td>
               <td class="px-4 py-2">{{ penduduk.kategori }}</td>
-              <td class="px-4 py-2">{{ penduduk.niktpk }}</td>
-              <td class="px-4 py-2 space-x-2 flex items-center">
+              <td v-if="user.role !== 'TPK'" class="px-4 py-2">{{ penduduk.niktpk }}</td>
+              <td v-if="user.role !== 'admin'" class="px-4 py-2 space-x-2 flex items-center">
                 <button @click="editPenduduk(penduduk.nik)" class="text-blue-600 hover:text-blue-800" title="Edit">
                   <PencilIcon class="w-5 h-5" />
                 </button>

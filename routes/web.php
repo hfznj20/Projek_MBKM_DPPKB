@@ -11,16 +11,18 @@ use App\Http\Controllers\CatinController;
 use App\Http\Controllers\BumilController;
 use App\Http\Controllers\ManajemenController;
 use App\Http\Controllers\PandugenreController;
+use App\Http\Controllers\DashboardController;
 
 // Homepage
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
 
-// Dashboard (authenticated & verified)
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+//Dashboard
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
 
 // Simpan logo
 Route::post('/store-logo', [SettingController::class, 'store'])->name('store.logo');
@@ -55,6 +57,7 @@ Route::get('/pandu-genre/{nik}', [PandugenreController::class, 'show'])->name('p
 Route::get('/pandu-genre/{nik}/kunjungan/create', [PandugenreController::class, 'createKunjungan']);
 Route::post('/pandu-genre/kunjungan', [PanduGenreController::class, 'storeKunjungan']);
 Route::get('/pandu-genre/{nik}/kunjungan/{id}', [PanduGenreController::class, 'showKunjungan']);
+
 
 // ========== TPK Pages ==========
 Route::get('/stunting-tpk', [UserController::class, 'indexStuntingTPK'])->name('stunting-tpk');
@@ -111,6 +114,9 @@ Route::delete('/bumil/{nik}', [BumilController::class, 'destroy'])->name('bumil.
 Route::get('/cek-ibu/{nik}', [PendudukController::class, 'searchIbu'])->name('cek-ibu');
 Route::post('/cek-nik', [PendudukController::class, 'cekNIK'])->name('cek-nik');
 
+//Dashboard
+Route::get('/api/baduta-locations', [BadutaController::class, 'locations']);
+Route::get('/api/kategori-per-kecamatan', [PendudukController::class, 'kategoriPerKecamatan']);
 
 // Form Static Rendering (jika masih dibutuhkan untuk shortcut saja)
 // Route::get('/bumil/create', fn () => Inertia::render('bumil/Create'))->name('bumil.create');

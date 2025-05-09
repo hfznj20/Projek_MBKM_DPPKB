@@ -242,7 +242,21 @@ class BadutaController extends Controller
         return redirect()->route('baduta.index')->with('success', 'Data Baduta berhasil dihapus.');
     }
 
+    public function locations()
+    {
+        $baduta = Baduta::with('anak:nik,nama')
+            ->select('penduduk_nik', 'latitude', 'longitude')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'nama' => $item->anak->nama ?? 'Tidak diketahui',
+                    'latitude' => $item->latitude,
+                    'longitude' => $item->longitude,
+                    'penduduk_nik' => $item->penduduk_nik,
+                ];
+            });
 
-
-
+        return response()->json($baduta);
+    }
 }
