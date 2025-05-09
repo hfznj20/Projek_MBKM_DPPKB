@@ -312,8 +312,17 @@ const submitForm = () => {
         <!-- Step 3 -->
         <div v-if="step === 4">
           <h2>Data Pendampingan Bulanan</h2>
-          <!-- <div><label>Longitude:</label><input v-model.number="form.longitude" type="number" step="0.000001" required /></div>
-<div><label>Latitude:</label><input v-model.number="form.latitude" type="number" step="0.000001" required /></div> -->
+          
+          <div class="mb-3">
+            <label for="longitude" class="form-label">Longitude</label>
+            <input v-model="form.longitude" type="text" class="form-control" id="longitude" readonly />
+          </div>
+
+          <div class="mb-3">
+            <label for="latitude" class="form-label">Latitude</label>
+            <input v-model="form.latitude" type="text" class="form-control" id="latitude" readonly />
+          </div>
+
           <div>
             <label>Kehadiran Posyandu?</label><br>
             <label><input type="radio" value="Ya" v-model="form.kehadiran_posyandu" /> Ya</label>
@@ -349,7 +358,7 @@ const submitForm = () => {
 
         <div class="mb-3">
           <label for="nik" class="form-label">nik</label>
-          <input v-model="formIbu.nik" type="text" class="form-control" id="nik" required />
+          <input v-model="formIbu.nik" type="text" class="form-control" id="nik" maxlength="16" required />
         </div>
 
         <div class="mb-3">

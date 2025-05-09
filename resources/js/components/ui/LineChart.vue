@@ -1,52 +1,66 @@
-<script setup lang="ts">
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  LineElement,
-  PointElement,
-  CategoryScale,
-  LinearScale,
-  ChartOptions,
-  ChartData,
-} from 'chart.js';
-import { Line } from 'vue-chartjs';
-
-// LINE CHART PERKEMBANGAN
-
-ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
-
-// Data sementara kosong untuk stunting
-const chartData: ChartData<'line'> = {
-  labels: [], // Label kosong, nanti diisi dengan data waktu (misalnya bulan atau tahun)
-  datasets: [
-    {
-      label: 'Persentase Stunting',
-      borderColor: '#FF5733', // Bisa diganti warna sesuai tema
-      backgroundColor: 'rgba(255, 87, 51, 0.2)', // Warna transparan
-      tension: 0.3, // Kurva sedikit melengkung
-      data: [], // Data kosong, akan diisi dari API atau props
-      fill: true, // Isi area grafik dengan warna transparan
-    },
-  ],
-};
-
-// Opsi konfigurasi chart
-const chartOptions: ChartOptions<'line'> = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-    title: {
-      display: true,
-      text: 'Tren Persentase Stunting',
-    },
-  },
-};
-</script>
-
 <template>
-  <Line :data="chartData" :options="chartOptions" />
-</template>
+    <div>
+      <canvas id="lineChart" height="100"></canvas>
+    </div>
+  </template>
+
+  <script setup lang="ts">
+  import { onMounted } from 'vue'
+  import axios from 'axios'
+  import {
+    Chart,
+    LineElement,
+    PointElement,
+    LineController,
+    CategoryScale,
+    LinearScale,
+    Title,
+    Tooltip,
+    Legend,
+  } from 'chart.js'
+
+  Chart.register(LineElement, PointElement, LineController, CategoryScale, LinearScale, Title, Tooltip, Legend)
+  interface StuntingData {
+  waktu: string
+  total: number
+}
+
+  onMounted(async () => {
+    const response = await axios.get('/api/grafik-stunting-per-bulan')
+    const data: StuntingData[] = response.data
+
+
+    const labels = data.map((item: StuntingData) => item.waktu)
+  const values = data.map((item: StuntingData) => item.total)
+
+    const ctx = document.getElementById('lineChart') as HTMLCanvasElement
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Jumlah Bayi Stunting',
+          data: values,
+          borderColor: 'rgba(255, 99, 132, 1)',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          fill: true,
+          tension: 0.3,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Jumlah Bayi Stunting per Bulan'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    })
+  })
+  </script>

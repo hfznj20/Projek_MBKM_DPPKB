@@ -259,4 +259,28 @@ class BadutaController extends Controller
 
         return response()->json($baduta);
     }
+
+    public function grafikStuntingPerBulan()
+    {
+        $data = DB::table('baduta')
+        ->selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d %H') as waktu, COUNT(*) as total")
+            ->where('stunting', 'Ya',)
+            ->groupBy('waktu')
+            ->orderBy('waktu')
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function grafikStunting()
+    {
+        $data = DB::table('baduta')
+            ->select('stunting', DB::raw('COUNT(*) as total'))
+            ->groupBy('stunting')
+            ->get();
+
+        return response()->json($data);
+    }
+
+
 }

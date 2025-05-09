@@ -1,47 +1,79 @@
+<template>
+  <div>
+    <canvas id="stuntingChart" height="100"></canvas>
+  </div>
+</template>
+
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import axios from 'axios'
 import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
+  Chart,
   BarElement,
   CategoryScale,
   LinearScale,
-  ChartOptions,
-  ChartData,
-} from 'chart.js';
-import { Bar } from 'vue-chartjs';
+  Tooltip,
+  Legend,
+  Title,
+  BarController
+} from 'chart.js'
 
-// BARCHART STUNTING
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title)
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+onMounted(async () => {
+  const response = await axios.get('/api/grafik-stunting')
+  const result = response.data
 
-// Data sementara kosong
-const chartData: ChartData<'bar'> = {
-  labels: [], // Label kosong, nanti diisi dengan data waktu (misalnya bulan atau tahun)
-  datasets: [
-    {
-      label: 'Jumlah Pengunjung',
-      backgroundColor: '#3b82f6',
-      data: [], // Data kosong, akan diisi nanti
+  const labels = ['Ya', 'Tidak'] // X-axis = status stunting
+
+  // Map data per kategori dan status
+  const badutaData = { 'Ya': 0, 'Tidak': 0 }
+  const bumilData = { 'Ya': 0, 'Tidak': 0 }
+
+  result.forEach((item: any) => {
+    if (item.kategori === 'Baduta') {
+      badutaData[item.stunting] = item.total
+    } else if (item.kategori === 'Bumil') {
+      bumilData[item.stunting] = item.total
+    }
+  })
+
+  const ctx = document.getElementById('stuntingChart') as HTMLCanvasElement
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Baduta',
+          data: [badutaData['Ya'], badutaData['Tidak']],
+          backgroundColor:  'rgba(255, 99, 132, 50)'
+        },
+        {
+          label: 'Bumil',
+          data: [bumilData['Ya'], bumilData['Tidak']],
+          backgroundColor: 'rgba(255, 206, 86, 50)'
+        }
+      ]
     },
-  ],
-};
-
-const chartOptions: ChartOptions<'bar'> = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-    title: {
-      display: true,
-      text: 'Statistik Pengunjung Bulanan', // Ganti jika perlu
-    },
-  },
-};
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Jumlah Status Stunting Baduta dan Bumil'
+        },
+        legend: {
+          position: 'top'
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  })
+})
 </script>
-
-<template>
-  <Bar :data="chartData" :options="chartOptions" />
-</template>

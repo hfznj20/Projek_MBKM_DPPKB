@@ -196,7 +196,7 @@ class PendudukController extends Controller
             ->get();
 
         $result = [];
-        $categories = ['BADUTA', 'BUMIL', 'CATIN', 'Pasca_Persalinan', 'Penduduk'];
+        $categories = ['BADUTA', 'BUMIL', 'CATIN', 'Pasca Persalinan', 'Penduduk'];
 
         foreach ($data as $item) {
 
@@ -206,7 +206,7 @@ class PendudukController extends Controller
                     'BADUTA' => 0,
                     'BUMIL' => 0,
                     'CATIN' => 0,
-                    'Pasca_Persalinan' => 0,
+                    'Pasca Persalinan' => 0,
                     'Penduduk' => 0,
                 ];
             }

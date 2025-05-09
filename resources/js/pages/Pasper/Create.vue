@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import AppLayout from '@/layouts/AppLayout.vue';
 import { BreadcrumbItem } from '@/types';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
 const penduduk_nik = ref<string>(new URLSearchParams(window.location.search).get('nik') || '');
@@ -27,6 +27,21 @@ penduduk_nik: penduduk_nik.value,
   fasilitas_layanan_rujukan: ''
 });
 
+onMounted(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        form.latitude = position.coords.latitude.toString();
+        form.longitude = position.coords.longitude.toString();
+      },
+      (error) => {
+        console.error('Gagal mengambil lokasi:', error);
+      }
+    );
+  } else {
+    console.warn('Geolocation tidak didukung browser ini.');
+  }
+});
 
 // Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -114,12 +129,12 @@ const submitForm = () => {
 
         <div class="mb-3">
           <label for="longitude" class="form-label">Longitude</label>
-          <input v-model="form.longitude" type="text" class="form-control" id="longitude" required />
+          <input v-model="form.longitude" type="text" class="form-control" id="longitude" readonly />
         </div>
 
         <div class="mb-3">
           <label for="latitude" class="form-label">Latitude</label>
-          <input v-model="form.latitude" type="text" class="form-control" id="latitude" required />
+          <input v-model="form.latitude" type="text" class="form-control" id="latitude" readonly />
         </div>
 
         <div class="mb-3">
