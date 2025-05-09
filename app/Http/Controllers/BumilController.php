@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bumil;
 use App\Models\Penduduk;
+use App\Models\KunjunganBumil; // Tambahkan import model KunjunganBumil
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -14,31 +15,29 @@ class BumilController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $query = DB::table('bumil')
-            ->join('penduduk', 'bumil.penduduk_nik', '=', 'penduduk.nik')
-            ->select(
-                'bumil.id',
-                'bumil.stunting',
-                'penduduk.nik',
-                'penduduk.nama',
-                'penduduk.kecamatan',
-                'penduduk.kelurahan',
-                'bumil.niktpk'
-            )
-            ->orderBy('bumil.created_at', 'desc');
+        $query = Bumil::with('penduduk')
+            ->orderBy('created_at', 'desc');
 
-            if ($user->name !== 'Admin') {
-                $query->where('bumil.niktpk', $user->NIK);
-            }
+        if ($user->name !== 'Admin') {
+            $query->where('niktpk', $user->NIK);
+        }
 
-            $bumils = $query->get();
-    
-    
+        $bumils = $query->get()->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'stunting' => $item->stunting,
+                'niktpk' => $item->niktpk,
+                'nik' => $item->penduduk->nik,
+                'nama' => $item->penduduk->nama,
+                'kecamatan' => $item->penduduk->kecamatan,
+                'kelurahan' => $item->penduduk->kelurahan,
+            ];
+        });
+
         return Inertia::render('Bumil/Index', [
             'bumils' => $bumils,
         ]);
     }
-    
 
     public function create(Request $request)
     {
@@ -52,7 +51,7 @@ class BumilController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'penduduk_nik' => 'required|exists:penduduk,nik', // nik bumil
+            'penduduk_nik' => 'required|exists:penduduk,nik',
             'usia_kehamilan' => 'required|integer',
             'TUF' => 'required|integer',
             'jumlah_anak_kandung' => 'required|integer',
@@ -76,11 +75,31 @@ class BumilController extends Controller
             'fasilitas_bantuan_sosial' => 'nullable|string',
             'stunting' => 'required|string',
         ]);
- 
-        Bumil::create(array_merge(
+
+        $bumil = Bumil::create(array_merge(
             $request->all(),
             ['niktpk' => auth()->user()->NIK]
         ));
+
+        // Menambahkan data kunjungan terkait Bumil setelah data Bumil disimpan
+        // KunjunganBumil::create([
+        //     'penduduk_nik' => $bumil->penduduk_nik,
+        //     'usia_kehamilan' => $bumil->usia_kehamilan,
+        //     'tanggal_kunjungan' => Carbon::now(), // Menggunakan waktu saat ini sebagai tanggal kunjungan
+        //     'berat_badan' => $bumil->berat_badan_saat_ini,
+        //     'tinggi_badan' => $bumil->tinggi_badan,
+        //     'menggunakan_alat_kontrasepsi' => $bumil->menggunakan_alat_kontrasepsi,
+        //     'sumber_air_minum' => $bumil->sumber_air_minum,
+        //     'fasilitas_BAB' => $bumil->fasilitas_BAB,
+        //     'merokok_terpapar' => $bumil->meerokok_terpapar,
+        //     'longitude' => $bumil->longitude,
+        //     'latitude' => $bumil->latitude,
+        //     'mendapatkan_tablet_tambah_darah' => $bumil->mendapatkan_tablet_tambah_darah,
+        //     'meminum_table_tambah_darah' => $bumil->meminum_table_tambah_darah,
+        //     'penyuluhan_KIE' => $bumil->penyuluhan_KIE,
+        //     'fasilitas_layanan_rujukan' => $bumil->fasilitas_layanan_rujukan,
+        //     'fasilitas_bantuan_sosial' => $bumil->fasilitas_bantuan_sosial,
+        // ]);
 
         return redirect()->route('penduduk.index')->with('success', 'Data Bumil berhasil disimpan');
     }
@@ -88,7 +107,6 @@ class BumilController extends Controller
     public function show($nik)
     {
         $bumil = Bumil::with('penduduk')->where('penduduk_nik', $nik)->firstOrFail();
-
         $penduduk = $bumil->penduduk;
         $usia = Carbon::parse($penduduk->tanggal_lahir)->age;
 
@@ -116,21 +134,27 @@ class BumilController extends Controller
                 'fasilitas_BAB' => $bumil->fasilitas_BAB,
                 'meerokok_terpapar' => $bumil->meerokok_terpapar,
                 'niktpk' => $bumil->niktpk,
+                'stunting' => $bumil->stunting, // ⬅️ INI WAJIB ADA
+                'kunjungan' => $bumil->kunjungan ?? [],
             ],
         ]);
     }
 
-    public function edit($nik)
+    public function edit($id)
     {
-        $bumil = Bumil::findOrFail($nik);
+        $bumil = Bumil::with('penduduk')->findOrFail($id);
         $penduduks = Penduduk::all();
-        return view('bumil.edit', compact('bumil', 'penduduks'));
+
+        return Inertia::render('Bumil/Edit', [
+            'bumil' => $bumil,
+            'penduduks' => $penduduks,
+        ]);
     }
 
-    public function update(Request $request, $nik)
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'penduduk_nik' => 'required|exists:penduduk,nik', // nik bumil
+            'penduduk_nik' => 'required|exists:penduduk,nik',
             'usia_kehamilan' => 'required|integer',
             'TUF' => 'required|integer',
             'jumlah_anak_kandung' => 'required|integer',
@@ -155,18 +179,33 @@ class BumilController extends Controller
             'stunting' => 'required|string',
         ]);
 
-        $bumil = Bumil::where('penduduk_nik', $nik)->firstOrFail();
+        $bumil = Bumil::findOrFail($id);
         $bumil->update(array_merge(
             $request->all(),
             ['niktpk' => auth()->user()->NIK]
         ));
 
+        // Update kunjungan Bumil jika diperlukan
+        $kunjungan = KunjunganBumil::where('penduduk_nik', $bumil->penduduk_nik)->first();
+        if ($kunjungan) {
+            $kunjungan->update([
+                'berat_badan' => $bumil->berat_badan_saat_ini,
+                'tinggi_badan' => $bumil->tinggi_badan,
+                'menggunakan_alat_kontrasepsi' => $bumil->menggunakan_alat_kontrasepsi,
+                'sumber_air_minum' => $bumil->sumber_air_minum,
+                'fasilitas_BAB' => $bumil->fasilitas_BAB,
+                'merokok_terpapar' => $bumil->meerokok_terpapar,
+                'longitude' => $bumil->longitude,
+                'latitude' => $bumil->latitude,
+            ]);
+        }
+
         return redirect()->route('penduduk.index')->with('success', 'Data Bumil berhasil diperbarui');
     }
 
-    public function destroy($nik)
+    public function destroy($id)
     {
-        $bumil = Bumil::where('penduduk_nik', $nik)->firstOrFail();
+        $bumil = Bumil::findOrFail($id);
         $bumil->delete();
 
         return redirect()->route('bumil.index')->with('success', 'Data bumil berhasil dihapus.');

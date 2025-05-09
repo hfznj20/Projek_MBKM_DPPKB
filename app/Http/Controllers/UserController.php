@@ -59,9 +59,9 @@ class UserController extends Controller
             });
 
         $stuntingData = $baduta->merge($bumil);
-        return Inertia::render('Stunting', [
-            'stuntingData' => $stuntingData,
-        ]);
+        return Inertia::render('Stunting/Index', [
+            'stuntingData' => $stuntingData->values()->toArray(),
+        ]);   
         
 
     }
@@ -215,6 +215,7 @@ class UserController extends Controller
                     'statusStunting' => 'Baduta',
                 ];
             });
+            
 
         $bumil = Bumil::with('penduduk')
             ->where('stunting', 'Ya')
@@ -231,10 +232,36 @@ class UserController extends Controller
             });
 
         $stuntingData = $baduta->merge($bumil);
-        return Inertia::render('StuntingTPK', [
-            'stuntingData' => $stuntingData,
-        ]);
-        
-
+        dd($stuntingData);
+        return Inertia::render('Stunting/Index', [
+            'stuntingData' => $stuntingData->values()->toArray(),
+        ]);        
     }
+
+    public function showBaduta($nik)
+{
+    // Ambil data Baduta berdasarkan ID
+    $baduta = Baduta::with('penduduk')
+        ->where('nik', $nik)
+        ->firstOrFail();
+
+    return Inertia::render('Baduta/Show', [
+        'baduta' => $baduta,
+        'kunjungan' => $baduta->kunjungan,
+    ]);
+}
+
+public function showBumil($nik)
+{
+    // Ambil data Bumil berdasarkan nik dari tabel penduduk
+    $bumil = Bumil::with('penduduk')
+        ->whereHas('penduduk', function ($query) use ($nik) {
+            $query->where('nik', $nik);
+        })
+        ->firstOrFail();
+
+    return Inertia::render('Bumil/Show', [
+        'bumil' => $bumil,
+    ]);
+}
 }

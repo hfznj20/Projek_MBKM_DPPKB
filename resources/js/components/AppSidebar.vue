@@ -43,7 +43,7 @@ const mainNavItems: NavItem[] = [
   },
   {
     title: 'Stunting',
-    href: '/stunting-tpk',
+    href: '/stunting',
     icon: ActivitySquare,
     guard: undefined
   },

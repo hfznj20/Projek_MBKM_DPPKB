@@ -9,6 +9,8 @@ use App\Http\Controllers\BadutaController;
 use App\Http\Controllers\PasperController;
 use App\Http\Controllers\CatinController;
 use App\Http\Controllers\BumilController;
+use App\Http\Controllers\KunjunganBumilController;
+use App\Http\Controllers\KunjunganController;
 use App\Http\Controllers\ManajemenController;
 
 // Homepage
@@ -50,7 +52,11 @@ Route::resource('manajemen', ManajemenController::class)
 Route::get('/manajemen/{NIK}', [ManajemenController::class, 'show'])->name('manajemen.show');
 
 // ========== TPK Pages ==========
-Route::get('/stunting-tpk', [UserController::class, 'indexStuntingTPK'])->name('stunting-tpk');
+Route::get('/stunting', [UserController::class, 'indexStunting'])->name('stunting');
+
+Route::post('/kunjungan', [KunjunganController::class, 'store']);
+Route::post('/kunjunganbumil', [KunjunganBumilController::class, 'store']);
+
 
 // Manajemen Penduduk
 Route::resource('penduduk', PendudukController::class);
@@ -100,6 +106,7 @@ Route::post('/bumil', [BumilController::class, 'store'])->name('bumil.store');
 Route::get('/Bumil/Index', [BumilController::class, 'index']);
 Route::get('/bumil/{nik}', [BumilController::class, 'show'])->name('bumil.show');
 Route::delete('/bumil/{nik}', [BumilController::class, 'destroy'])->name('bumil.destroy');
+
 
 // Cek nama ibu berdasarkan NIK
 Route::get('/cek-ibu/{nik}', [PendudukController::class, 'searchIbu'])->name('cek-ibu');
