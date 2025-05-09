@@ -248,4 +248,5 @@ const confirmDelete = () => {
             </div>
         </div>
     </AppLayout>
+
 </template>

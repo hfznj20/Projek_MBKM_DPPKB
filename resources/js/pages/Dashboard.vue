@@ -21,12 +21,12 @@ const breadcrumbs: BreadcrumbItem[] = [
   <AppLayout :breadcrumbs="breadcrumbs">
     <!-- Peta -->
         <!-- Peta -->
-    <div class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl">
-      PETA PERSEBARAN
-    </div>
-    <div class="h-[400px] rounded-b-xl overflow-hidden border border-sidebar-border/70 dark:border-sidebar-border">
-      <MapView />
-    </div>
+        <div class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl mt-12">
+  PETA PERSEBARAN
+</div>
+<div class="h-[400px] rounded-b-xl overflow-hidden border border-sidebar-border/70 dark:border-sidebar-border mt-4 z-40"> <!-- Menambahkan mt-12 dan z-40 -->
+  <MapView />
+</div>
 
     <!-- Diagram Batang 1 -->
     <div class="mt-4">

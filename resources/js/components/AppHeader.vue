@@ -16,7 +16,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
-import type { BreadcrumbItem, NavItem } from '@/types';
+import type { BreadcrumbItem, NavItem, AuthUser } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-vue-next';
 import { computed } from 'vue';
@@ -29,7 +29,8 @@ const props = withDefaults(defineProps<Props>(), {
     breadcrumbs: () => [],
 });
 
-const page = usePage();
+// ✅ Perbaikan typing auth
+const page = usePage<{ auth: { user: AuthUser } }>();
 const auth = computed(() => page.props.auth);
 
 const isCurrentRoute = computed(() => (url: string) => page.url === url);
@@ -38,11 +39,13 @@ const activeItemStyles = computed(
     () => (url: string) => (isCurrentRoute.value(url) ? 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100' : ''),
 );
 
+// ✅ Tambahkan `guard` agar tidak error
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: '/dashboard',
         icon: LayoutGrid,
+        guard: 'admin',
     },
 ];
 
@@ -51,11 +54,13 @@ const rightNavItems: NavItem[] = [
         title: 'Repository',
         href: 'https://github.com/laravel/vue-starter-kit',
         icon: Folder,
+        guard: 'admin',
     },
     {
         title: 'Documentation',
         href: 'https://laravel.com/docs/starter-kits',
         icon: BookOpen,
+        guard: 'guest',
     },
 ];
 </script>
@@ -171,7 +176,7 @@ const rightNavItems: NavItem[] = [
                                 <Avatar class="size-8 overflow-hidden rounded-full">
                                     <AvatarImage v-if="auth.user.avatar" :src="auth.user.avatar" :alt="auth.user.name" />
                                     <AvatarFallback class="rounded-lg bg-neutral-200 font-semibold text-black dark:bg-neutral-700 dark:text-white">
-                                        {{ getInitials(auth.user?.name) }}
+                                        {{ getInitials(auth.user.name) }}
                                     </AvatarFallback>
                                 </Avatar>
                             </Button>

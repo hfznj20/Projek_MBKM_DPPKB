@@ -6,8 +6,6 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import {
-  BookOpen,
-  Folder,
   Home,
   Users,
   ActivitySquare,
@@ -15,7 +13,6 @@ import {
   HeartPulse,
   Hand,
   UserRound,
-  ClipboardList,
   Settings
 } from 'lucide-vue-next';
 
@@ -23,22 +20,10 @@ import AppLogo from './AppLogo.vue';
 
 
 const mainNavItems: NavItem[] = [
-  {
+{
     title: 'Beranda',
     href: '/dashboard',
     icon: Home,
-    guard: undefined
-  },
-  {
-    title: 'Data Penduduk',
-    href: '/population_data',
-    icon: Users,
-    guard: undefined
-  },
-  {
-    title: 'Stunting',
-    href: '/stunting',
-    icon: ActivitySquare,
     guard: undefined
   },
   {
@@ -48,57 +33,51 @@ const mainNavItems: NavItem[] = [
     guard: ['admin']
   },
   {
-    title: 'BADUTA',
+    title: 'Data Penduduk',
+    href: '/penduduk',
+    icon: Users,
+    guard: undefined
+  },
+  {
+    title: 'Stunting',
+    href: '/stunting-tpk',
+    icon: ActivitySquare,
+    guard: undefined
+  },
+  {
+    title: 'Baduta',
     href: '/baduta',
     icon: Baby,
     guard: undefined
   },
   {
-    title: 'BUMIL',
+    title: 'Bumil',
     href: '/bumil',
     icon: HeartPulse,
     guard: undefined
   },
   {
-    title: 'CATIN',
+    title: 'Pasca Persalinan',
+    href: '/pasper',
+    icon: Baby,
+    guard: undefined,
+  },
+  {
+    title: 'Catin',
     href: '/catin',
     icon: UserRound,
     guard: undefined
   },
   {
-    title: 'Pasca Persalinan',
-    href: '/pasca-persalinan',
-    icon: HeartPulse,
-    guard: undefined
-  },
-  {
-    title: 'Kinerja TPK',
-    href: '/kinerja-tpk',
-    icon: ClipboardList,
-    guard: ['admin']
-  },
-  {
     title: 'Manajemen User',
-    href: '/manajemen-user',
+    href: '/manajemen',
     icon: Settings,
     guard: ['admin']
   },
 ];
-
-
 const footerNavItems: NavItem[] = [
-    {
-      title: 'Github Repo',
-      href: 'https://github.com/laravel/vue-starter-kit',
-      icon: Folder,
-      guard: undefined
-    },
-    {
-      title: 'Documentation',
-      href: 'https://laravel.com/docs/starter-kits',
-      icon: BookOpen,
-      guard: undefined
-    },
+
+
 ];
 </script>
 

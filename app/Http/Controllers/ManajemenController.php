@@ -4,14 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Manajemen;
 use App\Models\User;
-<<<<<<< HEAD
-=======
+
 use App\Models\Penduduk;
 use App\Models\Baduta;
 use App\Models\Catin;
 use App\Models\Pasper;
 use App\Models\Bumil;
->>>>>>> f8229fd0ccc0906669accab8c056dbe0625f7e5d
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -23,11 +22,7 @@ class ManajemenController extends Controller
      */
     public function index()
     {
-<<<<<<< HEAD
-        $manajemens = Manajemen::get(); 
-=======
         $manajemens = Manajemen::get();
->>>>>>> f8229fd0ccc0906669accab8c056dbe0625f7e5d
         return Inertia::render('Manajemen/Index', [
             'manajemens' => $manajemens,
         ]);
@@ -71,11 +66,7 @@ class ManajemenController extends Controller
 
         $user->assignRole('TPK');
 
-<<<<<<< HEAD
-        return redirect()->route('manajemen.index') 
-=======
         return redirect()->route('manajemen.index')
->>>>>>> f8229fd0ccc0906669accab8c056dbe0625f7e5d
             ->with('success', 'Data manajemen dan akun TPK berhasil dibuat!');
     }
 
@@ -120,8 +111,6 @@ class ManajemenController extends Controller
 
         return redirect()->route('manajemen.index')->with('success', 'Data berhasil dihapus!');
     }
-<<<<<<< HEAD
-=======
 
     public function show($nik)
     {
@@ -147,5 +136,4 @@ class ManajemenController extends Controller
         ]);
     }
 
->>>>>>> f8229fd0ccc0906669accab8c056dbe0625f7e5d
 }

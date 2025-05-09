@@ -72,10 +72,37 @@ provideSidebarContext({
         '--sidebar-width': SIDEBAR_WIDTH,
         '--sidebar-width-icon': SIDEBAR_WIDTH_ICON,
       }"
-      :class="cn('group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full', props.class)"
+      :class="cn('group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex flex-col min-h-svh w-full', props.class)"
       v-bind="$attrs"
     >
-      <slot />
+      <!-- TOP BAR -->
+      <div class="sticky top-0 bg-[#37347E] h-12 w-full flex items-center px-4 text-white shadow shrink-0 z-50">
+        <img src="/images/logo1.png" alt="Logo" class="h-full mr-3" />
+        <div class="text-[6px] leading-tight" style="word-spacing: 3px;">
+    <div>Dinas</div>
+    <div>Pengendalian Penduduk</div>
+    <div>dan Keluarga Berencana</div>
+    <div>Kota Parepare</div>
+  </div>
+</div>
+
+      <!-- MAIN LAYOUT -->
+      <div class="flex flex-1 overflow-hidden">
+        <!-- SIDEBAR -->
+        <div
+          v-if="open || isMobile"
+          class="bg-[#C0C0C0] w-[var(--sidebar-width)] transition-all duration-300 overflow-auto"
+>
+          <!-- Slot untuk sidebar content -->
+          <slot name="sidebar" />
+        </div>
+
+        <!-- CONTENT AREA -->
+        <div class="flex-1 overflow-auto p-4 bg-gray-100">
+          <!-- Slot untuk main content -->
+          <slot />
+        </div>
+      </div>
     </div>
   </TooltipProvider>
 </template>

@@ -12,8 +12,9 @@ defineProps<{
 }>();
 
 const form = useForm({
-    email: '',
+    NIK: '',
     password: '',
+    // email:'',
     remember: false,
 });
 
@@ -49,19 +50,19 @@ const submit = () => {
             <form @submit.prevent="submit" class="flex flex-col gap-3 w-full">
                 <!-- Email -->
                 <div class="grid gap-1">
-                    <label for="email" style="font-size: 0.8rem; text-align: center;">Email</label>
+                    <label for="email" style="font-size: 0.8rem; text-align: center;">NIK</label>
                     <Input
-                        id="email"
-                        type="email"
+                        id="nik"
+                        type="text"
                         required
                         autofocus
                         :tabindex="1"
                         autocomplete="email"
-                        v-model="form.email"
-                        placeholder="Pengguna@gmail.com"
+                        v-model="form.NIK"  
+                        placeholder="Masukkan NIK"
                         class="w-full h-9 rounded-full border border-[#E7942A] focus:outline-none focus:ring-2 focus:ring-[#E7942A]/40 text-xs sm:text-sm md:text-base transition-all duration-300"
                     />
-                    <InputError :message="form.errors.email" />
+                    <InputError :message="form.errors.NIK" />
                 </div>
 
                 <!-- Password -->

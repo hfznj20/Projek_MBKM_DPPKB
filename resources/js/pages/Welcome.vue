@@ -38,7 +38,7 @@ onMounted(() => {
     <header class="bg-[#37347E] w-full p-2 flex items-center justify-between fixed top-0 left-0 right-0 z-10">
       <div>
         <a href="register">
-          <img src="/logo1.png" alt="Logo" class="w-10 h-auto" />
+          <img src="/logo2.png" alt="Logo" class="w-10 h-auto" />
         </a>
       </div>
 
