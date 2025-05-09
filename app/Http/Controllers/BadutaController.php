@@ -242,7 +242,45 @@ class BadutaController extends Controller
         return redirect()->route('baduta.index')->with('success', 'Data Baduta berhasil dihapus.');
     }
 
+    public function locations()
+    {
+        $baduta = Baduta::with('anak:nik,nama')
+            ->select('penduduk_nik', 'latitude', 'longitude')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'nama' => $item->anak->nama ?? 'Tidak diketahui',
+                    'latitude' => $item->latitude,
+                    'longitude' => $item->longitude,
+                    'penduduk_nik' => $item->penduduk_nik,
+                ];
+            });
 
+        return response()->json($baduta);
+    }
+
+    public function grafikStuntingPerBulan()
+    {
+        $data = DB::table('baduta')
+        ->selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d %H') as waktu, COUNT(*) as total")
+            ->where('stunting', 'Ya',)
+            ->groupBy('waktu')
+            ->orderBy('waktu')
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function grafikStunting()
+    {
+        $data = DB::table('baduta')
+            ->select('stunting', DB::raw('COUNT(*) as total'))
+            ->groupBy('stunting')
+            ->get();
+
+        return response()->json($data);
+    }
 
 
 }

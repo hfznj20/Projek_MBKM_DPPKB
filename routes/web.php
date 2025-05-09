@@ -10,16 +10,19 @@ use App\Http\Controllers\PasperController;
 use App\Http\Controllers\CatinController;
 use App\Http\Controllers\BumilController;
 use App\Http\Controllers\ManajemenController;
+use App\Http\Controllers\PandugenreController;
+use App\Http\Controllers\DashboardController;
 
 // Homepage
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
 
-// Dashboard (authenticated & verified)
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+//Dashboard
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
 
 // Simpan logo
 Route::post('/store-logo', [SettingController::class, 'store'])->name('store.logo');
@@ -28,24 +31,7 @@ Route::post('/store-logo', [SettingController::class, 'store'])->name('store.log
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 
-// ========== Admin Pages ==========
-// Route::get('/population_data', [UserController::class, 'indexPenduduk'])->name('population_data');
-// Route::get('/stunting-admin', [UserController::class, 'indexStunting'])->name('stunting-admin');
-Route::get('/pandu-genre', [UserController::class, 'index3'])->name('pandu-genre');
-
-Route::get('/baduta', [UserController::class, 'index4'])->name('baduta');
-Route::get('/bumil', [UserController::class, 'index5'])->name('bumil');
-Route::get('/catin', [UserController::class, 'index6'])->name('catin');
-Route::get('/pasca-persalinan', [UserController::class, 'index7'])->name('pasca-persalinan');
-Route::get('/kinerja-tpk', [UserController::class, 'index8'])->name('kinerja-tpk');
-
-
-// Route::get('/bayi', [UserController::class, 'indexBaduta'])->name('bayi');
-// Route::get('/ibu', [UserController::class, 'indexBumil'])->name('ibu');
-// Route::get('/calon-pengantin', [UserController::class, 'indexCatin'])->name('calon-pengantin');
-// Route::get('/pasca-persalinan', [UserController::class, 'indexPascaPersalinan'])->name('pasca-persalinan');
-// Route::get('/kinerja-tpk', [UserController::class, 'indexKinerjaTPK'])->name('kinerja-tpk');
-
+//Manajemen User TPK
 Route::resource('manajemen', ManajemenController::class)
     ->parameters(['manajemen' => 'NIK'])
     ->names([
@@ -59,7 +45,20 @@ Route::resource('manajemen', ManajemenController::class)
     ]);
 Route::get('/manajemen/{NIK}', [ManajemenController::class, 'show'])->name('manajemen.show');
 
-// ========== TPK Pages ==========
+//Pandu Genre
+Route::resource('pandugenre', PandugenreController::class);
+Route::get('/pandu-genre', [PandugenreController::class, 'index'])->name('pandugenre.index');
+Route::get('/pandu-genre/create', [PandugenreController::class, 'create'])->name('pandugenre.create');
+Route::get('/check-baduta/{nik}', [PandugenreController::class, 'checkBaduta']);
+Route::post('/pandu-genre', [PandugenreController::class, 'store'])->name('pandugenre.store');
+Route::delete('/pandu-genre/{nik}', [PandugenreController::class, 'destroy'])->name('pandu-genre.destroy');
+Route::get('/pandu-genre/{nik}', [PandugenreController::class, 'show'])->name('pandu-genre.show');
+//kunjungan
+Route::get('/pandu-genre/{nik}/kunjungan/create', [PandugenreController::class, 'createKunjungan']);
+Route::post('/pandu-genre/kunjungan', [PanduGenreController::class, 'storeKunjungan']);
+Route::get('/pandu-genre/{nik}/kunjungan/{id}', [PanduGenreController::class, 'showKunjungan']);
+
+// Stunting
 Route::get('/stunting-tpk', [UserController::class, 'indexStuntingTPK'])->name('stunting-tpk');
 
 // Manajemen Penduduk
@@ -71,9 +70,6 @@ Route::get('/Penduduk/Index', [PendudukController::class, 'index']);
 Route::get('/penduduk/{nik}/edit', [PendudukController::class, 'edit'])->name('penduduk.edit');
 Route::put('/penduduk/{nik}', [PendudukController::class, 'update'])->name('penduduk.update');
 Route::delete('/penduduk/{nik}', [PendudukController::class, 'destroy'])->name('penduduk.destroy');
-Route::get('/penduduk/export/pdf', [PendudukController::class, 'exportPdf'])->name('penduduk.export.pdf');
-Route::get('/penduduk/export/excel', [PendudukController::class, 'exportExcel'])->name('penduduk.export.excel');
-
 
 // BADUTA CRUD
 Route::resource('baduta', BadutaController::class);
@@ -83,7 +79,6 @@ Route::post('/baduta', [BadutaController::class, 'store'])->name('baduta.store')
 Route::get('/Baduta/Index', [BadutaController::class, 'index']);
 Route::delete('/baduta/{nik}', [BadutaController::class, 'destroy'])->name('baduta.destroy');
 Route::get('/baduta/{nik}', [BadutaController::class, 'show'])->name('baduta.show');
-Route::delete('/baduta/{nik}', [BadutaController::class, 'destroy'])->name('baduta.destroy');
 
 // PASPER CRUD
 Route::resource('pasper', PasperController::class);
@@ -116,6 +111,13 @@ Route::delete('/bumil/{nik}', [BumilController::class, 'destroy'])->name('bumil.
 // Cek nama ibu berdasarkan NIK
 Route::get('/cek-ibu/{nik}', [PendudukController::class, 'searchIbu'])->name('cek-ibu');
 Route::post('/cek-nik', [PendudukController::class, 'cekNIK'])->name('cek-nik');
+
+//Dashboard
+Route::get('/api/baduta-locations', [BadutaController::class, 'locations']);
+Route::get('/api/kategori-per-kecamatan', [PendudukController::class, 'kategoriPerKecamatan']);
+Route::get('/api/grafik-stunting-per-bulan', [BadutaController::class, 'grafikStuntingPerBulan']);
+Route::get('/api/baduta/stunting/persentase', [BadutaController::class, 'persentaseStunting']);
+Route::get('/api/grafik-stunting', [DashboardController::class, 'grafikStunting']);
 
 
 // Form Static Rendering (jika masih dibutuhkan untuk shortcut saja)

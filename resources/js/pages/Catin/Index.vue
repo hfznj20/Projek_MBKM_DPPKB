@@ -19,19 +19,25 @@ interface Catin {
   nik_catin2: string;
   nama_catin2: string;
   tanggal_rencana_pernikahan: string;
+  niktpk: string;
 }
 
-const { props } = usePage();
-const catinData = ref<Catin[]>(Array.isArray(props.catins) ? props.catins : []);
+const { props } = usePage<{
+  auth: { user: { role: string } };
+  catins: Catin[];
+}>();
 
+const user = props.auth.user;
+const catins = ref<Catin[]>(props.catins);
 const search = ref('');
 const filteredCatin = computed(() => {
   const keyword = search.value.toLowerCase();
-  return catinData.value.filter((data) =>
-    Object.values(data).some(value =>
+
+  return catins.value.filter((data) => {
+    return Object.values(data).some((value) =>
       String(value).toLowerCase().includes(keyword)
-    )
-  );
+    );
+  });
 });
 
 const viewData = (nik: string) => {
@@ -43,10 +49,9 @@ const viewData = (nik: string) => {
   <Head title="Data Catin" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6">
-      <!-- Button Section -->
-      <div class="flex gap-2 mb-4">
-        <!-- Add buttons here if needed -->
-      </div>
+      <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl">
+        Data Catin
+      </h1>
 
       <!-- Search -->
       <div class="flex flex-col lg:flex-row flex-wrap gap-4 justify-between items-start mb-4">
@@ -66,27 +71,29 @@ const viewData = (nik: string) => {
         <table class="min-w-full border border-orange-500 rounded-lg">
           <thead class="bg-[#F9690C]/90 text-white">
             <tr>
-              <th class="px-4 py-2 text-left text-sm">No</th>
-              <th class="px-4 py-2 text-left text-sm">NIK Calon Wanita</th>
-              <th class="px-4 py-2 text-left text-sm">Nama Calon Wanita</th>
-              <th class="px-4 py-2 text-left text-sm">NIK Calon Pria</th>
-              <th class="px-4 py-2 text-left text-sm">Nama Calon Pria</th>
-              <th class="px-4 py-2 text-left text-sm">Tanggal Rencana Pernikahan</th>
-              <th class="px-4 py-2 text-left text-sm">Aksi</th>
+              <th class="px-4 py-2 text-left">No</th>
+              <th class="px-4 py-2 text-left">NIK Calon Wanita</th>
+              <th class="px-4 py-2 text-left">Nama Calon Wanita</th>
+              <th class="px-4 py-2 text-left">NIK Calon Pria</th>
+              <th class="px-4 py-2 text-left">Nama Calon Pria</th>
+              <th class="px-4 py-2 text-left">Tanggal Rencana Pernikahan</th>
+              <th v-if="user.role !== 'TPK'" class="px-4 py-2 text-left">TPK</th>
+              <th class="px-4 py-2 text-left">Aksi</th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="filteredCatin.length === 0" class="text-center text-gray-500">
               <td colspan="7" class="px-4 py-4 text-sm">Tidak ada data catin.</td>
             </tr>
-            <tr v-for="(data, index) in filteredCatin" :key="data.id" class="border-t border-orange-500">
-              <td class="px-4 py-2 text-sm">{{ index + 1 }}</td>
-              <td class="px-4 py-2 text-sm">{{ data.nik_catin1 }}</td>
-              <td class="px-4 py-2 text-sm">{{ data.nama_catin1 }}</td>
-              <td class="px-4 py-2 text-sm">{{ data.nik_catin2 }}</td>
-              <td class="px-4 py-2 text-sm">{{ data.nama_catin2 }}</td>
-              <td class="px-4 py-2 text-sm">{{ data.tanggal_rencana_pernikahan }}</td>
-              <td class="px-4 py-2 space-x-2 flex items-center">
+            <tr v-for="(data, index) in filteredCatin" :key="data.id" class="border-t hover:bg-gray-50">
+              <td class="px-4 py-2">{{ index + 1 }}</td>
+              <td class="px-4 py-2">{{ data.nik_catin1 }}</td>
+              <td class="px-4 py-2">{{ data.nama_catin1 }}</td>
+              <td class="px-4 py-2">{{ data.nik_catin2 }}</td>
+              <td class="px-4 py-2">{{ data.nama_catin2 }}</td>
+              <td class="px-4 py-2">{{ data.tanggal_rencana_pernikahan }}</td>
+              <td v-if="user.role !== 'TPK'" class="px-4 py-2">{{ data.niktpk }}</td>
+              <td class="px-4 py-2">
                 <button @click="viewData(data.nik_catin1)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />
                 </button>

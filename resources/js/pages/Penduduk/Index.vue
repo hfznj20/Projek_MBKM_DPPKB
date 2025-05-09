@@ -63,9 +63,13 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Data Penduduk', href: '/penduduk' },
 ];
 
-const { props } = usePage();
-const penduduks = ref<Penduduk[]>(props.penduduks as Penduduk[]);
+const { props } = usePage<{
+  auth: { user: { role: string } };
+  penduduks: Penduduk[];
+}>();
 
+const user = props.auth.user;
+const penduduks = ref<Penduduk[]>(props.penduduks);
 const search = ref('');
 const searchCategory = ref('');
 const showModal = ref(false);
@@ -113,6 +117,7 @@ const deleteConfirmed = () => {
   }
   showModal.value = false;
 };
+
 </script>
 
 <template>
@@ -131,6 +136,18 @@ const deleteConfirmed = () => {
           <DocumentCheckIcon class="w-5 h-5" />
           Cetak Excel
         </button>
+      <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl">
+        Data Penduduk
+      </h1>
+
+      <!-- Tombol Tambah Data -->
+      <div v-if="user.role !== 'admin'" class="flex justify-end my-4">
+        <Link
+          href="/penduduk/create"
+          class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700"
+        >
+          Tambah Data
+        </Link>
       </div>
 
       <div class="flex flex-col lg:flex-row flex-wrap gap-4 justify-between items-start lg:items-center mb-4">
@@ -177,8 +194,9 @@ const deleteConfirmed = () => {
               <th class="px-4 py-2 text-left text-sm">Kecamatan</th>
               <th class="px-4 py-2 text-left text-sm">Kelurahan</th>
               <th class="px-4 py-2 text-left text-sm">Kategori</th>
-              <th class="px-4 py-2 text-left text-sm">TPK</th>
-              <th class="px-4 py-2 text-left text-sm">Aksi</th>
+              <th v-if="user.role !== 'TPK'" class="px-4 py-2 text-left text-sm">TPK</th>
+              <th v-if="user.role !== 'admin'" class="px-4 py-2 text-left text-sm">Aksi</th>
+
             </tr>
           </thead>
           <tbody>
@@ -192,8 +210,8 @@ const deleteConfirmed = () => {
               <td class="px-4 py-2 text-sm">{{ penduduk.kecamatan }}</td>
               <td class="px-4 py-2 text-sm">{{ penduduk.kelurahan }}</td>
               <td class="px-4 py-2 text-sm">{{ penduduk.kategori }}</td>
-              <td class="px-4 py-2 text-sm">{{ penduduk.niktpk }}</td>
-              <td class="px-4 py-2 space-x-2 flex items-center">
+              <td v-if="user.role !== 'TPK'" class="px-4 py-2 text-sm">{{ penduduk.niktpk }}</td>
+              <td v-if="user.role !== 'admin'" class="px-4 py-2 space-x-2 flex items-center">
                 <button @click="editPenduduk(penduduk.nik)" class="text-blue-600 hover:text-blue-800" title="Edit">
                   <PencilIcon class="w-5 h-5" />
                 </button>
@@ -232,21 +250,3 @@ const deleteConfirmed = () => {
     </div>
   </transition>
 </template>
-
-<style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-
-table td, table th {
-  white-space: nowrap;
-}
-
-table th, table td {
-  font-size: 0.875rem;
-  padding: 8px 12px;
-}
-</style>

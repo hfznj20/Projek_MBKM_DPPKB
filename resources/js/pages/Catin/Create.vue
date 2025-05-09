@@ -102,7 +102,21 @@ onMounted(async () => {
       console.error('Error fetching catin data:', error);
     }
   }
+
+  // Ambil lokasi GPS
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        form.latitude = position.coords.latitude.toString();
+        form.longitude = position.coords.longitude.toString();
+      },
+      error => {
+        console.warn('Gagal mendapatkan lokasi:', error.message);
+      }
+    );
+  }
 });
+
 
 const onKecamatanChange = () => {
   const selected = formPasangan.kecamatan;
@@ -285,13 +299,13 @@ const goToFormPendudukBaru = () => {
       <div v-if="step === 3">
         <h3>Data Pendampingan</h3>
         <div class="mb-3">
-          <label class="form-label">Longitude</label>
-          <input v-model="form.longitude" type="text" class="form-control" />
+          <label for="longitude" class="form-label">Longitude</label>
+          <input v-model="form.longitude" type="text" class="form-control" id="longitude" readonly />
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Latitude</label>
-          <input v-model="form.latitude" type="text" class="form-control" />
+          <label for="latitude" class="form-label">Latitude</label>
+          <input v-model="form.latitude" type="text" class="form-control" id="latitude" readonly />
         </div>
 
         <div class="mb-3">

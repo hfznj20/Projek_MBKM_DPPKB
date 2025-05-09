@@ -14,6 +14,7 @@ interface Bumil {
   kecamatan: string;
   kelurahan: string;
   stunting: string;
+  niktpk: string;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -21,8 +22,13 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Bumil', href: '/bumil' },
 ];
 
-const { props } = usePage();
-const bumils = ref<Bumil[]>(props.bumils as Bumil[]);
+const { props } = usePage<{
+  auth: { user: { role: string } };
+  bumils: Bumil[];
+}>();
+
+const user = props.auth.user;
+const bumils = ref<Bumil[]>(props.bumils);
 
 const search = ref('');
 const filteredBumils = computed(() => {
@@ -41,7 +47,7 @@ const viewData = (nik: string) => {
 </script>
 
 <template>
-  <Head title="Bumil TPK" />
+  <Head title="Data Bumil" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6">
       <!-- Button Section -->
@@ -55,6 +61,9 @@ const viewData = (nik: string) => {
           Cetak Excel
         </button>
       </div>
+      <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl">
+        Data Bumil
+      </h1>
 
       <!-- Search -->
       <div class="flex flex-col lg:flex-row flex-wrap gap-4 justify-between items-start mb-4">
@@ -80,6 +89,7 @@ const viewData = (nik: string) => {
               <th class="px-4 py-2 text-left text-sm">Kecamatan</th>
               <th class="px-4 py-2 text-left text-sm">Kelurahan</th>
               <th class="px-4 py-2 text-left text-sm">Status Stunting</th>
+              <th v-if="user.role !== 'TPK'" class="px-4 py-2 text-left">TPK</th>
               <th class="px-4 py-2 text-left text-sm">Aksi</th>
             </tr>
           </thead>
@@ -94,6 +104,7 @@ const viewData = (nik: string) => {
               <td class="px-4 py-2 text-sm">{{ bumil.kecamatan }}</td>
               <td class="px-4 py-2 text-sm">{{ bumil.kelurahan }}</td>
               <td class="px-4 py-2 text-sm">{{ bumil.stunting }}</td>
+              <td v-if="user.role !== 'TPK'" class="px-4 py-2">{{ bumil.niktpk }}</td>
               <td class="px-4 py-2 space-x-2 flex items-center">
                 <button @click="viewData(bumil.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />

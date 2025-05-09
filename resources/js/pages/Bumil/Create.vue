@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import AppLayout from '@/layouts/AppLayout.vue';
 import { BreadcrumbItem } from '@/types';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
 const penduduk_nik = ref<string>(new URLSearchParams(window.location.search).get('nik') || '');
@@ -30,6 +30,22 @@ const form = useForm({
   fasilitas_layanan_rujukan: '',
   fasilitas_bantuan_sosial: '',
   stunting: ''
+});
+
+onMounted(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        form.latitude = position.coords.latitude.toString();
+        form.longitude = position.coords.longitude.toString();
+      },
+      (error) => {
+        console.error('Gagal mengambil lokasi:', error);
+      }
+    );
+  } else {
+    console.warn('Geolocation tidak didukung browser ini.');
+  }
 });
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -154,14 +170,15 @@ const submitForm = () => {
 
           <div>
             <label class="text-sm font-normal">Longitude</label>
-            <input v-model="form.longitude" type="text" class="w-full border border-orange-500 rounded px-3 py-1 text-sm" required />
+            <input v-model="form.longitude" type="text" class="w-full border border-orange-500 rounded px-3 py-1 text-sm" readonly />
           </div>
 
           <div>
             <label class="text-sm font-normal">Latitude</label>
-            <input v-model="form.latitude" type="text" class="w-full border border-orange-500 rounded px-3 py-1 text-sm" required />
+            <input v-model="form.latitude" type="text" class="w-full border border-orange-500 rounded px-3 py-1 text-sm" readonly />
           </div>
         </div>
+
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>

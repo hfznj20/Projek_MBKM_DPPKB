@@ -19,6 +19,7 @@ class PasperController extends Controller
             ->select(
                 'pasca_persalinan.id',
                 'pasca_persalinan.tanggal_persalinan',
+                'pasca_persalinan.niktpk',
                 'penduduk.nik',
                 'penduduk.nama',
                 'penduduk.kecamatan',
@@ -31,7 +32,7 @@ class PasperController extends Controller
 
             $pasca_persalinan = $query->get();
     
-        return Inertia::render('PascaPersalinan', [
+        return Inertia::render('Pasper/Index', [
             'pasper' => $pasca_persalinan,
         ]);
     }

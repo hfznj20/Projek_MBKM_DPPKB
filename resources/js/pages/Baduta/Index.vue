@@ -5,7 +5,7 @@ import { Head, usePage } from '@inertiajs/vue3';
 import type { BreadcrumbItem } from '@/types';
 import { EyeIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
-import { DocumentArrowDownIcon, DocumentCheckIcon} from '@heroicons/vue/24/solid';
+import { DocumentArrowDownIcon, DocumentCheckIcon } from '@heroicons/vue/24/solid';
 import { Inertia } from '@inertiajs/inertia';
 
 interface Baduta {
@@ -23,13 +23,19 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Baduta', href: '/baduta' },
 ];
 
-const { props } = usePage();
-const badutaData = ref<Baduta[]>(props.badutas as Baduta[]);
+const { props } = usePage<{
+  auth: { user: { role: string } };
+  badutas: Baduta[];
+}>();
+
+const badutas = ref<Baduta[]>(props.badutas);
 
 const search = ref('');
 const filteredBaduta = computed(() => {
-  const keyword = search.value.toLowerCase();
-  return badutaData.value.filter((baduta) =>
+  const keyword = search.value.toLowerCase().trim();
+  if (!keyword) return badutas.value; // If no search keyword, return all data
+
+  return badutas.value.filter((baduta) =>
     Object.values(baduta).some(value =>
       String(value).toLowerCase().includes(keyword)
     )
@@ -42,21 +48,21 @@ const viewData = (nik: string) => {
 </script>
 
 <template>
-  <Head title="Baduta TPK" />
+  <Head title="Data Baduta" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6">
       <!-- Button Section -->
       <div class="flex gap-2 mb-4">
         <button class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-1 rounded-lg">
-  <DocumentArrowDownIcon class="w-5 h-5" />
-  Cetak PDF
-</button>
+          <DocumentArrowDownIcon class="w-5 h-5" />
+          Cetak PDF
+        </button>
 
-<!-- Tombol Cetak Excel -->
-<button class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white text-sm px-4 py-1 rounded-lg">
-  <DocumentCheckIcon class="w-5 h-5" />
-  Cetak Excel
-</button>
+        <!-- Tombol Cetak Excel -->
+        <button class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white text-sm px-4 py-1 rounded-lg">
+          <DocumentCheckIcon class="w-5 h-5" />
+          Cetak Excel
+        </button>
       </div>
 
       <!-- Search -->
