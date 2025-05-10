@@ -16,7 +16,7 @@ const sumberAirOptions = [
 
 // Menambahkan semua field untuk form kunjungan
 const kunjunganForm = ref({
-  tanggal: '',
+  tanggal_kunjungan: '',
   berat_badan: '',
   tinggi_badan: '',
   menggunakan_alat_kontrasepsi: '',
@@ -34,7 +34,8 @@ function submitKunjungan() {
   // Mengirim semua data dari form kunjungan
   router.post('/kunjungan', {
     penduduk_nik: props.penduduk_nik,
-    tanggal: kunjunganForm.value.tanggal,
+    nama: props.nama,
+    tanggal_kunjungan: kunjunganForm.value.tanggal_kunjungan,
     berat_badan: kunjunganForm.value.berat_badan,
     tinggi_badan: kunjunganForm.value.tinggi_badan,
     menggunakan_alat_kontrasepsi: kunjunganForm.value.menggunakan_alat_kontrasepsi,
@@ -73,7 +74,7 @@ function submitKunjungan() {
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm mb-1">Tanggal Kunjungan</label>
-          <input type="date" v-model="kunjunganForm.tanggal" class="w-full border px-2 py-1 rounded" />
+          <input type="date" v-model="kunjunganForm.tanggal_kunjungan" class="w-full border px-2 py-1 rounded" />
         </div>
         <div>
           <label class="block text-sm mb-1">Berat Badan (kg)</label>

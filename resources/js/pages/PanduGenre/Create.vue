@@ -1,19 +1,3 @@
-<template>
-    <div>
-      <!-- Isi halaman -->
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'PanduGenreCreate'
-  }
-  </script>
-  
-  <style scoped>
-  /* Tambahkan CSS di sini jika perlu */
-  </style>
-  
 <script lang="ts" setup>
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';

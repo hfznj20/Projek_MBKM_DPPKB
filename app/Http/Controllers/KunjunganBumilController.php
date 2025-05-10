@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\KunjunganBumil;
+use App\Models\Bumil;  // Gunakan model Bumil yang sesuai
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class KunjunganBumilController extends Controller
 {
@@ -12,6 +14,7 @@ class KunjunganBumilController extends Controller
      */
     public function store(Request $request)
     {
+        // Validasi data dari request
         $request->validate([
             'penduduk_nik' => 'required|exists:penduduk,nik',
             'tanggal' => 'required|date',
@@ -34,6 +37,7 @@ class KunjunganBumilController extends Controller
             'fasilitas_bantuan_sosial' => 'nullable|string',
         ]);
 
+        // Menyimpan data kunjungan
         $kunjungan = new KunjunganBumil();
         $kunjungan->penduduk_nik = $request->penduduk_nik;
         $kunjungan->tanggal_kunjungan = $request->tanggal;
@@ -56,7 +60,26 @@ class KunjunganBumilController extends Controller
         $kunjungan->fasilitas_bantuan_sosial = $request->fasilitas_bantuan_sosial;
         $kunjungan->save();
 
+        // Redirect ke halaman detail Bumil setelah berhasil menyimpan data
         return redirect()->route('bumil.show', ['nik' => $request->penduduk_nik])
                          ->with('success', 'Data kunjungan bumil berhasil disimpan.');
+    }
+
+    /**
+     * Show the specified resource.
+     */
+    public function showKunjunganBumil($nik, $id)
+    {
+        // Ambil data kunjungan berdasarkan nik dan id
+        $kunjungan = KunjunganBumil::where('penduduk_nik', $nik)->where('id', $id)->firstOrFail();
+        
+        // Ambil data Bumil berdasarkan nik
+        $bumil = Bumil::where('penduduk_nik', $nik)->firstOrFail();
+
+        // Kirim data kunjungan dan bumil ke halaman frontend menggunakan Inertia
+        return Inertia::render('Bumil/TambahKunjunganshow', [
+            'kunjungan' => $kunjungan,
+            'bumil' => $bumil
+        ]);
     }
 }

@@ -177,21 +177,15 @@ class BadutaController extends Controller
                 'stunting' => $baduta->stunting, 
                 'kunjungan' => $baduta->kunjungan ?? [], //
             ],
-            // 'kunjungan' => $baduta->kunjungan->map(function ($kunjungan) {
-            // return [
-            //     'tanggal_kunjungan' => $kunjungan->tanggal_kunjungan,
-            //     'berat_badan' => $kunjungan->berat_badan,
-            //     'tinggi_badan' => $kunjungan->tinggi_badan,
-            //     'menggunakan_alat_kontrasepsi' => $kunjungan->menggunakan_alat_kontrasepsi,
-            //     'sumber_air_minum' => $kunjungan->sumber_air_minum,
-            //     'asi_eksklusif' => $kunjungan->asi_eksklusif,
-            //     'imunisasi_hepatitis_B' => $kunjungan->imunisasi_hepatitis_B,
-            //     'merokok_terpapar' => $kunjungan->merokok_terpapar,
-            //     'mengisi_KKA' => $kunjungan->mengisi_KKA,
-            //     'kehadiran_posyandu' => $kunjungan->kehadiran_posyandu,
-            //     'penyuluhan_KIE' => $kunjungan->penyuluhan_KIE,
-            //     'fasilitas_bantuan_sosial' => $kunjungan->fasilitas_bantuan_sosial,
-            // ];
+            'kunjungan' => $baduta->kunjungan->map(function ($kunjungan) {
+            return [
+                    'id' => $kunjungan->id,
+                    'tanggal_kunjungan' => $kunjungan->tanggal_kunjungan,
+                    'berat_badan' => $kunjungan->berat_badan,
+                    'tinggi_badan' => $kunjungan->tinggi_badan,
+                ];
+            
+        }),
     ]);
 
     }

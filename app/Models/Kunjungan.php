@@ -22,4 +22,9 @@ class Kunjungan extends Model
         'penyuluhan_KIE',
         'fasilitas_bantuan_sosial',
     ];
+
+    public function penduduk()
+    {
+        return $this->belongsTo(Penduduk::class, 'penduduk_nik', 'penduduk_nik');
+    }
 }

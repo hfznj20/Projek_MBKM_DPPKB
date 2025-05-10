@@ -134,9 +134,21 @@ class BumilController extends Controller
                 'fasilitas_BAB' => $bumil->fasilitas_BAB,
                 'meerokok_terpapar' => $bumil->meerokok_terpapar,
                 'niktpk' => $bumil->niktpk,
-                'stunting' => $bumil->stunting, // ⬅️ INI WAJIB ADA
+                'stunting' => $bumil->stunting, 
                 'kunjungan' => $bumil->kunjungan ?? [],
             ],
+            'kunjungan' => $bumil->kunjungan->map(function ($kunjungan) {
+                return [
+                    'id' => $kunjungan->id, 
+                    'tanggal' => $kunjungan->tanggal_kunjungan, 
+                    'usia_kehamilan' => $kunjungan->usia_kehamilan, 
+                    'berat_badan' => $kunjungan->berat_badan_saat_ini, 
+                    'indeks_massa_tubuh' => $kunjungan->indeks_massa_tubuh, 
+                    'kadar_hemoglobin' => $kunjungan->kadar_hemoglobin, 
+                    'LILA' => $kunjungan->LILA, 
+                 ];
+            }),
+
         ]);
     }
 

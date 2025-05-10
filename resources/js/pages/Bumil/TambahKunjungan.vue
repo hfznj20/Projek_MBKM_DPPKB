@@ -46,7 +46,7 @@ function submitKunjungan() {
     ...kunjunganForm.value,
   }, {
     onSuccess: () => {
-      router.visit(`/ibuhamil/${props.penduduk_nik}`);
+      router.visit(`/bumil/${props.penduduk_nik}`);
     },
     onError: (errors) => {
       console.error('Error submitting form:', errors);
