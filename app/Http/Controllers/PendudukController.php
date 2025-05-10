@@ -9,6 +9,7 @@ use App\Models\Bumil;
 use App\Models\Baduta;
 use App\Models\Catin;
 use App\Models\Pasper;
+use Illuminate\Support\Facades\DB;
 
 class PendudukController extends Controller
 {
@@ -186,4 +187,34 @@ class PendudukController extends Controller
         }
     }
 
+    public function kategoriPerKecamatan()
+    {
+
+        $data = DB::table('penduduk')
+            ->select('kecamatan', 'kategori', DB::raw('COUNT(*) as total'))
+            ->groupBy('kecamatan', 'kategori')
+            ->get();
+
+        $result = [];
+        $categories = ['BADUTA', 'BUMIL', 'CATIN', 'Pasca_Persalinan', 'Penduduk'];
+
+        foreach ($data as $item) {
+
+            if (!isset($result[$item->kecamatan])) {
+                $result[$item->kecamatan] = [
+                    'kecamatan' => $item->kecamatan,
+                    'BADUTA' => 0,
+                    'BUMIL' => 0,
+                    'CATIN' => 0,
+                    'Pasca_Persalinan' => 0,
+                    'Penduduk' => 0,
+                ];
+            }
+
+
+            $result[$item->kecamatan][$item->kategori] = $item->total;
+        }
+        $formattedData = array_values($result);
+        return response()->json($formattedData);
+    }
 }

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    // Method untuk menampilkan halaman manajemen user dengan Inertia.js
+// Method untuk menampilkan halaman manajemen user dengan Inertia.js
     public function indexPenduduk()
     {
         $user = auth()->user();
@@ -198,7 +198,7 @@ class UserController extends Controller
         return Inertia::render('KinerjaTPK');
     }
 
-    public function indexStuntingTPK()
+  public function indexStuntingTPK()
     {
         $stuntingData = collect();
 

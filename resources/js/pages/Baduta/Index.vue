@@ -22,8 +22,13 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Baduta', href: '/baduta' },
 ];
 
-const { props } = usePage();
-const badutaData = ref<Baduta[]>(props.badutas as Baduta[]);
+const { props } = usePage<{
+  auth: { user: { role: string } };
+  badutas: Baduta[];
+}>();
+
+const user = props.auth.user;
+const badutas = ref<Baduta[]>(props.badutas);
 
 const search = ref('');
 const searchCategory = ref('nama');
@@ -32,7 +37,7 @@ const filteredBaduta = computed(() => {
   const keyword = search.value.toLowerCase();
   const category = searchCategory.value;
 
-  return badutaData.value.filter((baduta) => {
+  return badutas.value.filter((baduta) => {
     return String(baduta[category as keyof Baduta]).toLowerCase().includes(keyword);
   });
 });
@@ -44,11 +49,11 @@ const viewData = (nik: string) => {
 </script>
 
 <template>
-  <Head title="Baduta TPK" />
+  <Head title="Data Baduta" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6">
       <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl">
-        Data Baduta TPK
+        Data Baduta
       </h1>
 
       <!-- Search -->
@@ -92,7 +97,7 @@ const viewData = (nik: string) => {
               <th class="px-4 py-2 text-left">Kecamatan</th>
               <th class="px-4 py-2 text-left">Kelurahan</th>
               <th class="px-4 py-2 text-left">Status Stunting</th>
-              <th class="px-4 py-2 text-left">TPK</th>
+              <th v-if="user.role !== 'TPK'" class="px-4 py-2 text-left">TPK</th>
               <th class="px-4 py-2 text-left">Aksi</th>
             </tr>
           </thead>
@@ -108,7 +113,7 @@ const viewData = (nik: string) => {
               <td class="px-4 py-2">{{ baduta.kecamatan }}</td>
               <td class="px-4 py-2">{{ baduta.kelurahan }}</td>
               <td class="px-4 py-2">{{ baduta.stunting }}</td>
-              <td class="px-4 py-2">{{ baduta.niktpk }}</td>
+              <td v-if="user.role !== 'TPK'" class="px-4 py-2">{{ baduta.niktpk }}</td>
               <td class="px-4 py-2 space-x-2 flex items-center">
                 <button @click="viewData(baduta.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />

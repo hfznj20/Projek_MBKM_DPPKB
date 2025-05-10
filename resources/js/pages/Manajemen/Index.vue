@@ -33,7 +33,7 @@ function confirmDelete(NIK: string) {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex flex-col gap-4 p-4">
             <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-bold">Manajemen</h1>
+                <h1 class="text-2xl font-bold">Manajemen User</h1>
                 <Link 
                     :href="route('manajemen.create')"
                     class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"

@@ -49,7 +49,7 @@ const viewData = (id: number) => {
 </script>
 
 <template>
-  <Head title="Data Stunting TPK" />
+  <Head title="Data Stunting" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6 space-y-6">
       <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-xl">

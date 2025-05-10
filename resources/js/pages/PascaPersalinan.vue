@@ -40,7 +40,7 @@ const viewData = (nik: string) => {
 </script>
 
 <template>
-  <Head title="Pasca Persalinan TPK" />
+  <Head title="Pasca Persalinan" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6">
       <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-t-xl">
