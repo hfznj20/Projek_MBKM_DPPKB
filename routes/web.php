@@ -34,7 +34,6 @@ Route::post('/store-logo', [SettingController::class, 'store'])->name('store.log
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 
-// ========== Admin Pages ==========
 //Manajemen User TPK
 Route::resource('manajemen', ManajemenController::class)
     ->parameters(['manajemen' => 'NIK'])
@@ -61,6 +60,7 @@ Route::get('/pandu-genre/{nik}/kunjungan/create', [PandugenreController::class, 
 Route::post('/pandu-genre/kunjungan', [PanduGenreController::class, 'storeKunjungan']);
 Route::get('/pandu-genre/{nik}/kunjungan/{id}', [PanduGenreController::class, 'showKunjungan']);
 
+<<<<<<< HEAD
 
 // ========== TPK Pages ==========
 Route::get('/stunting', [UserController::class, 'indexStunting'])->name('stunting');
@@ -69,6 +69,10 @@ Route::post('/kunjungan', [KunjunganController::class, 'store']);
 
 Route::post('/kunjunganbumil', [KunjunganBumilController::class, 'store']);
 Route::post('/kunjungan', [KunjunganController::class, 'store'])->name('baduta.kunjungan.store');
+=======
+// Stunting
+Route::get('/stunting-tpk', [UserController::class, 'indexStuntingTPK'])->name('stunting-tpk');
+>>>>>>> 9a68d78d6b3a0b505d6db7828f16e4e2c2096584
 
 // Manajemen Penduduk
 Route::resource('penduduk', PendudukController::class);
@@ -79,7 +83,6 @@ Route::get('/Penduduk/Index', [PendudukController::class, 'index']);
 Route::get('/penduduk/{nik}/edit', [PendudukController::class, 'edit'])->name('penduduk.edit');
 Route::put('/penduduk/{nik}', [PendudukController::class, 'update'])->name('penduduk.update');
 Route::delete('/penduduk/{nik}', [PendudukController::class, 'destroy'])->name('penduduk.destroy');
-
 
 // BADUTA CRUD
 Route::resource('baduta', BadutaController::class);
@@ -128,6 +131,10 @@ Route::post('/cek-nik', [PendudukController::class, 'cekNIK'])->name('cek-nik');
 //Dashboard
 Route::get('/api/baduta-locations', [BadutaController::class, 'locations']);
 Route::get('/api/kategori-per-kecamatan', [PendudukController::class, 'kategoriPerKecamatan']);
+Route::get('/api/grafik-stunting-per-bulan', [BadutaController::class, 'grafikStuntingPerBulan']);
+Route::get('/api/baduta/stunting/persentase', [BadutaController::class, 'persentaseStunting']);
+Route::get('/api/grafik-stunting', [DashboardController::class, 'grafikStunting']);
+
 
 // Form Static Rendering (jika masih dibutuhkan untuk shortcut saja)
 // Route::get('/bumil/create', fn () => Inertia::render('bumil/Create'))->name('bumil.create');

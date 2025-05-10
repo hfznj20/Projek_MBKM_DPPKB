@@ -476,6 +476,7 @@ const submitForm = () => {
     </div>
   </div>
 
+<<<<<<< HEAD
   <!-- Tombol Navigasi -->
   <div class="flex justify-between mt-6">
     <button
@@ -579,6 +580,120 @@ const submitForm = () => {
             >
               Simpan
             </button>
+=======
+        <!-- Step 3 -->
+        <div v-if="step === 4">
+          <h2>Data Pendampingan Bulanan</h2>
+          
+          <div class="mb-3">
+            <label for="longitude" class="form-label">Longitude</label>
+            <input v-model="form.longitude" type="text" class="form-control" id="longitude" readonly />
+          </div>
+
+          <div class="mb-3">
+            <label for="latitude" class="form-label">Latitude</label>
+            <input v-model="form.latitude" type="text" class="form-control" id="latitude" readonly />
+          </div>
+
+          <div>
+            <label>Kehadiran Posyandu?</label><br>
+            <label><input type="radio" value="Ya" v-model="form.kehadiran_posyandu" /> Ya</label>
+            <label><input type="radio" value="Tidak" v-model="form.kehadiran_posyandu" /> Tidak</label>
+          </div>
+          <div>
+            <label>Penyuluhan/KIE:</label><br>
+            <label><input type="radio" value="Ya, perorang" v-model="form.penyuluhan_KIE" /> Ya, perorang</label>
+            <label><input type="radio" value="Ya, kelompok" v-model="form.penyuluhan_KIE" /> Ya, kelompok</label>
+            <label><input type="radio" value="Tidak" v-model="form.penyuluhan_KIE" /> Tidak</label>
+          </div>
+          <div>
+            <label>Bantuan Sosial:</label><br>
+            <label><input type="radio" value="Ya, sedang di proses" v-model="form.fasilitas_bantuan_sosial" /> Ya, sedang di proses</label>
+            <label><input type="radio" value="Ya, sudah mendapat bantuan sosial" v-model="form.fasilitas_bantuan_sosial" /> Ya, sudah mendapat</label>
+            <label><input type="radio" value="Tidak, karena tidak memenuhi syarat" v-model="form.fasilitas_bantuan_sosial" /> Tidak, tidak memenuhi syarat</label>
+            <label><input type="radio" value="Tidak, karena sudah menerima bantuan" v-model="form.fasilitas_bantuan_sosial" /> Tidak, sudah menerima</label>
+          </div>
+          <div>
+            <label>Anak Mengalami Stunting?</label><br>
+            <label><input type="radio" value="Ya" v-model="form.stunting" /> Ya</label>
+            <label><input type="radio" value="Tidak" v-model="form.stunting" /> Tidak</label>
+          </div>
+          <button type="button" @click="step--">Back</button>
+          <button type="submit">Simpan Data</button>
+        </div>
+      </form>
+
+      <!-- Modal Input Penduduk Baru -->
+     <Modal v-model:show="showModal">
+        <h3>Tambah Data Ibu</h3>
+        <form @submit.prevent="submitPendudukBaru">
+
+        <div class="mb-3">
+          <label for="nik" class="form-label">nik</label>
+          <input v-model="formIbu.nik" type="text" class="form-control" id="nik" maxlength="16" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="nama" class="form-label">Nama</label>
+          <input v-model="formIbu.nama" type="text" class="form-control" id="nama" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
+          <input v-model="formIbu.tanggal_lahir" type="date" class="form-control" id="tanggal_lahir" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
+          <select v-model="formIbu.jenis_kelamin" class="form-select" id="jenis_kelamin" required>
+            <option value="">-- Pilih --</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="kecamatan" class="form-label">Kecamatan</label>
+          <select v-model="formIbu.kecamatan" @change="onKecamatanChange" class="form-select" id="kecamatan" required>
+            <option value="">-- Pilih --</option>
+            <option value="Ujung">Ujung</option>
+            <option value="Bacukiki">Bacukiki</option>
+            <option value="Bacukiki Barat">Bacukiki Barat</option>
+            <option value="Soreang">Soreang</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="kelurahan" class="form-label">Kelurahan</label>
+          <select v-model="formIbu.kelurahan" class="form-select" id="kelurahan" required>
+            <option value="">-- Pilih Kelurahan --</option>
+            <option v-for="kelurahan in kelurahanOptions" :key="kelurahan" :value="kelurahan">
+              {{ kelurahan }}
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="rt" class="form-label">RT</label>
+          <input v-model="formIbu.RT" type="text" class="form-control" id="rt" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="rw" class="form-label">RW</label>
+          <input v-model="formIbu.RW" type="text" class="form-control" id="rw" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="alamat" class="form-label">Alamat</label>
+          <input v-model="formIbu.alamat" type="text" class="form-control" id="alamat" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="no_hp" class="form-label">No HP</label>
+          <input v-model="formIbu.no_hp" type="text" class="form-control" id="no_hp" pattern="^\+62\d{10,12}$" minlength="12"  placeholder="Contoh: +6281234567890" required />
+          <div v-if="formIbu.no_hp && !formIbu.no_hp.match(/^\+62\d{10,12}$/)" class="text-danger">
+            Nomor telepon harus dimulai dengan +62 dan memiliki minimal 12 digit.
+>>>>>>> 9a68d78d6b3a0b505d6db7828f16e4e2c2096584
           </div>
         </form>
       </Modal>
