@@ -122,47 +122,57 @@ class BumilController extends Controller
 
     public function edit($nik)
     {
-        $bumil = Bumil::findOrFail($nik);
-        $penduduks = Penduduk::all();
-        return view('bumil.edit', compact('bumil', 'penduduks'));
+        $bumil = Bumil::where('penduduk_nik', $nik)->firstOrFail();
+        $penduduk = Penduduk::where('nik', $nik)->firstOrFail();
+
+        return Inertia::render('Bumil/Edit', [
+            'bumil' => $bumil,
+            'penduduk' => $penduduk,
+        ]);
     }
 
     public function update(Request $request, $nik)
-    {
-        $request->validate([
-            'penduduk_nik' => 'required|exists:penduduk,nik', // nik bumil
-            'usia_kehamilan' => 'required|integer',
-            'TUF' => 'required|integer',
-            'jumlah_anak_kandung' => 'required|integer',
-            'tgl_lahir_ank_terakhir' => 'required|date',
-            'tinggi_badan' => 'required|integer',
-            'berat_badan_sebelum_hamil' => 'required|integer',
-            'berat_badan_saat_ini' => 'required|integer',
-            'indeks_massa_tubuh' => 'required|numeric',
-            'kadar_hemoglobin' => 'required|numeric',
-            'LILA' => 'required|numeric',
-            'menggunakan_alat_kontrasepsi' => 'nullable|string',
-            'sumber_air_minum' => 'nullable|string',
-            'fasilitas_BAB' => 'nullable|string',
-            'meerokok_terpapar' => 'nullable|string',
-            'longitude' => 'required|numeric',
-            'latitude' => 'required|numeric',
-            'mendapatkan_tablet_tambah_darah' => 'nullable|string',
-            'meminum_table_tambah_darah' => 'nullable|string',
-            'penyuluhan_KIE' => 'nullable|string',
-            'fasilitas_layanan_rujukan' => 'nullable|string',
-            'fasilitas_bantuan_sosial' => 'nullable|string',
-            'stunting' => 'required|string',
-        ]);
+{
+    // Validasi data yang diterima
+    $request->validate([
+        'penduduk_nik' => 'required|exists:penduduk,nik', // nik bumil
+        'usia_kehamilan' => 'required|integer',
+        'TUF' => 'required|integer',
+        'jumlah_anak_kandung' => 'required|integer',
+        'tgl_lahir_ank_terakhir' => 'required|date',
+        'tinggi_badan' => 'required|integer',
+        'berat_badan_sebelum_hamil' => 'required|integer',
+        'berat_badan_saat_ini' => 'required|integer',
+        'indeks_massa_tubuh' => 'required|numeric',
+        'kadar_hemoglobin' => 'required|numeric',
+        'LILA' => 'required|numeric',
+        'menggunakan_alat_kontrasepsi' => 'nullable|string',
+        'sumber_air_minum' => 'nullable|string',
+        'fasilitas_BAB' => 'nullable|string',
+        'meerokok_terpapar' => 'nullable|string',
+        'longitude' => 'required|numeric',
+        'latitude' => 'required|numeric',
+        'mendapatkan_tablet_tambah_darah' => 'nullable|string',
+        'meminum_table_tambah_darah' => 'nullable|string',
+        'penyuluhan_KIE' => 'nullable|string',
+        'fasilitas_layanan_rujukan' => 'nullable|string',
+        'fasilitas_bantuan_sosial' => 'nullable|string',
+        'stunting' => 'required|string',
+    ]);
 
-        $bumil = Bumil::where('penduduk_nik', $nik)->firstOrFail();
-        $bumil->update(array_merge(
-            $request->all(),
-            ['niktpk' => auth()->user()->NIK]
-        ));
+    // Mencari data Bumil berdasarkan nik
+    $bumil = Bumil::where('penduduk_nik', $nik)->firstOrFail();
 
-        return redirect()->route('penduduk.index')->with('success', 'Data Bumil berhasil diperbarui');
-    }
+    // Melakukan pembaruan data
+    $bumil->update(array_merge(
+        $request->all(),
+        ['niktpk' => auth()->user()->NIK] // Menambahkan NIK dari user yang sedang login
+    ));
+
+    // Mengembalikan response berhasil
+    return redirect()->route('penduduk.index')->with('success', 'Data Bumil berhasil diperbarui');
+}
+
 
     public function destroy($nik)
     {

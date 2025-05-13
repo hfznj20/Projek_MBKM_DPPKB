@@ -133,16 +133,19 @@ class PasperController extends Controller
 
     public function edit($nik)
     {
-        $pasper = Pasper::findOrFail($nik);
+        $pasper = Pasper::where('penduduk_nik', $nik)->firstOrFail();
+        $penduduk = Penduduk::where('nik', $nik)->firstOrFail();
+
         return Inertia::render('Pasper/Edit', [
             'pasper' => $pasper,
+            'penduduk' => $penduduk,
         ]);
     }
 
     public function update(Request $request, $nik)
     {
         // Valnikasi input
-        $request->valnikate([
+        $request->validate([
             'penduduk_nik' => 'required|exists:penduduk,nik', // nik penduduk
             'tanggal_persalinan' => 'required|date',
             'tempat_persalinan' => 'required|string',
@@ -161,29 +164,18 @@ class PasperController extends Controller
             'fasilitas_layanan_rujukan' => 'nullable|string',
         ]);
 
-        // Cari data Pasper yang akan diperbarui
-        $pasper = Pasper::findOrFail($nik);
-        $pasper->update([
-            'penduduk_nik' => $request->penduduk_nik,
-            'tanggal_persalinan' => $request->tanggal_persalinan,
-            'tempat_persalinan' => $request->tempat_persalinan,
-            'penolong_persalinan' => $request->penolong_persalinan,
-            'cara_persalinan' => $request->cara_persalinan,
-            'keadaan_bayi' => $request->keadaan_bayi,
-            'menggunakan_alat_kontrasepsi' => $request->menggunakan_alat_kontrasepsi,
-            'meerokok_terpapar' => $request->meerokok_terpapar,
-            'sumber_air_minum' => $request->sumber_air_minum,
-            'fasilitas_BAB' => $request->fasilitas_BAB,
-            'longitude' => $request->longitude,
-            'latitude' => $request->latitude,
-            'mendapatkan_tablet_tambah_darah' => $request->mendapatkan_tablet_tambah_darah,
-            'meminum_table_tambah_darah' => $request->meminum_table_tambah_darah,
-            'penyuluhan_KIE' => $request->penyuluhan_KIE,
-            'fasilitas_layanan_rujukan' => $request->fasilitas_layanan_rujukan,
-        ]);
+        // Mencari data pasper berdasarkan nik
+    $pasper = Pasper::where('penduduk_nik', $nik)->firstOrFail();
 
-        return redirect()->route('pasper.index')->with('success', 'Data Pasper berhasil diperbarui');
-    }
+    // Melakukan pembaruan data
+    $pasper->update(array_merge(
+        $request->all(),
+        ['niktpk' => auth()->user()->NIK] // Menambahkan NIK dari user yang sedang login
+    ));
+
+    // Mengembalikan response berhasil
+    return redirect()->route('penduduk.index')->with('success', 'Data pasper berhasil diperbarui');
+}
 
     public function destroy($nik)
     {

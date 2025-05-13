@@ -79,54 +79,70 @@ class PendudukController extends Controller
 
     public function edit($nik)
     {
-        $penduduk = Penduduk::findOrFail($nik);
+        $penduduk = Penduduk::where('nik', $nik)->firstOrFail();
         return Inertia::render('Penduduk/Edit', [
             'penduduk' => $penduduk,
         ]);
     }   
 
     public function update(Request $request, $nik)
-    {
-        $request->validate([
-            'nik' => 'required|digits:16|unique:penduduk,nik,' . $nik . ',nik',
-            'nama' => 'required|string',
-            'tanggal_lahir' => 'required|date',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-            'kecamatan' => 'required|in:Ujung,Bacukiki,Bacukiki Barat,Soreang',
-            'kelurahan' => 'required',
-            'RT' => 'required',
-            'RW' => 'required',
-            'alamat' => 'required',
-            'no_hp' => 'required',
-            'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk,penduduk',
-        ]);
+{
+    $request->validate([
+        'nik' => 'required|digits:16|unique:penduduk,nik,' . $nik . ',nik',
+        'nama' => 'required|string',
+        'tanggal_lahir' => 'required|date',
+        'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+        'kecamatan' => 'required|in:Ujung,Bacukiki,Bacukiki Barat,Soreang',
+        'kelurahan' => 'required',
+        'RT' => 'required',
+        'RW' => 'required',
+        'alamat' => 'required',
+        'no_hp' => 'required',
+        'kategori' => 'required|in:CATIN,BUMIL,BADUTA,Pasca Persalinan,Penduduk,penduduk, catin',
+    ]);
 
-        $penduduk = Penduduk::where('nik', $nik)->firstOrFail();
-        $kategoriLama = $penduduk->kategori;
-        $kategoriBaru = $request->kategori;
-    
-        // Jika kategori berubah, hapus data lama di tabel kategori sebelumnya
-        if ($kategoriLama !== $kategoriBaru) {
-            match ($kategoriLama) {
-                'BUMIL' => \App\Models\Bumil::where('penduduk_nik', $nik)->delete(),
-                'BADUTA' => \App\Models\Baduta::where('penduduk_nik', $nik)->delete(),
-                'CATIN' => \App\Models\Catin::where('penduduk_nik', $nik)->delete(),
-                'Pasca Persalinan' => \App\Models\Pasper::where('penduduk_nik', $nik)->delete(),
-                default => null,
-            };
-        }
+    $penduduk = Penduduk::where('nik', $nik)->firstOrFail();
+    $kategoriLama = $penduduk->kategori;
+    $kategoriBaru = $request->kategori;
 
-        $penduduk->update($request->all());
+    // Jika kategori berubah, hapus data lama dari kategori sebelumnya
+    if ($kategoriLama !== $kategoriBaru) {
+        match ($kategoriLama) {
+            'BUMIL' => \App\Models\Bumil::where('penduduk_nik', $nik)->delete(),
+            'BADUTA' => \App\Models\Baduta::where('penduduk_nik', $nik)->delete(),
+            'CATIN' => \App\Models\Catin::where('penduduk_nik', $nik)->delete(),
+            'Pasca Persalinan' => \App\Models\Pasper::where('penduduk_nik', $nik)->delete(),
+            default => null,
+        };
+    }
 
-        return match ($penduduk->kategori) {
+    // Update data penduduk
+    $penduduk->update($request->all());
+
+    // Arahkan sesuai kondisi perubahan kategori
+    if ($kategoriLama !== $kategoriBaru) {
+        // Jika kategori berubah, arahkan ke form CREATE kategori baru
+        return match ($kategoriBaru) {
             'CATIN' => Inertia::location(route('catin.create', ['nik' => $penduduk->nik])),
             'BUMIL' => Inertia::location(route('bumil.create', ['nik' => $penduduk->nik])),
             'BADUTA' => Inertia::location(route('baduta.create', ['nik' => $penduduk->nik])),
             'Pasca Persalinan' => Inertia::location(route('pasper.create', ['nik' => $penduduk->nik])),
-            'Penduduk' => Inertia::location(route('penduduk.index')),
-            default => redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil disimpan'),
+            'Penduduk', 'penduduk' => Inertia::location(route('penduduk.index')),
+            default => redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil diperbarui'),
+        };
+    } else {
+        // Jika kategori tetap sama, arahkan ke halaman EDIT data kategori terkait
+        return match ($kategoriBaru) {
+            'CATIN', 'catin' => Inertia::location(route('catin.edit', ['nik' => $penduduk->nik])),
+            'BUMIL' => Inertia::location(route('bumil.edit', ['nik' => $penduduk->nik])),
+            'BADUTA' => Inertia::location(route('baduta.edit', ['nik' => $penduduk->nik])),
+            'Pasca Persalinan' => Inertia::location(route('pasper.edit', ['nik' => $penduduk->nik])),
+            'Penduduk', 'penduduk' => Inertia::location(route('penduduk.index')),
+            default => redirect()->route('penduduk.index')->with('success', 'Data Penduduk berhasil diperbarui'),
         };
     }
+}
+
 
 
     public function destroy($nik)

@@ -173,13 +173,19 @@ class BadutaController extends Controller
         ]);
     }
 
-    public function edit($penduduk_nik)
+    public function edit($nik)
     {
-        $baduta = Baduta::findOrFail($penduduk_nik);
-        return view('baduta.edit', compact('baduta'));
+        $baduta = Baduta::where('penduduk_nik', $nik)->firstOrFail();
+        $penduduk = Penduduk::where('nik', $nik)->firstOrFail();
+
+        return Inertia::render('Baduta/Edit', [
+            'baduta' => $baduta,
+            'penduduk' => $penduduk,
+            'ibu' => Penduduk::where('nik', $baduta->nik_ibu)->first(),
+        ]);
     }
 
-    public function update(Request $request, $penduduk_nik)
+    public function update(Request $request, $nik)
     {
         $request->validate([
                 'penduduk_nik' => 'required|exists:penduduk,nik', // nik bayi
@@ -205,33 +211,17 @@ class BadutaController extends Controller
                 'stunting' => 'required|string',
         ]);
 
-        // Cari data Baduta yang akan diperbarui
-        $baduta = Baduta::findOrFail($id);
-        $baduta->update([
-            'penduduk_nik' => $request->penduduk_nik,
-            'penduduk_ibu_nik' => $request->penduduk_ibu_nik,
-            'jumlah_anak_kandung' => $request->jumlah_anak_kandung,
-            'tanggal_lahir_anak_terakhir' => $request->tanggal_lahir_anak_terakhir,
-            'berat_badan' => $request->berat_badan,
-            'tinggi_badan' => $request->tinggi_badan,
-            'urutan_anak' => $request->urutan_anak,
-            'umur_kehamilan_saat_lahir' => $request->umur_kehamilan_saat_lahir,
-            'menggunakan_alat_kontrasepsi' => $request->menggunakan_alat_kontrasepsi,
-            'sumber_air_minum' => $request->sumber_air_minum,
-            'fasilitas_BAB' => $request->fasilitas_BAB,
-            'asi_eksklusif' => $request->asi_eksklusif,
-            'imunisasi_hepatitis_B' => $request->imunisasi_hepatitis_B,
-            'meerokok_terpapar' => $request->meerokok_terpapar,
-            'mengisi_KKA' => $request->mengisi_KKA,
-            'longitude' => $request->longitude,
-            'latitude' => $request->latitude,
-            'kehadiran_posyandu' => $request->kehadiran_posyandu,
-            'penyuluhan_KIE' => $request->penyuluhan_KIE,
-            'fasilitas_bantuan_sosial' => $request->fasilitas_bantuan_sosial,
-            'stunting' => $request->stunting,
-        ]);
+        // Mencari data baduta berdasarkan nik
+        $baduta = Baduta::where('penduduk_nik', $nik)->firstOrFail();
 
-        return redirect()->route('baduta.index')->with('success', 'Data Baduta berhasil diperbarui');
+        // Melakukan pembaruan data
+        $baduta->update(array_merge(
+            $request->all(),
+            ['niktpk' => auth()->user()->NIK] // Menambahkan NIK dari user yang sedang login
+        ));
+
+        // Mengembalikan response berhasil
+        return redirect()->route('penduduk.index')->with('success', 'Data baduta berhasil diperbarui');
     }
 
     public function destroy($nik)

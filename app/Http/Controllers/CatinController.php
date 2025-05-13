@@ -233,4 +233,80 @@ class CatinController extends Controller
        ]);
    }
 
+   public function edit($nik)
+{
+    $catin = Catin::where('nik_catin1', $nik)
+        ->orWhere('nik_catin2', $nik)
+        ->firstOrFail();
+
+    return Inertia::render('Catin/Edit', [
+        'catin' => [
+            'nik_catin1' => $catin->nik_catin1,
+            'nik_catin2' => $catin->nik_catin2,
+            'tanggal_pernikahan' => $catin->tanggal_pernikahan,
+            'latitude' => $catin->latitude,
+            'longitude' => $catin->longitude,
+            'tinggi_badan' => $catin->tinggi_badan,
+            'berat_badan' => $catin->berat_badan,
+            'indeks_massa_tubuh' => $catin->indeks_massa_tubuh,
+            'kadar_hemoglobin' => $catin->kadar_hemoglobin,
+            'LILA' => $catin->LILA,
+            'menggunakan_alat_kontrasepsi' => $catin->menggunakan_alat_kontrasepsi,
+            'catin_wanita_merokok_terpapar' => $catin->catin_wanita_merokok_terpapar,
+            'catin_pria_merokok_terpapar' => $catin->catin_pria_merokok_terpapar,
+            'sumber_air_minum' => $catin->sumber_air_minum,
+            'fasilitas_BAB' => $catin->fasilitas_BAB,
+            'mendapatkan_tablet_tambah_darah' => $catin->mendapatkan_tablet_tambah_darah,
+            'meminum_table_tambah_darah' => $catin->meminum_table_tambah_darah,
+            'penyuluhan_KIE' => $catin->penyuluhan_KIE,
+            'fasilitas_layanan_rujukan' => $catin->fasilitas_layanan_rujukan,
+            'fasilitas_bantuan_sosial' => $catin->fasilitas_bantuan_sosial,
+        ]
+    ]);
+}
+
+
+    public function update(Request $request, $nik)
+    {
+        $catin = Catin::where('nik_catin1', $nik)
+            ->orWhere('nik_catin2', $nik)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'nik_catin1' => 'required|string',
+            'nik_catin2' => 'required|string',
+            'tanggal_pernikahan' => 'required|date',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'tinggi_badan' => 'required|numeric',
+            'berat_badan' => 'required|numeric',
+            'indeks_massa_tubuh' => 'required|numeric',
+            'kadar_hemoglobin' => 'required|numeric',
+            'LILA' => 'required|numeric',
+            'menggunakan_alat_kontrasepsi' => 'nullable|string',
+            'catin_wanita_merokok_terpapar' => 'nullable|string',
+            'catin_pria_merokok_terpapar' => 'nullable|string',
+            'sumber_air_minum' => 'nullable|string',
+            'fasilitas_BAB' => 'nullable|string',
+            'mendapatkan_tablet_tambah_darah' => 'nullable|string',
+            'meminum_table_tambah_darah' => 'nullable|string',
+            'penyuluhan_KIE' => 'nullable|string',
+            'fasilitas_layanan_rujukan' => 'nullable|string',
+            'fasilitas_bantuan_sosial' => 'nullable|string',
+        ]);
+
+        $catin->update($validated);
+
+        return redirect()->route('penduduk.index')->with('success', 'Data Catin berhasil diperbarui.');
+    }
+
+
+    public function destroy($nik)
+    {
+        $catin = Catin::where('nik_catin1', $nik)->firstOrFail();
+        $catin->delete();
+
+        return redirect()->route('catin.index')->with('success', 'Data catin berhasil dihapus.');
+    }
+
 }

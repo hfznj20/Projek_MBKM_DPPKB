@@ -78,6 +78,8 @@ Route::post('/baduta', [BadutaController::class, 'store'])->name('baduta.store')
 Route::get('/Baduta/Index', [BadutaController::class, 'index']);
 Route::delete('/baduta/{nik}', [BadutaController::class, 'destroy'])->name('baduta.destroy');
 Route::get('/baduta/{nik}', [BadutaController::class, 'show'])->name('baduta.show');
+Route::get('/baduta/{nik}/edit', [BadutaController::class, 'edit'])->name('baduta.edit');
+Route::put('/baduta/{nik}', [BadutaController::class, 'update'])->name('baduta.update');
 
 // PASPER CRUD
 Route::resource('pasper', PasperController::class);
@@ -87,6 +89,8 @@ Route::post('/pasper', [PasperController::class, 'store'])->name('pasper.store')
 Route::get('/Pasper/Index', [PasperController::class, 'index']);
 Route::get('/pasper/{nik}', [PasperController::class, 'show'])->name('pasper.show');
 Route::delete('/pasper/{nik}', [PasperController::class, 'destroy'])->name('pasper.destroy');
+Route::get('/pasper/{nik}/edit', [PasperController::class, 'edit'])->name('pasper.edit');
+Route::put('/pasper/{nik}', [PasperController::class, 'update'])->name('pasper.update');
 
 // CATIN CRUD
 Route::resource('catin', CatinController::class);
@@ -97,6 +101,8 @@ Route::post('/catin/storePasanganBaru', [CatinController::class, 'storePasanganB
 Route::get('/Catin/Index', [CatinController::class, 'index']);
 Route::get('/catin/{nik}', [CatinController::class, 'show'])->name('catin.show');
 Route::delete('/catin/{nik}', [CatinController::class, 'destroy'])->name('catin.destroy');
+Route::get('/catin/{nik}/edit', [CatinController::class, 'edit'])->name('catin.edit');
+Route::put('/catin/{nik}', [CatinController::class, 'update'])->name('catin.update');
 
 //BUMIL CRUD
 Route::resource('bumil', BumilController::class);
@@ -106,6 +112,8 @@ Route::post('/bumil', [BumilController::class, 'store'])->name('bumil.store');
 Route::get('/Bumil/Index', [BumilController::class, 'index']);
 Route::get('/bumil/{nik}', [BumilController::class, 'show'])->name('bumil.show');
 Route::delete('/bumil/{nik}', [BumilController::class, 'destroy'])->name('bumil.destroy');
+Route::get('/bumil/{nik}/edit', [BumilController::class, 'edit'])->name('bumil.edit');
+Route::put('/bumil/{nik}', [BumilController::class, 'update'])->name('bumil.update');
 
 // Cek nama ibu berdasarkan NIK
 Route::get('/cek-ibu/{nik}', [PendudukController::class, 'searchIbu'])->name('cek-ibu');
