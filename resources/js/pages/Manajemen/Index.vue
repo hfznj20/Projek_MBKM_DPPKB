@@ -84,21 +84,21 @@ function deleteConfirmed() {
                                 <div class="flex justify-center gap-2">
                                     <Link
                                         :href="route('manajemen.edit', { NIK: item.NIK })"
-                                        class="p-1.5 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                                        class="p-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                                         title="Edit"
                                     >
                                         <Pencil class="w-4 h-4" />
                                     </Link>
                                     <Link
                                         :href="route('manajemen.show', { NIK: item.NIK })"
-                                        class="p-1.5 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                        class="p-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                                         title="Detail"
                                     >
                                         <Eye class="w-4 h-4" />
                                     </Link>
                                     <button
                                         @click="confirmDelete(item.NIK)"
-                                        class="p-1.5 bg-red-500 text-white rounded hover:bg-red-600"
+                                        class="p-1 bg-red-500 text-white rounded hover:bg-red-600"
                                         title="Hapus"
                                     >
                                         <Trash2 class="w-4 h-4" />

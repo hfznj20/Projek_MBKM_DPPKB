@@ -127,10 +127,13 @@ class ManajemenController extends Controller
             'Perempuan' => Penduduk::where('niktpk', $nik)->where('jenis_kelamin', 'Perempuan')->count(),
         ];
 
+        $penduduks = Penduduk::where('niktpk', $nik)->get();
+
         return Inertia::render('Manajemen/Show', [
             'tpk' => $manajemen,
             'dataInput' => $data,
             'genderCount' => $genderCount,
+            'penduduks' => $penduduks,
         ]);
     }
 
