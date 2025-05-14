@@ -6,7 +6,6 @@ import { EyeIcon } from '@heroicons/vue/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import { type BreadcrumbItem } from '@/types';
 import { useRouter } from 'vue-router';
-import { Inertia } from '@inertiajs/inertia';
 
 // Props dari server (Laravel Controller)
 const props = defineProps<{ stuntingData: any[] }>();
@@ -39,39 +38,18 @@ const filteredStunting = computed(() => {
 });
 
 
-const viewData = (data: any) => {
-  const kategori = data.statusStunting?.toLowerCase().trim();
-
-  console.log('DATA YANG DIKLIK:', data);
-  console.log('NIK:', data.nik, '| Kategori:', kategori);
-
-  if (kategori === 'baduta') {
-    Inertia.visit(`/baduta/${data.nik}`);
-  } else if (kategori === 'bumil') {
-    Inertia.visit(`/bumil/${data.nik}`);
-  } else {
-    alert('Kategori tidak dikenali: ' + data.statusStunting);
-  }
-};
-
-
-
-
-
 // Menambahkan fungsi untuk view data
-// const router = useRouter();
+const router = useRouter();
 
-// const viewData = (nik: string) => {
-//   Inertia.visit(`/baduta/${nik}`);
-//   Inertia.visit(`/bumil/${nik}`);
-//   // Arahkan ke halaman detail dengan parameter id
-//   // router.push({ name: 'baduta-detail', params: { nik } });
-// };
+const viewData = (id: number) => {
+  // Arahkan ke halaman detail dengan parameter id
+  router.push({ name: 'baduta-detail', params: { id } });
+};
 
 </script>
 
 <template>
-  <Head title="Data Stunting TPK" />
+  <Head title="Data Stunting" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-6 space-y-6">
       <h1 class="text-center text-white text-lg font-semibold bg-[#071556] px-4 py-2 rounded-xl">
@@ -137,7 +115,7 @@ const viewData = (data: any) => {
               <td class="px-4 py-3">{{ data.kelurahan }}</td>
               <td class="px-4 py-3">{{ data.statusStunting }}</td>
               <td class="px-4 py-3 flex items-center space-x-2">
-                <button @click="viewData(data)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
+                <button @click="viewData(data.nik)" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                   <EyeIcon class="w-5 h-5" />
                 </button>
               </td>
