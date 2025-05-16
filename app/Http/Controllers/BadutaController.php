@@ -114,6 +114,11 @@ class BadutaController extends Controller
     {
         $baduta = Baduta::with(['anak', 'ibu'])->where('penduduk_nik', $nik)->firstOrFail();
 
+        // return Inertia::render('Baduta/Show', [
+        //     'baduta' => $baduta->load('kunjungan'),
+        // ]);
+        
+        
         // Hitung usia anak dalam tahun dan bulan
         $lahir_anak = Carbon::parse($baduta->anak->tanggal_lahir);
         $now = Carbon::now();
@@ -169,11 +174,22 @@ class BadutaController extends Controller
                 'menggunakan_alat_kontrasepsi' => $baduta->menggunakan_alat_kontrasepsi,
                 'sumber_air_minum' => $baduta->sumber_air_minum,
                 'fasilitas_BAB' => $baduta->fasilitas_BAB,
-            ]
-        ]);
-    }
+                'stunting' => $baduta->stunting, 
+                'kunjungan' => $baduta->kunjungan ?? [], //
+            ],
+            'kunjungan' => $baduta->kunjungan->map(function ($kunjungan) {
+            return [
+                    'id' => $kunjungan->id,
+                    'tanggal_kunjungan' => $kunjungan->tanggal_kunjungan,
+                    'berat_badan' => $kunjungan->berat_badan,
+                    'tinggi_badan' => $kunjungan->tinggi_badan,
+                ];
+            
+        }),
+    ]);
 
-    public function edit($nik)
+    }
+    public function edit($penduduk_nik)
     {
         $baduta = Baduta::where('penduduk_nik', $nik)->firstOrFail();
         $penduduk = Penduduk::where('nik', $nik)->firstOrFail();
@@ -223,6 +239,7 @@ class BadutaController extends Controller
         // Mengembalikan response berhasil
         return redirect()->route('penduduk.index')->with('success', 'Data baduta berhasil diperbarui');
     }
+
 
     public function destroy($nik)
     {

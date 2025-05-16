@@ -42,4 +42,9 @@ class Bumil extends Model
     {
         return $this->belongsTo(Penduduk::class, 'penduduk_nik', 'nik');
     }
+    
+    public function kunjungan()
+    {
+    return $this->hasMany(KunjunganBumil::class, 'penduduk_nik', 'penduduk_nik');
+    }
 }

@@ -9,9 +9,12 @@ use App\Http\Controllers\BadutaController;
 use App\Http\Controllers\PasperController;
 use App\Http\Controllers\CatinController;
 use App\Http\Controllers\BumilController;
+use App\Http\Controllers\KunjunganBumilController;
+use App\Http\Controllers\KunjunganController;
 use App\Http\Controllers\ManajemenController;
 use App\Http\Controllers\PandugenreController;
 use App\Http\Controllers\DashboardController;
+use App\Models\Kunjungan;
 
 // Homepage
 Route::get('/', function () {
@@ -57,8 +60,14 @@ Route::get('/pandu-genre/{nik}/kunjungan/create', [PandugenreController::class, 
 Route::post('/pandu-genre/kunjungan', [PanduGenreController::class, 'storeKunjungan']);
 Route::get('/pandu-genre/{nik}/kunjungan/{id}', [PanduGenreController::class, 'showKunjungan']);
 
-// Stunting
-Route::get('/stunting-tpk', [UserController::class, 'indexStuntingTPK'])->name('stunting-tpk');
+
+// ========== TPK Pages ==========
+Route::get('/stunting', [UserController::class, 'indexStuntingTPK'])->name('stunting');
+Route::get('/baduta/{nik}/kunjungan/{id}', [KunjunganController::class, 'showKunjungan'])->name('baduta.kunjungan.show');
+Route::post('/kunjungan', [KunjunganController::class, 'store']);
+
+Route::post('/kunjunganbumil', [KunjunganBumilController::class, 'store']);
+Route::post('/kunjungan', [KunjunganController::class, 'store'])->name('baduta.kunjungan.store');
 
 // Manajemen Penduduk
 Route::resource('penduduk', PendudukController::class);
@@ -112,8 +121,9 @@ Route::post('/bumil', [BumilController::class, 'store'])->name('bumil.store');
 Route::get('/Bumil/Index', [BumilController::class, 'index']);
 Route::get('/bumil/{nik}', [BumilController::class, 'show'])->name('bumil.show');
 Route::delete('/bumil/{nik}', [BumilController::class, 'destroy'])->name('bumil.destroy');
-Route::get('/bumil/{nik}/edit', [BumilController::class, 'edit'])->name('bumil.edit');
-Route::put('/bumil/{nik}', [BumilController::class, 'update'])->name('bumil.update');
+Route::get('/bumil/{nik}/kunjungan/{id}', [KunjunganBumilController::class, 'showKunjunganBumil'])->name('bumil.kunjungan.show');
+
+
 
 // Cek nama ibu berdasarkan NIK
 Route::get('/cek-ibu/{nik}', [PendudukController::class, 'searchIbu'])->name('cek-ibu');

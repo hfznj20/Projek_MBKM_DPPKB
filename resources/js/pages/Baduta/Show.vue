@@ -1,7 +1,29 @@
 <script setup lang="ts">
-import { usePage, Head } from '@inertiajs/vue3';
+import { usePage, Head, Link } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
+import TambahKunjungan from "./TambahKunjungan.vue";
+import Chartbadutakunjungan from '@/components/Chartbadutakunjungan.vue';
+
+
+interface Kunjungan {
+  id: number;
+  tanggal_kunjungan: string;
+  berat_badan: string;
+  tinggi_badan: string;
+  menggunakan_alat_kontrasepsi: string;
+  sumber_air_minum: string;
+  fasilitas_BAB: string;
+  asi_eksklusif: string;
+  imunisasi_hepatitis_B: string;
+  meerokok_terpapar: string;
+  mengisi_KKA: string;
+  longitude: string;
+  latitude: string;
+  kehadiran_posyandu: string;
+  penyuluhan_KIE: string;
+  fasilitas_bantuan_sosial: string;
+}
 
 interface Baduta {
   nama: string;
@@ -27,6 +49,8 @@ interface Baduta {
   menggunakan_alat_kontrasepsi: string;
   sumber_air_minum: string;
   fasilitas_BAB: string;
+  kunjungan: Kunjungan[];
+  stunting: string;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -36,6 +60,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const { props } = usePage();
 const baduta = props.baduta as Baduta;
+const stunting = baduta.stunting;
+const kunjungan = props.kunjungan as Kunjungan[];
+
 </script>
 
 <template>
@@ -71,6 +98,48 @@ const baduta = props.baduta as Baduta;
         <li><strong>Sumber Air Minum:</strong> {{ baduta.sumber_air_minum }}</li>
         <li><strong>Fasilitas BAB:</strong> {{ baduta.fasilitas_BAB }}</li>
       </ul>
+
+      <!-- RIWAYAT KUNJUNGAN -->
+      <div v-if="stunting && stunting.trim().toLowerCase() === 'ya'" class="mt-6 border border-orange-400 rounded p-4">
+        <h2 class="text-lg font-bold mb-4">Kunjungan</h2>
+        <div v-if="Array.isArray(baduta.kunjungan) && baduta.kunjungan.length > 0">
+          <div class="grid grid-cols-3 font-semibold border-b pb-2 mb-2">
+            <div>Kunjungan ke-</div>
+            <div>Tanggal Kunjungan</div>
+            <div>Detail</div>
+          </div>
+          <div
+            v-for="(item, index) in baduta.kunjungan"
+            :key="item.id"
+            class="grid grid-cols-3 py-1 border-b text-sm"
+          >
+            <div>Kunjungan ke-{{ index + 1 }}</div>
+            <div>{{ item.tanggal_kunjungan }}</div>
+            <div>
+              <Link
+                :href="`/baduta/${baduta.nik}/kunjungan/${item.id}`"
+                class="text-blue-600 hover:underline"
+              >
+                Detail &gt;&gt;
+              </Link>
+            </div>
+          </div>
+        </div>
+        <div v-else class="text-sm text-gray-500">
+          Belum ada data kunjungan.
+        </div>
+
+        <div class="mt-6">
+          <h2 class="text-lg font-bold mb-4">Grafik Perkembangan Baduta</h2>
+          <Chartbadutakunjungan :kunjungan="kunjungan" />
+        </div>
+
+        <!-- Tombol tambah kunjungan -->
+        <div class="mt-6 border border-red-500 p-2">
+          <TambahKunjungan :penduduk_nik="baduta.nik" :nama="baduta.nama"/>
+        </div>
+        
+      </div>
     </div>
   </AppLayout>
 </template>
